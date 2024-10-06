@@ -8,8 +8,9 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\HasName;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasName
 {
     use HasFactory, Notifiable;
 
@@ -51,7 +52,7 @@ class User extends Authenticatable implements FilamentUser
     {
         // 判断面板id是否为admin
         if ($panel->getId() === 'admin') {
-            return $this->isAdmin();
+            // return $this->isAdmin();
         }
         return true;
     }
@@ -59,6 +60,11 @@ class User extends Authenticatable implements FilamentUser
     public function isAdmin(): bool
     {
         return !!$this->is_admin;
+    }
+
+    public function getFilamentName(): string
+    {
+        return "{$this->email}";
     }
 
 }
