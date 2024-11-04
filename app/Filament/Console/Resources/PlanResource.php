@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Enums\FontWeight;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\ActionSize;
 
 class PlanResource extends Resource
 {
@@ -26,21 +27,15 @@ class PlanResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
+                Forms\Components\TextInput::make('price')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
+                Forms\Components\TextInput::make('description')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('is_admin')
-                    ->numeric()
-                    ->default(1),
             ]);
     }
 
@@ -49,25 +44,14 @@ class PlanResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\Layout\Stack::make([
-                    Tables\Columns\ImageColumn::make('image')
-                        ->height('100%')
-                        ->width('100%'),
-                    Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\TextColumn::make('title')
-                            ->weight(FontWeight::Bold),
-                        Tables\Columns\TextColumn::make('url')
-                            ->formatStateUsing(fn (string $state): string => str($state)->after('://')->ltrim('www.')->trim('/'))
-                            ->color('gray')
-                            ->limit(30),
-                    ]),
-                ])->space(3),
-                Tables\Columns\Layout\Panel::make([
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\ColorColumn::make('color')
-                            ->grow(false),
-                        Tables\Columns\TextColumn::make('description')
-                            ->color('gray'),
-                    ]),
+                    Tables\Columns\TextColumn::make('title')
+                        ->extraAttributes(['class' => 'text-lg'])
+                        ->alignment('center')
+                        ->weight(FontWeight::Bold),
+                    Tables\Columns\TextColumn::make('title')
+                        ->formatStateUsing(fn (string $state): string => "¥ $state")
+                        ->color('gray')
+                        ->limit(30),
                 ]),
             ])
             ->filters([
@@ -87,9 +71,13 @@ class PlanResource extends Resource
             ->selectable(false)
             ->actions([
                 Tables\Actions\Action::make('visit')
-                    ->label('Visit link')
-                    ->icon('heroicon-m-arrow-top-right-on-square')
-                    ->color('gray')
+                    ->label('购买此套餐')
+                    ->color('primary')
+                    ->button()
+                    ->size(ActionSize::Large)
+                    ->extraAttributes([
+                        'class' => 'mx-auto my-8',
+                    ])
                     ->url(fn (Plan $record): string => '#' . urlencode($record->url)),
                 // Tables\Actions\EditAction::make(),
             ])
