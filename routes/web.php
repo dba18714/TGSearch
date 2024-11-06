@@ -8,6 +8,7 @@ use App\Models\Tmp2;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use App\Jobs\ProcessPodcast;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 // Route::get('/', function () {
@@ -17,6 +18,10 @@ use Illuminate\Support\Facades\DB;
 Route::get('/', Home::class);
 
 Route::get('/tmp', function () {
+    User::query()->create(['email' => now(), 'password' => now()]);
+    return User::query()->get();
+
+    return Carbon::now()->toDateTimeString();
 
     config()->set('app.timezone', 'Asia/Shanghai');
 
