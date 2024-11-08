@@ -18,6 +18,15 @@ use Illuminate\Support\Facades\DB;
 Route::get('/', Home::class);
 
 Route::get('/tmp', function () {
+    return User::query()->create([
+        'name' => fake()->name(),
+        'email' => fake()->unique()->safeEmail(),
+        'email_verified_at' => now(),
+        'password' => '222',
+    ]);
+
+
+
     User::query()->create(['email' => now(), 'password' => now()]);
     return User::query()->get();
 
@@ -25,29 +34,29 @@ Route::get('/tmp', function () {
 
     config()->set('app.timezone', 'Asia/Shanghai');
 
-        return(Tmp::query()->create(['name' => time()])->created_at->toString());
+    return (Tmp::query()->create(['name' => time()])->created_at->toString());
 
-        // 创建一个新的 Tmp 模型实例
-        $tmp = Tmp::create(['name' => time()]);
+    // 创建一个新的 Tmp 模型实例
+    $tmp = Tmp::create(['name' => time()]);
 
-        // 检查数据库中存储的时间（直接从数据库查询）
-        $dbTime = DB::select("SELECT created_at FROM tmps ORDER BY id DESC LIMIT 1");
-    
-        return response()->json([
-            'stored_created_at' => $tmp->created_at,  // Laravel 读取的时间
-            'db_created_at' => $dbTime[0]->created_at  // 直接从数据库查询的时间
-        ]);
-        
+    // 检查数据库中存储的时间（直接从数据库查询）
+    $dbTime = DB::select("SELECT created_at FROM tmps ORDER BY id DESC LIMIT 1");
+
+    return response()->json([
+        'stored_created_at' => $tmp->created_at,  // Laravel 读取的时间
+        'db_created_at' => $dbTime[0]->created_at  // 直接从数据库查询的时间
+    ]);
+
     // $result = DB::select("SELECT created_at FROM tmps ORDER BY id DESC LIMIT 1");
 
     // return response()->json($result);
 
     // // 检查 PHP 默认时区
     // $phpTimezone = date_default_timezone_get();
-    
+
     // // 检查 Laravel 应用的时区
     // $appTimezone = config('app.timezone');
-    
+
     // return response()->json([
     //     'php_timezone' => $phpTimezone,
     //     'app_timezone' => $appTimezone,
@@ -60,14 +69,14 @@ Route::get('/tmp', function () {
 
     // 返回：[{"TimeZone":"+00:00"}]
 
-    return(Tmp::query()->create(['name' => time()]));
+    return (Tmp::query()->create(['name' => time()]));
 
     // echo date("Y-m-d H:i:s T");
     // echo '11';
 
-    return(Tmp::query()->create(['name' => time()]));
+    return (Tmp::query()->create(['name' => time()]));
 
-    return(Tmp::query()->create(['name' => time()])->created_at->toString());
+    return (Tmp::query()->create(['name' => time()])->created_at->toString());
 
     // Carbon::setTimezone('Asia/Shanghai');
 
@@ -98,16 +107,16 @@ Route::get('/tmp', function () {
     // return(Tmp2::query()->create(['id' => time()])->created_at->toString());
 
 
-    
-    return(Plan::where('created_at', '2024-10-10 04:52:30+08:00')->first());
+
+    return (Plan::where('created_at', '2024-10-10 04:52:30+08:00')->first());
 
 
     dump(Plan::query()->create(['title' => time(), 'description' => time()]));
-    return(Plan::query()->orderByDesc('id')->first());
+    return (Plan::query()->orderByDesc('id')->first());
 
     dump(Tmp::query()->create(['name' => time()]));
-    return(Tmp::query()->orderByDesc('id')->first());
-    
+    return (Tmp::query()->orderByDesc('id')->first());
+
     dump(Tmp::where('created_at', '2024-10-10 02:10:00+08:00')->first()->created_at->setTimezone('Asia/Shanghai'));
 
     $flight = new Tmp;
@@ -121,7 +130,7 @@ Route::get('/tmp', function () {
 
     dump(Tmp::query()->orderByDesc('id')->first());
 
-    
+
     return;
 
 

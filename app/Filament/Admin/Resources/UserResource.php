@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\PlanResource\Pages;
+use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\Plan;
 use Filament\Forms;
@@ -12,10 +12,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\User;
 
-class PlanResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = Plan::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
@@ -23,15 +24,23 @@ class PlanResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('price')
+                Forms\Components\TextInput::make('email')
                     ->required()
+                    ->email()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('description')
-                    ->required()
-                    ->maxLength(255),
+
+                // 密码
+                Forms\Components\TextInput::make('password')
+                    ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->maxLength(255)
+                    ->placeholder('留空以保留当前密码'),
+
+                Forms\Components\DateTimePicker::make('email_verified_at')
+                    ->timezone('Asia/Shanghai'),
             ]);
     }
 
@@ -39,11 +48,17 @@ class PlanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
+                Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('price')
+                Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('description')
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->since()
+                    ->dateTimeTooltip('Y-m-d H:i:s', 'Asia/Shanghai')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->since()
+                    ->dateTimeTooltip('Y-m-d H:i:s', 'Asia/Shanghai')
                     ->searchable(),
             ])
             ->filters([

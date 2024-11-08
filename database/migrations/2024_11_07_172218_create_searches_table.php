@@ -4,8 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use function Laravel\Prompts\table;
-
 return new class extends Migration
 {
     /**
@@ -13,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('searches', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->decimal('price')->default(0);
-            $table->text('description');
+            $table->string('keyword');
+            $table->integer('searched_count')->default(0);
+            $table->timestamp('last_searched_at');
+
+
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('searches');
     }
 };
