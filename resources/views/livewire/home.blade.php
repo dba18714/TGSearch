@@ -4,10 +4,10 @@
             <h1 class="text-3xl tracking-tight text-gray-900">冲上云霄</h1>
             <div class="text-right flex-1">
                 @auth
-                    <x-button flat label="进入控制台" :href="route('filament.console.pages.dashboard')" />
+                    <x-button flat label="进入控制台" :href="" />
                 @else
-                    <x-button flat label="登录" href="{{ route('filament.console.auth.login') }}" />
-                    <x-button label="注册" href="{{ route('filament.console.auth.register') }}" />
+                    <x-button flat label="登录" href="" />
+                    <x-button label="注册" href="" />
                 @endauth
             </div>
         </div>
@@ -22,8 +22,8 @@
             </div>
 
             <div class="text-center">
-                <x-button class="mx-3" xl positive label="立即选购" href="{{ route('filament.console.pages.dashboard') }}" />
-                <x-button xl warning label="控制台" href="{{ route('filament.console.pages.dashboard') }}" />
+                <x-button class="mx-3" xl positive label="立即选购" href="" />
+                <x-button xl warning label="控制台" href="" />
             </div>
         
         </div>
