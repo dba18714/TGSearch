@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
     use HasFactory, Notifiable;
+    use HasUlids;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +25,7 @@ class User extends Authenticatable implements FilamentUser, HasName
         'name',
         'email',
         'password',
+        'email_verified_at',
     ];
 
     /**
