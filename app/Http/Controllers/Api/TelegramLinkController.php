@@ -64,7 +64,7 @@ class TelegramLinkController extends Controller
         ]);
 
         $validated['is_by_user'] = true;
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = auth()->id;
         $validated['is_valid'] = false; // 需要管理员审核
 
         $telegramLink = TelegramLink::create($validated);
