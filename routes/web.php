@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
+use App\Livewire\TelegramLinks;
 use App\Models\Tmp;
 use App\Models\Tmp2;
 use Carbon\Carbon;
@@ -24,3 +25,5 @@ Route::get('/tmp', function () {
         'password' => '222',
     ]);
 });
+
+Route::get('/telegram-links', TelegramLinks::class)->name('telegram-links');
