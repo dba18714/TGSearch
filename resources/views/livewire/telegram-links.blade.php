@@ -10,55 +10,69 @@
         <!-- Search and Sort Section -->
         <div class="max-w-3xl mx-auto mb-12">
             <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
-                <!-- Search Input with Type Select and Search Button -->
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <!-- Search Input -->
-                    <div class="relative flex-1">
-                        <input
-                            wire:model.live.debounce.300ms="search"
-                            type="text"
-                            placeholder="搜索名称或用户名..."
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                    </div>
-
-                    <!-- Type Select and Search Button -->
-                    <div class="flex gap-2">
-                        <select
-                            wire:model.live="type"
-                            class="pl-2 pr-8 py-2 border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 text-gray-500 sm:text-sm rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">全部类型</option>
-                            <option value="bot">机器人</option>
-                            <option value="channel">频道</option>
-                            <option value="group">群组</option>
-                            <option value="person">个人</option>
-                        </select>
-                        <button
-                            wire:click="search"
-                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-                            搜索
-                        </button>
+                <!-- Search Input -->
+                <div class="relative">
+                    <input
+                        wire:model.live.debounce.300ms="search"
+                        type="text"
+                        placeholder="搜索名称或用户名..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
                     </div>
                 </div>
 
-                <!-- Sort Toggle -->
-                <div class="mt-4 flex items-center justify-center space-x-4">
-                    <span class="text-sm text-gray-600 dark:text-gray-400">排序:</span>
-                    <div class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
-                        <button
-                            wire:click="sortBy('name')"
-                            class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'name' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
-                            名称 {{ $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
-                        </button>
-                        <button
-                            wire:click="sortBy('member_count')"
-                            class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'member_count' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
-                            成员数 {{ $sortField === 'member_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
-                        </button>
+                <!-- Type and Sort Toggles -->
+                <div class="mt-4 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+                    <!-- Type Toggle -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">类型:</span>
+                        <div class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                            <button
+                                wire:click="$set('type', '')"
+                                class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === '' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                全部
+                            </button>
+                            <button
+                                wire:click="$set('type', 'bot')"
+                                class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'bot' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                机器人
+                            </button>
+                            <button
+                                wire:click="$set('type', 'channel')"
+                                class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'channel' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                频道
+                            </button>
+                            <button
+                                wire:click="$set('type', 'group')"
+                                class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'group' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                群组
+                            </button>
+                            <button
+                                wire:click="$set('type', 'person')"
+                                class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'person' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                个人
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sort Toggle -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">排序:</span>
+                        <div class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                            <button
+                                wire:click="sortBy('name')"
+                                class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'name' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                名称 {{ $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
+                            </button>
+                            <button
+                                wire:click="sortBy('member_count')"
+                                class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'member_count' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                成员数 {{ $sortField === 'member_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
