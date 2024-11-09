@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 transition-colors duration-200">
+<div x-data="{ open: false }" class="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 transition-colors duration-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <!-- Header Section -->
@@ -7,79 +7,60 @@
             <p class="mt-3 text-xl text-gray-600 dark:text-gray-300">发现优质的 Telegram 频道、群组、机器人和个人</p>
         </div>
 
-        <!-- Search Section -->
+        <!-- Search and Sort Section -->
         <div class="max-w-3xl mx-auto mb-12">
-            <div class="bg-white dark:bg-gray-800 p-2 rounded-2xl shadow-md">
-                <div class="flex items-center">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+                <!-- Search Input with Type Select and Search Button -->
+                <div class="flex flex-col sm:flex-row gap-4">
                     <!-- Search Input -->
-                    <div class="flex-1 min-w-0 px-3">
-                        <div class="flex items-center">
-                            <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <div class="relative flex-1">
+                        <input
+                            wire:model.live.debounce.300ms="search"
+                            type="text"
+                            placeholder="搜索名称或用户名..."
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                             </svg>
-                            <input
-                                wire:model.live.debounce.300ms="search"
-                                type="text"
-                                placeholder="搜索名称或用户名..."
-                                class="block w-full border-0 focus:ring-0 px-3 py-3 text-base placeholder-gray-500 text-gray-900 dark:text-white dark:placeholder-gray-400 bg-transparent">
                         </div>
                     </div>
 
-                    <!-- Divider -->
-                    <div class="h-8 w-px bg-gray-200 dark:bg-gray-700"></div>
-
-                    <!-- Type Select -->
-                    <div class="px-3">
+                    <!-- Type Select and Search Button -->
+                    <div class="flex gap-2">
                         <select
                             wire:model.live="type"
-                            class="block w-full border-0 bg-transparent pr-1 py-3 text-base text-gray-900 dark:text-white focus:ring-0">
-                            <option value="">所有类型</option>
+                            class="pl-2 pr-8 py-2 border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 text-gray-500 sm:text-sm rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">全部类型</option>
                             <option value="bot">机器人</option>
                             <option value="channel">频道</option>
                             <option value="group">群组</option>
                             <option value="person">个人</option>
                         </select>
-                    </div>
-
-                    <!-- Search Button -->
-                    <div class="pl-2">
                         <button
                             wire:click="search"
-                            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
                             搜索
                         </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Sort Options -->
-            <div class="flex items-center justify-center space-x-2 mt-6">
-                <button
-                    wire:click="sortBy('name')"
-                    class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200
-                        {{ $sortField === 'name' 
-                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700 dark:text-indigo-100' 
-                            : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
-                    <span>按名称</span>
-                    @if($sortField === 'name')
-                    <svg class="ml-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $sortDirection === 'asc' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7' }}" />
-                    </svg>
-                    @endif
-                </button>
-                <button
-                    wire:click="sortBy('member_count')"
-                    class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200
-                        {{ $sortField === 'member_count' 
-                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700 dark:text-indigo-100' 
-                            : 'bg-white text-gray-500 hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600' }}">
-                    <span>按成员数</span>
-                    @if($sortField === 'member_count')
-                    <svg class="ml-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $sortDirection === 'asc' ? 'M5 15l7-7 7 7' : 'M19 9l-7 7-7-7' }}" />
-                    </svg>
-                    @endif
-                </button>
+                <!-- Sort Toggle -->
+                <div class="mt-4 flex items-center justify-center space-x-4">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">排序:</span>
+                    <div class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                        <button
+                            wire:click="sortBy('name')"
+                            class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'name' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                            名称 {{ $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
+                        </button>
+                        <button
+                            wire:click="sortBy('member_count')"
+                            class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'member_count' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                            成员数 {{ $sortField === 'member_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -134,4 +115,3 @@
         </div>
     </div>
 </div>
-
