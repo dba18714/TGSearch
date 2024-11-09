@@ -12,8 +12,8 @@ class TelegramLinks extends Component
 
     public $search = '';
     public $type = '';
-    public $sortField = 'created_at';
-    public $sortDirection = 'desc';
+    public $sortField = '';
+    public $sortDirection = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -24,6 +24,12 @@ class TelegramLinks extends Component
 
     public function sortBy($field)
     {
+        if ($field === '') {
+            $this->sortField = '';
+            $this->sortDirection = '';
+            return;
+        }
+
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
@@ -51,7 +57,9 @@ class TelegramLinks extends Component
             ->when($this->type, function ($query) {
                 $query->where('type', $this->type);
             })
-            ->orderBy($this->sortField, $this->sortDirection)
+            ->when($this->sortField, function ($query) {
+                $query->orderBy($this->sortField, $this->sortDirection);
+            })
             ->paginate(12);
 
         return view('livewire.telegram-links', [
