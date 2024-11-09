@@ -31,6 +31,11 @@ class TelegramLinks extends Component
             $this->sortDirection = 'asc';
         }
     }
+    
+    public function doSearch()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -47,7 +52,7 @@ class TelegramLinks extends Component
                 $query->where('type', $this->type);
             })
             ->orderBy($this->sortField, $this->sortDirection)
-            ->paginate(10);
+            ->paginate(12);
 
         return view('livewire.telegram-links', [
             'links' => $links

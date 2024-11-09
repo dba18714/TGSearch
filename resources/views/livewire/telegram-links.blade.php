@@ -11,18 +11,39 @@
         <div class="max-w-3xl mx-auto mb-12">
             <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
                 <!-- Search Input -->
-                <div class="relative">
-                    <input
-                        wire:model.live.debounce.300ms="search"
-                        type="text"
-                        placeholder="搜索名称或用户名..."
-                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                        </svg>
+                <div class="relative flex items-center space-x-2">
+                    <div class="relative flex-1">
+                        <input
+                            wire:model="search"
+                            wire:keydown.enter="doSearch"
+                            type="text"
+                            placeholder="搜索名称或用户名..."
+                            class="w-full pl-12 pr-4 py-3.5 text-base border-0 bg-gray-50 dark:bg-gray-700 
+            rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
+            text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400
+            shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600
+            transition-all duration-200">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
                     </div>
+
+                    <button
+                        wire:click="doSearch"
+                        class="px-6 py-3.5 bg-indigo-600 text-white rounded-xl font-medium 
+        hover:bg-indigo-700 active:bg-indigo-800
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+        dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:active:bg-indigo-700
+        dark:focus:ring-offset-gray-800 shadow-sm
+        transform transition-all duration-200 hover:scale-105">
+                        <div class="flex items-center justify-center space-x-2">
+                            <span>搜索</span>
+                        </div>
+                    </button>
                 </div>
+
 
                 <!-- Type and Sort Toggles -->
                 <div class="mt-4 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
