@@ -61,6 +61,7 @@ class UserResource extends Resource
                     ->dateTimeTooltip('Y-m-d H:i:s', 'Asia/Shanghai')
                     ->searchable(),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 //
             ])
