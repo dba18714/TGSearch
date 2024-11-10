@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('member_count')->default(0);
             $table->integer('view_count')->default(0);
             $table->boolean('is_by_user')->default(false)->comment('true: 由用户添加 or false: 由爬虫添加');
-            $table->ulid('user_id')->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
+            $table->ulid('user_id')->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
             $table->boolean('is_valid')->default(false)->comment('是否有效');
             $table->timestamp('verified_at')->nullable();
             $table->timestamp('verified_start_at')->nullable()->comment('验证开始时间，不管是否验证成功');
