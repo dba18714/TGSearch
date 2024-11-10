@@ -99,7 +99,7 @@
                 <span class="text-sm text-gray-600 dark:text-gray-400">个人</span>
             </div>
         </div>
-        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="mt-6 pt-4">
             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-4">
                 <div class="text-center">
                     <div class="flex items-center justify-center mt-1">
