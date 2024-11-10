@@ -2,19 +2,19 @@
     <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">数据统计</h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="text-center">
-            <span class="block text-2xl font-bold text-green-600 dark:text-green-400">{{ $totalChannels }}</span>
+            <span class="block text-2xl font-bold text-green-600 dark:text-green-400">{{ number_format($totalChannels) }}</span>
             <span class="text-sm text-gray-600 dark:text-gray-400">频道</span>
         </div>
         <div class="text-center">
-            <span class="block text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $totalGroups }}</span>
+            <span class="block text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ number_format($totalGroups) }}</span>
             <span class="text-sm text-gray-600 dark:text-gray-400">群组</span>
         </div>
         <div class="text-center">
-            <span class="block text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $totalBots }}</span>
+            <span class="block text-2xl font-bold text-purple-600 dark:text-purple-400">{{ number_format($totalBots) }}</span>
             <span class="text-sm text-gray-600 dark:text-gray-400">机器人</span>
         </div>
         <div class="text-center">
-            <span class="block text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ $totalPersons }}</span>
+            <span class="block text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ number_format($totalPersons) }}</span>
             <span class="text-sm text-gray-600 dark:text-gray-400">个人</span>
         </div>
     </div>
@@ -24,7 +24,7 @@
                 <div class="flex items-center justify-center mt-1">
                     <span class="mr-2 text-sm text-gray-600 dark:text-gray-400">当前已收录</span>
                     <span class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                        {{ $totalLinks }}
+                        {{ number_format($totalLinks) }}
                     </span>
                     <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">条记录</span>
                 </div>

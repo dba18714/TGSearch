@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->homeUrl('/')
             ->login()
             ->spa()
+            ->sidebarCollapsibleOnDesktop()
             ->pages([
                 Dashboard::class, // 使用自定义的仪表板作为默认页面
             ])

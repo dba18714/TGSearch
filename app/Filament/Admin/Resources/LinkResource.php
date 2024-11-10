@@ -20,6 +20,9 @@ class LinkResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('id')
+                    ->disabled()
+                    ->dehydrated(false),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -61,12 +64,33 @@ class LinkResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->limit(16)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('telegram_username')
+                    ->limit(16)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    })
                     ->searchable(),
+                Tables\Columns\TextColumn::make('url')
+                    ->url(fn(Link $record): string => $record->url)
+                    ->openUrlInNewTab()
+                    ->limit(16)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    })
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('introduction')
+                    ->limit(16)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    }),
                 Tables\Columns\IconColumn::make('is_valid')
+                    ->sortable()
                     ->boolean(),
                 Tables\Columns\TextColumn::make('member_count')
                     ->numeric()
@@ -85,9 +109,29 @@ class LinkResource extends Resource
             ])
             ->defaultSort('id', 'desc')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('is_valid')
+                    ->label('有效的')
+                    ->options([
+                        '1' => '是',
+                        '0' => '否',
+                    ]),
+                Tables\Filters\SelectFilter::make('is_by_user')
+                    ->label('由用户创建')
+                    ->options([
+                        '1' => '是',
+                        '0' => '否',
+                    ]),
+                Tables\Filters\SelectFilter::make('type')
+                    ->label('类型')
+                    ->options([
+                        'bot' => '机器人',
+                        'channel' => '频道',
+                        'group' => '群组',
+                        'person' => '个人',
+                    ]),
             ])
             ->actions([
+                // Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -109,7 +153,8 @@ class LinkResource extends Resource
         return [
             'index' => Pages\ListLinks::route('/'),
             'create' => Pages\CreateLink::route('/create'),
-            'edit' => Pages\EditLink::route('/{record}/edit'),
+            // 'view' => Pages\ViewLink::route('/{record}'),
+            // 'edit' => Pages\EditLink::route('/{record}/edit'),
         ];
     }
 }

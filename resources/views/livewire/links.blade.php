@@ -18,8 +18,8 @@
                             wire:key="search-input-{{ $search }}"
                             wire:keydown.enter="doSearch"
                             type="text"
-                            placeholder="搜索名称或用户名..."
-                            class="w-full pl-12 pr-4 py-3.5 text-base border-0 bg-gray-50 dark:bg-gray-700 
+                            placeholder="搜索名称/用户名/介绍..."
+                            class="w-full pl-12 pr-4 py-3.5 text-base border-0 bg-gray-200 dark:bg-gray-700 
             rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
             text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400
             shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600
