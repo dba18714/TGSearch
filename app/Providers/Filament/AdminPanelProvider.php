@@ -17,6 +17,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Admin\Pages\Dashboard;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,6 +30,13 @@ class AdminPanelProvider extends PanelProvider
             ->homeUrl('/')
             ->login()
             ->spa()
+            ->pages([
+                Dashboard::class, // 使用自定义的仪表板作为默认页面
+            ])
+            // 注册小部件
+            ->widgets([
+                \App\Filament\Admin\Widgets\StatsOverviewWidget::class,
+            ])
             ->colors([
                 'primary' => Color::Amber,
             ])
