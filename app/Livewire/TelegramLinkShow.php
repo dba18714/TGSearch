@@ -8,10 +8,12 @@ use Livewire\Component;
 class TelegramLinkShow extends Component
 {
     public TelegramLink $telegramLink;
+    public bool $isModal = false; // 添加这个属性
     
-    public function mount(TelegramLink $telegramLink)
+    public function mount(TelegramLink $telegramLink, bool $isModal = false)
     {
         $this->telegramLink = $telegramLink;
+        $this->isModal = $isModal; // 通过参数设置
     }
 
     public function render()

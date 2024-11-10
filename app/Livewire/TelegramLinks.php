@@ -14,6 +14,7 @@ class TelegramLinks extends Component
     public $type = '';
     public $sortField = '';
     public $sortDirection = '';
+    public $selectedLink = null;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -41,6 +42,11 @@ class TelegramLinks extends Component
     public function doSearch()
     {
         $this->resetPage();
+    }
+
+    public function selectLink($linkId)
+    {
+        $this->selectedLink = TelegramLink::findOrFail($linkId);
     }
 
     public function render()
