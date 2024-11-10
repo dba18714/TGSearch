@@ -3,7 +3,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="col-span-1 md:col-span-2">
                 <div class="mb-4">
-                    <a href="/" class="text-2xl font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">TNav.me</a>
+                    <a href="/" wire:navigate class="text-2xl font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">TNav.me</a>
                 </div>
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Telegram 资源导航网站
