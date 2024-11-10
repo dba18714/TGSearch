@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 //     return view('welcome');
 // });
 
-Route::get('/', Home::class);
+// Route::get('/', Home::class);
 
 Route::get('/tmp', function () {
     return User::query()->create([
@@ -27,5 +27,5 @@ Route::get('/tmp', function () {
     ]);
 });
 
-Route::get('/telegram-links', TelegramLinks::class)->name('telegram-links');
+Route::get('/', TelegramLinks::class)->name('home');
 Route::get('/telegram-links/{telegramLink}', TelegramLinkShow::class)->name('telegram-link.show');
