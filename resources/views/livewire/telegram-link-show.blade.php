@@ -11,7 +11,7 @@
         </div>
 
 
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg }} overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
             <div class="p-6">
                 <!-- 头部信息 -->
                 <div class="flex items-start justify-between mb-6">
@@ -24,7 +24,7 @@
                         {{ $telegramLink->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
                         {{ $telegramLink->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
                         {{ $telegramLink->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}">
-                        {{ ucfirst($telegramLink->type) }}
+                        {{ $telegramLink->type_name }}
                     </span>
                 </div>
 
@@ -96,7 +96,7 @@
                             {{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
                             {{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
                             {{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}">
-                                {{ ucfirst($link->type) }}
+                                {{ $link->type_name }}
                             </span>
                         </div>
 

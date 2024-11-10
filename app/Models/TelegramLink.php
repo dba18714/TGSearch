@@ -108,4 +108,18 @@ class TelegramLink extends Model
     {
         return $this->type === 'person';
     }
+
+    /**
+     * Get the type name of the Telegram link.
+     */
+    public function getTypeNameAttribute(): string
+    {
+        return match ($this->type) {
+            'bot' => '机器人',
+            'channel' => '频道',
+            'group' => '群组',
+            'person' => '个人',
+            default => '未知',
+        };
+    }
 }

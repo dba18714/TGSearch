@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->default('Updating...');
             $table->string('introduction')->nullable();
             $table->string('url')->index();
-            $table->string('type')->nullable()->comment('bot or channel or group or person');
+            $table->string('type')->default('unknown')->comment('bot or channel or group or person');
             $table->string('telegram_username')->nullable();
             $table->integer('member_count')->default(0);
             $table->integer('view_count')->default(0);

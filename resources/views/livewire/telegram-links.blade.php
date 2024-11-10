@@ -151,7 +151,7 @@
                             {{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
                             {{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
                         ">
-                            {{ ucfirst($link->type) }}
+                            {{ $link->type_name }}
                         </span>
                     </div>
 
