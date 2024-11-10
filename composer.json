@@ -7,12 +7,16 @@
     "require": {
         "php": "^8.2",
         "filament/filament": "^3.2",
+        "http-interop/http-factory-guzzle": "^1.2",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
+        "laravel/scout": "^10.11",
         "laravel/tinker": "^2.9",
+        "meilisearch/meilisearch-php": "^1.11",
         "wireui/wireui": "^2.1"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.14",
         "fakerphp/faker": "^1.23",
         "laravel-lang/lang": "^15.9",
         "laravel/pint": "^1.13",

@@ -16,12 +16,14 @@ class LinkShow extends Component
 
     public function getRelatedLinks()
     {
-        return Link::query()
-            ->valid()
-            ->where('id', '!=', $this->link->id)
-            ->where('type', $this->link->type)
-            ->inRandomOrder()
-            ->limit(3)
+        return Link::search($this->link->name)
+            ->query(function ($query) {
+                return $query->whereNot('id', $this->link->id)
+                            ->where('type', $this->link->type);
+            })
+            // ->whereNot('id', $this->link->id)
+            // ->where('type', $this->link->type)
+            ->take(7)
             ->get();
     }
 

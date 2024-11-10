@@ -80,6 +80,7 @@
                         </div>
                     </div>
 
+                    @if(!$search)
                     <!-- Sort Toggle -->
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-gray-600 dark:text-gray-400">排序:</span>
@@ -101,6 +102,7 @@
                             </button>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -142,7 +144,14 @@
                 <div class="p-6">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $link->name }}</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ $link->name }}
+                                @if(isset($link->_formatted['name']))
+                                {!! $link->_formatted['name'] !!}
+                                @else
+                                {{ $link->name }}
+                                @endif
+                            </h3>
                             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $link->telegram_username }}</p>
                         </div>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium

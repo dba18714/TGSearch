@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Link;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
 
 class Links extends Component
 {
@@ -18,8 +19,8 @@ class Links extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'type' => ['except' => ''],
-        'sortField' => ['except' => 'created_at'],
-        'sortDirection' => ['except' => 'desc'],
+        'sortField' => ['except' => ''],
+        'sortDirection' => ['except' => ''],
     ];
 
     public function resetFilters()
@@ -51,28 +52,33 @@ class Links extends Component
 
     public function doSearch()
     {
+        if ($this->search !== '') {
+            $this->sortField = '';
+            $this->sortDirection = '';
+        }
         $this->resetPage();
     }
 
     public function render()
     {
-        $links = Link::query()
-            ->valid()
-            ->when($this->search, function ($query) {
-                $query->where(function ($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('introduction', 'like', '%' . $this->search . '%')
-                        ->orWhere('telegram_username', 'like', '%' . $this->search . '%');
-                });
-            })
+        $query = Link::query();
+    
+        if (!empty($this->search)) {
+            $query = Link::search($this->search);
+        }
+    
+        $links = $query
             ->when($this->type, function ($query) {
                 $query->where('type', $this->type);
             })
             ->when($this->sortField, function ($query) {
                 $query->orderBy($this->sortField, $this->sortDirection);
             })
-            ->cursorPaginate(12);
-
+            ->paginate(12);
+    
+        app('debugbar')->debug('$this->sortField: ' . $this->sortField);
+        app('debugbar')->debug($links);
+    
         return view('livewire.links', [
             'links' => $links
         ]);
