@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\TelegramLink;
+use App\Models\Link;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TelegramLinkFactory extends Factory
+class LinkFactory extends Factory
 {
-    protected $model = TelegramLink::class;
+    protected $model = Link::class;
     
     public function definition(): array
     {

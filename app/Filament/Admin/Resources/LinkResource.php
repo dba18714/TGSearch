@@ -2,17 +2,17 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\TelegramLinkResource\Pages;
-use App\Models\TelegramLink;
+use App\Filament\Admin\Resources\LinkResource\Pages;
+use App\Models\Link;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class TelegramLinkResource extends Resource
+class LinkResource extends Resource
 {
-    protected static ?string $model = TelegramLink::class;
+    protected static ?string $model = Link::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -106,9 +106,9 @@ class TelegramLinkResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTelegramLinks::route('/'),
-            'create' => Pages\CreateTelegramLink::route('/create'),
-            'edit' => Pages\EditTelegramLink::route('/{record}/edit'),
+            'index' => Pages\ListLinks::route('/'),
+            'create' => Pages\CreateLink::route('/create'),
+            'edit' => Pages\EditLink::route('/{record}/edit'),
         ];
     }
 }

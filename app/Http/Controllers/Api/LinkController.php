@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\TelegramLinkResource;
-use App\Models\TelegramLink;
+use App\Http\Resources\LinkResource;
+use App\Models\Link;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class TelegramLinkController extends Controller
+class LinkController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = TelegramLink::query()->valid();
+        $query = Link::query()->valid();
 
         // 根据类型筛选
         if ($request->has('type')) {
@@ -37,7 +37,7 @@ class TelegramLinkController extends Controller
         $order = $request->input('order', 'desc');
         $query->orderBy($sort, $order);
 
-        return TelegramLinkResource::collection(
+        return LinkResource::collection(
             $query->paginate($request->input('per_page', 15))
         );
     }
@@ -45,9 +45,9 @@ class TelegramLinkController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TelegramLink $telegramLink): TelegramLinkResource
+    public function show(Link $Link): LinkResource
     {
-        return new TelegramLinkResource($telegramLink);
+        return new LinkResource($Link);
     }
 
     /**
@@ -67,8 +67,8 @@ class TelegramLinkController extends Controller
         $validated['user_id'] = auth()->id;
         $validated['is_valid'] = false; // 需要管理员审核
 
-        $telegramLink = TelegramLink::create($validated);
+        $Link = Link::create($validated);
 
-        return new TelegramLinkResource($telegramLink);
+        return new LinkResource($Link);
     }
 }

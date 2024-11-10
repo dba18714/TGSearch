@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('telegram_links', function (Blueprint $table) {
+        Schema::create('links', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name')->default('Updating...');
             $table->string('introduction')->nullable();
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('telegrams');
+        Schema::dropIfExists('links');
     }
 };

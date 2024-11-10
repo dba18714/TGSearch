@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
-use App\Livewire\TelegramLinks;
-use App\Livewire\TelegramLinkShow;
+use App\Livewire\Links;
+use App\Livewire\LinkShow;
 use App\Models\Tmp;
 use App\Models\Tmp2;
 use Carbon\Carbon;
@@ -27,5 +27,5 @@ Route::get('/tmp', function () {
     ]);
 });
 
-Route::get('/', TelegramLinks::class)->name('home');
-Route::get('/telegram-links/{telegramLink}', TelegramLinkShow::class)->name('telegram-link.show');
+Route::get('/', Links::class)->name('home');
+Route::get('/links/{link}', LinkShow::class)->name('link.show');

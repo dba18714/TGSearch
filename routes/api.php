@@ -2,15 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\TelegramLinkController;
+use App\Http\Controllers\Api\LinkController;
 
 // 公开接口
-Route::get('/telegram-links', [TelegramLinkController::class, 'index']);
-Route::get('/telegram-links/{telegramLink}', [TelegramLinkController::class, 'show']);
+Route::get('/links', [LinkController::class, 'index']);
+Route::get('/links/{link}', [LinkController::class, 'show']);
 
 // 需要认证的接口
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/telegram-links', [TelegramLinkController::class, 'store']);
+    Route::post('/links', [LinkController::class, 'store']);
 });
 
 Route::get('/user', function (Request $request) {

@@ -2,11 +2,11 @@
 
 namespace App\Livewire;
 
-use App\Models\TelegramLink;
+use App\Models\Link;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class TelegramLinks extends Component
+class Links extends Component
 {
     use WithPagination;
 
@@ -56,7 +56,7 @@ class TelegramLinks extends Component
 
     public function render()
     {
-        $links = TelegramLink::query()
+        $links = Link::query()
             ->valid()
             ->when($this->search, function ($query) {
                 $query->where(function ($query) {
@@ -73,7 +73,7 @@ class TelegramLinks extends Component
             })
             ->paginate(12);
 
-        return view('livewire.telegram-links', [
+        return view('livewire.links', [
             'links' => $links
         ]);
     }

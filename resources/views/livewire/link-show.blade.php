@@ -16,22 +16,22 @@
                 <!-- 头部信息 -->
                 <div class="flex items-start justify-between mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $telegramLink->name }}</h1>
-                        <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">{{ $telegramLink->telegram_username }}</p>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $link->name }}</h1>
+                        <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">{{ $link->telegram_username }}</p>
                     </div>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                        {{ $telegramLink->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-                        {{ $telegramLink->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-                        {{ $telegramLink->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-                        {{ $telegramLink->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}">
-                        {{ $telegramLink->type_name }}
+                        {{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+                        {{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+                        {{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+                        {{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}">
+                        {{ $link->type_name }}
                     </span>
                 </div>
 
                 <!-- 介绍内容 -->
                 <div class="prose dark:prose-invert max-w-none mb-8">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">介绍</h2>
-                    <p class="text-gray-600 dark:text-gray-300">{{ $telegramLink->introduction }}</p>
+                    <p class="text-gray-600 dark:text-gray-300">{{ $link->introduction }}</p>
                 </div>
 
                 <!-- 统计信息 -->
@@ -43,7 +43,7 @@
                             </svg>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400">成员数量</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($telegramLink->member_count) }}</p>
+                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($link->member_count) }}</p>
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                             </svg>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400">浏览次数</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($telegramLink->view_count) }}</p>
+                                <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ number_format($link->view_count) }}</p>
                             </div>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
 
                 <!-- 访问按钮 -->
                 <div class="flex justify-center">
-                    <a href="{{ $telegramLink->url }}"
+                    <a href="{{ $link->url }}"
                         target="_blank"
                         class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 
                               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
@@ -109,7 +109,7 @@
                                 </svg>
                                 {{ number_format($link->member_count) }}
                             </div>
-                            <a href="{{ route('telegram-link.show', $link) }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
+                            <a href="{{ route('link.show', $link) }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
                                 查看详情
                             </a>
                         </div>
