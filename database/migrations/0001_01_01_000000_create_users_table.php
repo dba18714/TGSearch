@@ -15,7 +15,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('name');
             $table->unsignedBigInteger('telegram_user_id')->nullable()->index();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable()->comment('当使用 Telegram 注册时，此项为空');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
