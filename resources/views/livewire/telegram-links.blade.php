@@ -15,6 +15,7 @@
                     <div class="relative flex-1">
                         <input
                             wire:model="search"
+                            wire:key="search-input-{{ $search }}"
                             wire:keydown.enter="doSearch"
                             type="text"
                             placeholder="搜索名称或用户名..."
@@ -105,6 +106,36 @@
         </div>
 
         <!-- Links Grid -->
+        @if($links->isEmpty())
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">没有找到相关记录</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                @if($search || $type)
+                当前搜索条件：
+                @if($search)
+                搜索词 "{{ $search }}"
+                @endif
+                @if($type)
+                @if($search), @endif
+                类型 "{{ $type }}"
+                @endif
+                @else
+                没有应用任何搜索条件
+                @endif
+            </p>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                请尝试使用其他搜索词或清除筛选条件。
+            </p>
+            <button
+                wire:click="resetFilters"
+                class="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                清除所有筛选条件
+            </button>
+        </div>
+        @else
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach($links as $link)
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-200">
@@ -165,6 +196,7 @@
             </div>
             @endforeach
         </div>
+        @endif
 
         <!-- Modal -->
         <div x-show="open"
@@ -205,13 +237,25 @@
 
                     <!-- 加载详情组件 -->
                     <div class="max-h-[80vh] overflow-y-auto">
-                    @if($selectedLink)
-    <livewire:telegram-link-show 
-        :telegram-link="$selectedLink" 
-        :is-modal="true"
-        :key="$selectedLink->id" 
-    />
-@endif
+                        @if($selectedLink)
+                        <livewire:telegram-link-show
+                            :telegram-link="$selectedLink"
+                            :is-modal="true"
+                            :key="$selectedLink->id" />
+
+                        <!-- 添加"在独立页面查看"链接 -->
+                        <div class="px-4 py-3 bg-gray-50 dark:bg-gray-800 text-right">
+                            <a href="{{ route('telegram-link.show', $selectedLink) }}"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                                target="_blank">
+                                在独立页面查看
+                                <svg class="ml-2 -mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                                </svg>
+                            </a>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -23,6 +23,17 @@ class TelegramLinks extends Component
         'sortDirection' => ['except' => 'desc'],
     ];
 
+    public function resetFilters()
+    {
+        $this->reset(['search', 'type', 'sortField', 'sortDirection']);
+        $this->resetPage();
+    }
+
+    public function updatedType()
+    {
+        $this->resetPage();
+    }
+    
     public function sortBy($field)
     {
         if ($field === '') {
@@ -38,7 +49,7 @@ class TelegramLinks extends Component
             $this->sortDirection = 'asc';
         }
     }
-    
+
     public function doSearch()
     {
         $this->resetPage();
