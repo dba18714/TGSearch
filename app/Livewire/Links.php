@@ -71,7 +71,7 @@ class Links extends Component
             ->when($this->sortField, function ($query) {
                 $query->orderBy($this->sortField, $this->sortDirection);
             })
-            ->paginate(12);
+            ->cursorPaginate(12);
 
         return view('livewire.links', [
             'links' => $links
