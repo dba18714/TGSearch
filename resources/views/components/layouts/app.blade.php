@@ -74,6 +74,8 @@
 
     {{ $slot }}
 
+    <x-footer />
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const themeToggle = document.getElementById('themeToggle');
