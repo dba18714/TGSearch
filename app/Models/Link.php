@@ -22,6 +22,7 @@ class Link extends Model
     protected $fillable = [
         'name',
         'introduction',
+        'message',
         'url',
         'type',
         'telegram_username',

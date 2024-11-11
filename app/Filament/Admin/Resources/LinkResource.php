@@ -9,6 +9,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
+use Filament\Notifications\Notification;
 
 class LinkResource extends Resource
 {
@@ -27,6 +29,9 @@ class LinkResource extends Resource
                     ->dehydrated(fn($state) => filled($state))
                     ->maxLength(255),
                 Forms\Components\Textarea::make('introduction')
+                    ->dehydrated(fn($state) => filled($state))
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('message')
                     ->dehydrated(fn($state) => filled($state))
                     ->maxLength(65535),
                 Forms\Components\TextInput::make('url')
@@ -153,6 +158,16 @@ class LinkResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('update')
+                        ->label('爬取更新信息')
+                        ->icon('heroicon-o-arrow-path')
+                        ->action(function (Collection $records) {
+                            $records->each->dispatchUpdateJob();
+                            Notification::make()
+                                ->title('已派发爬取更新任务')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ]);
     }

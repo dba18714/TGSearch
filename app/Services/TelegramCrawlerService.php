@@ -9,8 +9,6 @@ use Illuminate\Support\Str;
 
 class TelegramCrawlerService
 {
-
-    // TODO 加上 message 类型的检测
     public function crawl($url)
     {
         try {
@@ -26,6 +24,7 @@ class TelegramCrawlerService
 
             $name = $this->extractName($xpath);
             $introduction = $this->extractDescription($xpath);
+            $message = $this->extractMessageText($xpath);
             $memberCount = $this->extractMemberCount($xpath);
             $type = $this->determineType($xpath);
             $isValid = $this->checkValidity($xpath);
@@ -33,6 +32,7 @@ class TelegramCrawlerService
             return [
                 'name' => $name,
                 'introduction' => $introduction,
+                'message' => $message,
                 'member_count' => $memberCount,
                 'type' => $type,
                 'is_valid' => $isValid,
@@ -43,19 +43,43 @@ class TelegramCrawlerService
         }
     }
 
+
+
+    private function extractMessageText($xpath)
+    {
+        $messageNode = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
+        if ($messageNode) {
+            // 先替换 <br/> 为换行符，然后再去除其他HTML标签
+            $html = $messageNode->ownerDocument->saveHTML($messageNode);
+            $text = str_replace(['<br>', '<br/>', '<br />'], "\n", $html);
+            $text = strip_tags($text);
+
+            // 处理可能出现的连续换行和空格
+            $text = preg_replace('/\n\s+/', "\n", $text);
+            $text = trim($text);
+
+            return $text;
+        }
+        return null;
+    }
+
+
     private function extractName($xpath)
     {
-        $nameNode = $xpath->query('//div[contains(@class, "tgme_page_title")]/span')->item(0);
-        return $nameNode ? $nameNode->textContent : 'None';
+        $ogTitleNode = $xpath->query('//meta[@property="og:title"]')->item(0);
+        return $ogTitleNode ? $ogTitleNode->getAttribute('content') : 'None';
+
+        // $nameNode = $xpath->query('//div[contains(@class, "tgme_page_title")]/span')->item(0);
+        // return $nameNode ? $nameNode->textContent : 'None';
     }
 
     private function extractDescription($xpath)
     {
         $ogDescNode = $xpath->query('//meta[@property="og:description"]')->item(0);
-        return $ogDescNode ? $ogDescNode->getAttribute('content') : 'None';
+        return $ogDescNode ? str_replace("\t", "\n", $ogDescNode->getAttribute('content')) : 'None';
 
-        $descNode = $xpath->query('//div[contains(@class, "tgme_page_description")]')->item(0);
-        return $descNode ? $descNode->textContent : 'None';
+        // $descNode = $xpath->query('//div[contains(@class, "tgme_page_description")]')->item(0);
+        // return $descNode ? $descNode->textContent : 'None';
     }
 
     private function extractMemberCount($xpath)
@@ -87,6 +111,11 @@ class TelegramCrawlerService
             if (preg_match('/^@\w+$/', $text)) {
                 return 'person';
             }
+        }
+
+        $messageNode = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
+        if ($messageNode) {
+            return 'message';
         }
         return 'unknown';
     }

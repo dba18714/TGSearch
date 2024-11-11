@@ -1,4 +1,5 @@
 <div>
+    <!-- TODO 加上 message 的显示 -->
     <div class="bg-white dark:bg-gray-900 min-h-screen py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -32,7 +33,7 @@
                     <!-- 介绍内容 -->
                     <div class="prose dark:prose-invert max-w-none mb-8">
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">介绍</h2>
-                        <p class="text-gray-600 dark:text-gray-300">{{ $link->introduction }}</p>
+                        <p class="text-gray-600 dark:text-gray-300">{!! nl2br(e($link->introduction)) !!}</p>
                     </div>
 
                     <!-- 统计信息 -->

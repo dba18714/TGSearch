@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // TODO add nullable
         Schema::create('links', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name')->default('None')->nullable();
             $table->string('introduction')->default('None')->nullable();
+            $table->text('message')->default('None')->nullable();
             $table->string('url')->unique();
             $table->string('type')->default('unknown')->comment('bot or channel or group or person or message')->nullable();
             $table->string('telegram_username')->unique()->nullable();
