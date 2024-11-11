@@ -55,8 +55,10 @@ class LinkResource extends Resource
                     ->required(),
                 Forms\Components\Toggle::make('is_valid')
                     ->required(),
-                Forms\Components\DateTimePicker::make('verified_at'),
-                Forms\Components\DateTimePicker::make('verified_start_at'),
+                Forms\Components\DateTimePicker::make('verified_at')
+                    ->timezone('PRC'),
+                Forms\Components\DateTimePicker::make('verified_start_at')
+                    ->timezone('PRC'),
             ]);
     }
 
@@ -64,6 +66,10 @@ class LinkResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column): string {
@@ -73,7 +79,7 @@ class LinkResource extends Resource
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('telegram_username')
                     ->limit(16)
-                    ->tooltip(function (Tables\Columns\TextColumn $column){
+                    ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();
                     })
                     ->searchable(),
@@ -99,11 +105,18 @@ class LinkResource extends Resource
                 Tables\Columns\TextColumn::make('view_count')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('verified_start_at')
+                    ->timezone('PRC')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                ->timezone('PRC')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                ->timezone('PRC')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
