@@ -17,5 +17,6 @@ class LinkSeeder extends Seeder
         Link::factory()->channel()->count(5)->create();
         Link::factory()->group()->count(5)->create();
         Link::factory()->person()->count(5)->create();
+        Link::factory()->state(['type' => 'message'])->count(5)->create();
     }
 }

@@ -12,7 +12,7 @@ class LinkFactory extends Factory
     
     public function definition(): array
     {
-        $type = $this->faker->randomElement(['bot', 'channel', 'group', 'person']);
+        $type = $this->faker->randomElement(['bot', 'channel', 'group', 'person', 'message']);
         $name = $this->getNameByType($type);
         $username = strtolower(str_replace(' ', '_', $name));
 
@@ -39,6 +39,7 @@ class LinkFactory extends Factory
             'channel' => $this->faker->words(3, true) . ' Channel',
             'group' => $this->faker->words(2, true) . ' Group',
             'person' => $this->faker->name(),
+            'message' => $this->faker->sentence(2) . ' Message',
             default => $this->faker->name(),
         };
     }

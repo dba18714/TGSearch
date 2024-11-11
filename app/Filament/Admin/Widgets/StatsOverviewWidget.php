@@ -15,7 +15,7 @@ class StatsOverviewWidget extends BaseWidget
                 ->description('所有提交的链接总数')
                 ->descriptionIcon('heroicon-m-link')
                 ->color('success'),
-                
+
             Stat::make('待审核', Link::where('is_valid', false)->count())
                 ->description('等待审核的链接数量')
                 ->descriptionIcon('heroicon-m-clock')
@@ -34,11 +34,15 @@ class StatsOverviewWidget extends BaseWidget
             Stat::make('频道', Link::where('type', 'channel')->count())
                 ->description('频道链接数量')
                 ->descriptionIcon('heroicon-m-megaphone')
-                ->color('info'), 
+                ->color('info'),
 
             Stat::make('群组', Link::where('type', 'group')->count())
                 ->description('群组链接数量')
                 ->descriptionIcon('heroicon-m-user-group')
+                ->color('info'),
+            Stat::make('消息', Link::where('type', 'message')->count())
+                ->description('消息链接数量')
+                ->descriptionIcon('heroicon-m-chat-bubble-left-right')
                 ->color('info'),
         ];
     }

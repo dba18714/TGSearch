@@ -111,6 +111,11 @@ class Link extends Model
         return $this->type === 'person';
     }
 
+    public function isMessage(): bool
+    {
+        return $this->type === 'message';
+    }
+
     /**
      * Get the type name of the Telegram link.
      */
@@ -121,6 +126,7 @@ class Link extends Model
             'channel' => '频道',
             'group' => '群组',
             'person' => '个人',
+            'message' => '消息',
             default => '未知',
         };
     }

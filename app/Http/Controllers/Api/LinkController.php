@@ -59,7 +59,7 @@ class LinkController extends Controller
             'name' => 'required|string|max:255',
             'introduction' => 'required|string',
             'url' => 'required|url|unique:telegram_links',
-            'type' => 'required|in:bot,channel,group,person',
+            'type' => 'required|in:bot,channel,group,person,message',
             'telegram_username' => 'required|string|max:255',
         ]);
 
