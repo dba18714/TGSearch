@@ -151,4 +151,39 @@ class Link extends Model
     {
         return $this->is_valid === true;
     }
+
+    /**
+     * Get a single link for verification, prioritizing unverified and in-progress links
+     *
+     * @return void
+     */
+    public static function dispatchNextVerificationJob(): Link
+    {
+        $link = self::selectForVerification()->first();
+
+        if ($link) {
+            // 如果1小时之内已经验证过了，就跳过
+            if (
+                $link->verified_start_at &&
+                $link->verified_start_at->gt(now()->subHour())
+            ) return $link;
+            
+            $link->dispatchUpdateJob();
+        }
+
+        return $link;
+    }
+
+    /**
+     * Query scope for selecting links for verification
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSelectForVerification($query)
+    {
+        return $query->orderByRaw('verified_start_at ASC NULLS FIRST')
+            ->orderByRaw('verified_at ASC NULLS FIRST')
+            ->orderBy('created_at');
+    }
 }

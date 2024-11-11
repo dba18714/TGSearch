@@ -37,7 +37,7 @@ class UpdateLinkInfoJob implements ShouldQueue
     public function handle(TelegramCrawlerService $crawler): void
     {
         try {
-            Cache::lock('telegram-crawler', 1)->block(5, function () use ($crawler) {
+            Cache::lock('telegram-crawler', 1)->block(60, function () use ($crawler) {
                 $this->processCrawling($crawler);
             });
         } catch (\Illuminate\Contracts\Cache\LockTimeoutException $e) {
