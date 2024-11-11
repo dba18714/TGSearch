@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class UpdateLinkInfoJob implements ShouldQueue
 {
@@ -34,6 +35,22 @@ class UpdateLinkInfoJob implements ShouldQueue
      * 必须使用模型的 $link->dispatchUpdateJob(); 方法派遣本任务，以防止队列执行失败时，任务被重新调度。
      */
     public function handle(TelegramCrawlerService $crawler): void
+    {
+        try {
+            Cache::lock('telegram-crawler', 1)->block(5, function () use ($crawler) {
+                $this->processCrawling($crawler);
+            });
+        } catch (\Illuminate\Contracts\Cache\LockTimeoutException $e) {
+            Log::warning('Failed to acquire lock for link update', [
+                'link_id' => $this->link->id,
+                'url' => $this->link->url,
+            ]);
+            // 可以选择重新抛出异常让任务重试，或者直接返回
+            throw $e;
+        }
+    }
+
+    protected function processCrawling(TelegramCrawlerService $crawler): void
     {
         try {
             $crawledData = $crawler->crawl($this->link->url);

@@ -141,4 +141,14 @@ class Link extends Model
 
         return $this;
     }
+
+    /**
+     * Determine if the model should be searchable.
+     *
+     * @return bool
+     */
+    public function shouldBeSearchable()
+    {
+        return $this->is_valid === true;
+    }
 }
