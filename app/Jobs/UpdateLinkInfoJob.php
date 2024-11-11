@@ -36,52 +36,12 @@ class UpdateLinkInfoJob implements ShouldQueue
      */
     public function handle(TelegramCrawlerService $crawler): void
     {
-        try {
-            Cache::lock('telegram-crawler', 1)->block(60, function () use ($crawler) {
-                $this->processCrawling($crawler);
-            });
-        } catch (\Illuminate\Contracts\Cache\LockTimeoutException $e) {
-            Log::warning('Failed to acquire lock for link update', [
-                'link_id' => $this->link->id,
-                'url' => $this->link->url,
-            ]);
-            // 可以选择重新抛出异常让任务重试，或者直接返回
-            throw $e;
-        }
-    }
-
-    protected function processCrawling(TelegramCrawlerService $crawler): void
-    {
-        try {
-            $crawledData = $crawler->crawl($this->link->url);
-
-            if (!empty($crawledData['name']) || !empty($crawledData['member_count']) || !empty($crawledData['introduction'])) {
-                $this->link->update([
-                    'name' => $crawledData['name'] ?? $this->link->name,
-                    'member_count' => $crawledData['member_count'] ?? $this->link->member_count,
-                    'introduction' => $crawledData['introduction'] ?? $this->link->introduction,
-                ]);
-
-                Log::info('Link info updated successfully', [
-                    'link_id' => $this->link->id,
-                    'url' => $this->link->url,
-                ]);
-            } else {
-                Log::warning('No data crawled for link', [
-                    'link_id' => $this->link->id,
-                    'url' => $this->link->url,
-                ]);
+        Cache::lock('telegram-crawler', 1)->block(60, function () use ($crawler) {
+            $data = $crawler->crawl($this->link->url);
+            if ($data) {
+                $this->link->update($data);
             }
-        } catch (\Exception $e) {
-            Log::error('Failed to update link info', [
-                'link_id' => $this->link->id,
-                'url' => $this->link->url,
-                'error' => $e->getMessage(),
-            ]);
-
-            // 重新抛出异常，让队列系统知道任务失败
-            throw $e;
-        }
+        });
     }
 
     /**

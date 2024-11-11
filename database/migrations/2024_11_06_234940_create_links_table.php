@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // TODO add nullable
         Schema::create('links', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name')->default('None');

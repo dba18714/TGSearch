@@ -24,17 +24,14 @@ class LinkResource extends Resource
                     ->disabled()
                     ->dehydrated(false),
                 Forms\Components\TextInput::make('name')
-                    ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('introduction')
-                    ->required()
                     ->maxLength(65535),
                 Forms\Components\TextInput::make('url')
                     ->required()
                     ->url()
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
-                    ->required()
                     ->options([
                         'bot' => '机器人',
                         'channel' => '频道',
@@ -43,18 +40,13 @@ class LinkResource extends Resource
                         'message' => '消息',
                     ]),
                 Forms\Components\TextInput::make('telegram_username')
-                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('member_count')
-                    ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('view_count')
-                    ->required()
                     ->numeric(),
-                Forms\Components\Toggle::make('is_by_user')
-                    ->required(),
-                Forms\Components\Toggle::make('is_valid')
-                    ->required(),
+                Forms\Components\Toggle::make('is_by_user'),
+                Forms\Components\Toggle::make('is_valid'),
                 Forms\Components\DateTimePicker::make('verified_at')
                     ->timezone('PRC'),
                 Forms\Components\DateTimePicker::make('verified_start_at')

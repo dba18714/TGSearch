@@ -2,63 +2,94 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Client\Factory as HttpFactory;
+use App\Models\Link;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class TelegramCrawlerService
 {
-    protected HttpFactory $http;
-    public function __construct(HttpFactory $http)
-    {
-        $this->http = $http;
-    }
 
-    public function crawl(string $url): array
+    public function crawl($url)
     {
         try {
-            $response = $this->http->get($url);
+            $response = Http::withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
+                ->get($url);
 
-            if ($response->successful()) {
-                $html = $response->body();
+            $response->throw();
 
-                return [
-                    'name' => $this->extractName($html),
-                    'member_count' => $this->extractMemberCount($html),
-                    'introduction' => $this->extractDescription($html),
-                ];
-            }
+            $html = $response->body();
+            $dom = new \DOMDocument();
+            @$dom->loadHTML($html);
+            $xpath = new \DOMXPath($dom);
 
-            Log::warning('Failed to fetch Telegram URL', [
-                'url' => $url,
-                'status' => $response->status(),
-            ]);
+            $name = $this->extractName($xpath);
+            $introduction = $this->extractDescription($xpath);
+            $memberCount = $this->extractMemberCount($xpath);
+            $type = $this->determineType($xpath);
+            $isValid = $this->checkValidity($xpath);
 
+            return [
+                'name' => $name,
+                'introduction' => $introduction,
+                'member_count' => $memberCount,
+                'type' => $type,
+                'is_valid' => $isValid,
+            ];
         } catch (\Exception $e) {
-            Log::error('Error crawling Telegram URL', [
-                'url' => $url,
-                'error' => $e->getMessage(),
-            ]);
+            Log::error("处理 URL:{$url} 时发生错误: " . $e->getMessage());
+            return null;
         }
-
-        return [
-            'name' => null,
-            'member_count' => null,
-            'introduction' => null,
-        ];
     }
 
-    private function extractName($html)
+    private function extractName($xpath)
     {
-        // 实现提取名称的逻辑
+        $nameNode = $xpath->query('//div[contains(@class, "tgme_page_title")]/span')->item(0);
+        return $nameNode ? $nameNode->textContent : 'None';
     }
 
-    private function extractMemberCount($html)
+    private function extractDescription($xpath)
     {
-        // 实现提取成员数量的逻辑
+        $descNode = $xpath->query('//div[contains(@class, "tgme_page_description")]')->item(0);
+        return $descNode ? $descNode->textContent : 'None';
     }
 
-    private function extractDescription($html)
+    private function extractMemberCount($xpath)
     {
-        // 实现提取描述的逻辑
+        $memberNode = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
+        if ($memberNode) {
+            $text = $memberNode->textContent;
+            if (preg_match('/(\d[\d\s,]*)members/', $text, $matches)) {
+                return (int) preg_replace('/\D/', '', $matches[1]);
+            }
+            if (preg_match('/(\d[\d\s,]*)subscribers/', $text, $matches)) {
+                return (int) preg_replace('/\D/', '', $matches[1]);
+            }
+        }
+        return 0;
+    }
+
+    private function determineType($xpath)
+    {
+        $extraNode = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
+        if ($extraNode) {
+            $text = $extraNode->textContent;
+            if (strpos($text, 'members') !== false) {
+                return 'group';
+            }
+            if (strpos($text, 'subscribers') !== false) {
+                return 'channel';
+            }
+            if (preg_match('/^@\w+$/', $text)) {
+                return 'person';
+            }
+        }
+        return 'unknown';
+    }
+
+    private function checkValidity($xpath)
+    {
+        $robotsMeta = $xpath->query('//meta[@name="robots"]')->item(0);
+        return !($robotsMeta && $robotsMeta->getAttribute('content') !== 'none');
     }
 }

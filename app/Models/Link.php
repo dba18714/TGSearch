@@ -186,4 +186,11 @@ class Link extends Model
             ->orderByRaw('verified_at ASC NULLS FIRST')
             ->orderBy('created_at');
     }
+
+    protected static function booted(): void
+    {
+        static::created(function (Link $link) {
+            $link->dispatchUpdateJob();
+        });
+    }
 }
