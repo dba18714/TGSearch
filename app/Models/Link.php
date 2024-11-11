@@ -157,21 +157,21 @@ class Link extends Model
      *
      * @return void
      */
-    public static function dispatchNextVerificationJob(): Link
+    public static function dispatchNextVerificationJob(): bool
     {
         $link = self::selectForVerification()->first();
 
-        if ($link) {
-            // 如果1小时之内已经验证过了，就跳过
-            if (
-                $link->verified_start_at &&
-                $link->verified_start_at->gt(now()->subHour())
-            ) return $link;
-            
-            $link->dispatchUpdateJob();
-        }
+        if (!$link) return false;
 
-        return $link;
+        // 如果1小时之内已经验证过了，就跳过
+        if (
+            $link->verified_start_at &&
+            $link->verified_start_at->gt(now()->subHour())
+        ) return false;
+
+        $link->dispatchUpdateJob();
+
+        return true;
     }
 
     /**

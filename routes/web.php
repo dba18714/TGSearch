@@ -15,9 +15,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 Route::get('/tmp', function () {
-    $link = Link::find('01jcdcttvp5se3ma1r687z6z1f');
-    $link->dispatchUpdateJob();
-    dump($link->name);
+    $link = Link::find('01jcdr9bqrzfvxs08awhjy17jv');
+    if($link) $link->dispatchUpdateJob(); 
+    dump($link);
+    
 });
 
 Route::get('/tmp2', function () {
