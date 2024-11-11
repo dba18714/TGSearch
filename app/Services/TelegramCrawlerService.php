@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class TelegramCrawlerService
 {
 
+    // TODO 加上 message 类型的检测
     public function crawl($url)
     {
         try {

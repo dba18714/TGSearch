@@ -193,4 +193,21 @@ class Link extends Model
             $link->dispatchUpdateJob();
         });
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+
+            // 自动修剪字符串前后空格, 并且如果修剪后是空字符串,则设置为 null
+            foreach ($model->getAttributes() as $key => $value) {
+                if (is_string($value)) {
+                    $value = trim($value);
+                    if ($value === '') $value = null;
+                    $model->{$key} = $value;
+                }
+            }
+        });
+    }
 }

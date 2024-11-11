@@ -24,14 +24,17 @@ class LinkResource extends Resource
                     ->disabled()
                     ->dehydrated(false),
                 Forms\Components\TextInput::make('name')
+                    ->dehydrated(fn($state) => filled($state))
                     ->maxLength(255),
                 Forms\Components\Textarea::make('introduction')
+                    ->dehydrated(fn($state) => filled($state))
                     ->maxLength(65535),
                 Forms\Components\TextInput::make('url')
                     ->required()
                     ->url()
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
+                ->dehydrated(fn($state) => filled($state))
                     ->options([
                         'bot' => '机器人',
                         'channel' => '频道',
@@ -42,14 +45,20 @@ class LinkResource extends Resource
                 Forms\Components\TextInput::make('telegram_username')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('member_count')
+                ->dehydrated(fn($state) => filled($state))
                     ->numeric(),
                 Forms\Components\TextInput::make('view_count')
+                ->dehydrated(fn($state) => filled($state))
                     ->numeric(),
-                Forms\Components\Toggle::make('is_by_user'),
-                Forms\Components\Toggle::make('is_valid'),
+                Forms\Components\Toggle::make('is_by_user')
+                ->dehydrated(fn($state) => filled($state)),
+                Forms\Components\Toggle::make('is_valid')
+                ->dehydrated(fn($state) => filled($state)),
                 Forms\Components\DateTimePicker::make('verified_at')
+                ->dehydrated(fn($state) => filled($state))
                     ->timezone('PRC'),
                 Forms\Components\DateTimePicker::make('verified_start_at')
+                ->dehydrated(fn($state) => filled($state))
                     ->timezone('PRC'),
             ]);
     }
@@ -103,12 +112,12 @@ class LinkResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                ->timezone('PRC')
+                    ->timezone('PRC')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                ->timezone('PRC')
+                    ->timezone('PRC')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
