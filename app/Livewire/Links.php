@@ -5,11 +5,12 @@ namespace App\Livewire;
 use App\Models\Link;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\DB;
-
+use App\Services\GoogleCustomSearchService;
 class Links extends Component
 {
     use WithPagination;
+
+    protected $googleSearchService;
 
     public $search = '';
     public $type = '';
@@ -22,6 +23,11 @@ class Links extends Component
         'sortField' => ['except' => ''],
         'sortDirection' => ['except' => ''],
     ];
+
+    public function boot(GoogleCustomSearchService $googleSearchService)
+    {
+        $this->googleSearchService = $googleSearchService;
+    }
 
     public function resetFilters()
     {
@@ -52,21 +58,49 @@ class Links extends Component
 
     public function doSearch()
     {
-        if ($this->search !== '') {
-            $this->sortField = '';
-            $this->sortDirection = '';
+        if (empty($this->search)) {
+            return;
         }
+
+        $this->sortField = '';
+        $this->sortDirection = '';
+
+        $results = $this->googleSearchService->search($this->search);
+
+        $this->processSearchResults($results);
+
         $this->resetPage();
+    }
+
+    protected function processSearchResults($results)
+    {
+        app('debugbar')->debug($results);
+        foreach ($results as $item) {
+            // if 以 https://web.t.me 开头的链接，跳过
+            if (strpos($item['link'], 'https://web.t.me') === 0) {
+                continue;
+            }
+            $link = new Link();
+            $link->firstOrCreate(
+                [
+                    'url' => $item['link']
+                ],
+                [
+                    'name' => $item['title'],
+                    'type' => 'message',
+                ]
+            );
+        }
     }
 
     public function render()
     {
         $query = Link::query();
-    
+
         if (!empty($this->search)) {
             $query = Link::search($this->search);
         }
-    
+
         $links = $query
             ->when($this->type, function ($query) {
                 $query->where('type', $this->type);
@@ -75,10 +109,9 @@ class Links extends Component
                 $query->orderBy($this->sortField, $this->sortDirection);
             })
             ->paginate(12);
-    
         app('debugbar')->debug('$this->sortField: ' . $this->sortField);
         app('debugbar')->debug($links);
-    
+
         return view('livewire.links', [
             'links' => $links
         ]);

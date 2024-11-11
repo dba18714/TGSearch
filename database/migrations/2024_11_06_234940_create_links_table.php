@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('links', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('name')->default('Updating...');
-            $table->string('introduction')->nullable();
-            $table->string('url')->index();
+            $table->string('name')->default('None');
+            $table->string('introduction')->default('None');
+            $table->string('url')->unique();
             $table->string('type')->default('unknown')->comment('bot or channel or group or person or message');
-            $table->string('telegram_username')->nullable();
+            $table->string('telegram_username')->unique()->nullable();
             $table->integer('member_count')->default(0);
             $table->integer('view_count')->default(0);
             $table->boolean('is_by_user')->default(false)->comment('true: 由用户添加 or false: 由爬虫添加');

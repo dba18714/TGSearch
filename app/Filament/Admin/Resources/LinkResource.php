@@ -73,7 +73,7 @@ class LinkResource extends Resource
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('telegram_username')
                     ->limit(16)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                    ->tooltip(function (Tables\Columns\TextColumn $column){
                         return $column->getState();
                     })
                     ->searchable(),
