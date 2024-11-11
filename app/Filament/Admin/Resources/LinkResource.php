@@ -94,7 +94,7 @@ class LinkResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('introduction')
                     ->limit(16)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                    ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();
                     }),
                 Tables\Columns\IconColumn::make('is_valid')

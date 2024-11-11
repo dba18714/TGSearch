@@ -19,3 +19,5 @@ yarn-error.log
 /.vscode
 .DS_Store
 .~1*.insyncdl
+_ide_helper.php
+.phpstorm.meta.php

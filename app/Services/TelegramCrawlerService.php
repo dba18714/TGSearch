@@ -51,6 +51,9 @@ class TelegramCrawlerService
 
     private function extractDescription($xpath)
     {
+        $ogDescNode = $xpath->query('//meta[@property="og:description"]')->item(0);
+        return $ogDescNode ? $ogDescNode->getAttribute('content') : 'None';
+
         $descNode = $xpath->query('//div[contains(@class, "tgme_page_description")]')->item(0);
         return $descNode ? $descNode->textContent : 'None';
     }
