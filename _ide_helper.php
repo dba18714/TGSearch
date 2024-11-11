@@ -26902,6 +26902,7 @@ namespace  {
             class Vite extends \Illuminate\Support\Facades\Vite {}
             class EloquentSerialize extends \AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade {}
             class Debugbar extends \Barryvdh\Debugbar\Facades\Debugbar {}
+            class Horizon extends \Laravel\Horizon\Horizon {}
             class Livewire extends \Livewire\Livewire {}
             class Flare extends \Spatie\LaravelIgnition\Facades\Flare {}
             class WireUi extends \WireUi\Facades\WireUi {}

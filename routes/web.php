@@ -9,14 +9,15 @@ use App\Models\Tmp2;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use App\Jobs\ProcessPodcast;
+use App\Jobs\UpdateLinkInfoJob;
+use App\Models\Link;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-Route::get('/tmp1', function () {
-    dump('tmp1 start: ' . now());
-    sleep(10);
-    dump('tmp1 end: ' . now());
-    return 'tmp1';
+Route::get('/tmp', function () {
+    $link = Link::find('01jcdcttvp5se3ma1r687z6z1f');
+    $link->dispatchUpdateJob();
+    dump($link->name);
 });
 
 Route::get('/tmp2', function () {

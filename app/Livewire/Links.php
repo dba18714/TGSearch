@@ -6,11 +6,14 @@ use App\Models\Link;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
+use App\Services\TelegramCrawlerService;
+use App\Jobs\UpdateLinkInfoJob;
+
 class Links extends Component
 {
     use WithPagination;
 
-    protected $googleSearchService;
+    protected GoogleCustomSearchService $googleSearchService;
 
     public $search = '';
     public $type = '';
@@ -24,8 +27,9 @@ class Links extends Component
         'sortDirection' => ['except' => ''],
     ];
 
-    public function boot(GoogleCustomSearchService $googleSearchService)
-    {
+    public function boot(
+        GoogleCustomSearchService $googleSearchService
+    ) {
         $this->googleSearchService = $googleSearchService;
     }
 
@@ -80,8 +84,7 @@ class Links extends Component
             if (strpos($item['link'], 'https://web.t.me') === 0) {
                 continue;
             }
-            $link = new Link();
-            $link->firstOrCreate(
+            $link = Link::firstOrCreate(
                 [
                     'url' => $item['link']
                 ],
@@ -90,6 +93,10 @@ class Links extends Component
                     'type' => 'message',
                 ]
             );
+
+            app('debugbar')->debug($link);
+
+            $link->dispatchUpdateJob();
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\UpdateLinkInfoJob;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -129,5 +130,15 @@ class Link extends Model
             'message' => '消息',
             default => '未知',
         };
+    }
+
+    public function dispatchUpdateJob()
+    {
+        $this->verified_start_at = now();
+        $this->save();
+
+        UpdateLinkInfoJob::dispatch($this);
+
+        return $this;
     }
 }
