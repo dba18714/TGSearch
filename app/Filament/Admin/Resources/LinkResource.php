@@ -40,6 +40,7 @@ class LinkResource extends Resource
                         'channel' => '频道',
                         'group' => '群组',
                         'person' => '个人',
+                        'message' => '消息',
                     ]),
                 Forms\Components\TextInput::make('telegram_username')
                     ->required()
@@ -128,6 +129,7 @@ class LinkResource extends Resource
                         'channel' => '频道',
                         'group' => '群组',
                         'person' => '个人',
+                        'message' => '消息',
                     ]),
             ])
             ->actions([
