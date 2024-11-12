@@ -148,7 +148,7 @@ class Link extends Model
      *
      * @return bool
      */
-    public function shouldBeSearchable()
+    public function shouldBeSearchable(): bool
     {
         return $this->is_valid === true;
     }
