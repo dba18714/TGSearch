@@ -39,7 +39,7 @@ class LinkResource extends Resource
                     ->url()
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
-                ->dehydrated(fn($state) => filled($state))
+                    ->dehydrated(fn($state) => filled($state))
                     ->options([
                         'bot' => '机器人',
                         'channel' => '频道',
@@ -50,20 +50,20 @@ class LinkResource extends Resource
                 Forms\Components\TextInput::make('username')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('member_count')
-                ->dehydrated(fn($state) => filled($state))
+                    ->dehydrated(fn($state) => filled($state))
                     ->numeric(),
                 Forms\Components\TextInput::make('view_count')
-                ->dehydrated(fn($state) => filled($state))
+                    ->dehydrated(fn($state) => filled($state))
                     ->numeric(),
                 Forms\Components\Toggle::make('is_by_user')
-                ->dehydrated(fn($state) => filled($state)),
+                    ->dehydrated(fn($state) => filled($state)),
                 Forms\Components\Toggle::make('is_valid')
-                ->dehydrated(fn($state) => filled($state)),
+                    ->dehydrated(fn($state) => filled($state)),
                 Forms\Components\DateTimePicker::make('verified_at')
-                ->dehydrated(fn($state) => filled($state))
+                    ->dehydrated(fn($state) => filled($state))
                     ->timezone('PRC'),
                 Forms\Components\DateTimePicker::make('verified_start_at')
-                ->dehydrated(fn($state) => filled($state))
+                    ->dehydrated(fn($state) => filled($state))
                     ->timezone('PRC'),
             ]);
     }
@@ -73,6 +73,10 @@ class LinkResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
+                    ->limit(4)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    })
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
