@@ -1,0 +1,123 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Models\Link;
+use App\Services\GoogleCustomSearchService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
+
+class ProcessGoogleCustomSearchJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * 任务最大尝试次数
+     */
+    public $tries = 1;
+
+    /**
+     * 任务可以执行的最大秒数
+     */
+    public $timeout = 30;
+
+    /**
+     * 搜索关键词
+     */
+    protected string $search;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(string $search)
+    {
+        $this->search = $search;
+    }
+
+    /**
+     * Execute the job.
+     */
+    public function handle(GoogleCustomSearchService $googleSearchService): void
+    {
+        Log::info('Starting Google custom search job', [
+            'search' => $this->search
+        ]);
+
+        $executed = RateLimiter::attempt(
+            'google-custom-search',  // 限流器的key
+            100,                     // 每天允许100次
+            function() use ($googleSearchService) {
+                Log::info('Starting Google custom search job', [
+                    'search' => $this->search
+                ]);
+                
+                try {
+                    $results = $googleSearchService->search($this->search);
+                    $this->processSearchResults($results);
+                } catch (\Exception $e) {
+                    Log::error('Google custom search processing failed', [
+                        'search' => $this->search,
+                        'error' => $e->getMessage(),
+                    ]);
+                    throw $e;
+                }
+            },
+            60 * 60 * 24           // 24小时后重置
+        );
+
+        if (!$executed) {
+            $seconds = RateLimiter::availableIn('google-custom-search');
+            Log::warning('Daily Google custom search limit reached', [
+                'search' => $this->search,
+                'available_in_seconds' => $seconds,
+                'available_in_hours' => round($seconds / 3600, 2)
+            ]);
+        }
+    }
+
+    /**
+     * Process the search results
+     */
+    protected function processSearchResults(array $results): void
+    {
+        foreach ($results as $item) {
+            // 跳过 web.t.me 的链接
+            if (str_starts_with($item['link'], 'https://web.t.me')) {
+                continue;
+            }
+
+            try {
+                $link = Link::firstOrCreate(
+                    ['url' => $item['link']],
+                    [
+                        'name' => $item['title'],
+                        'type' => 'message',
+                    ]
+                );
+
+                $link->dispatchUpdateJob();
+            } catch (\Exception $e) {
+                Log::error('Failed to process search result item', [
+                    'item' => $item,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * 处理失败的任务
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('Google custom search job failed', [
+            'search' => $this->search,
+            'error' => $exception->getMessage(),
+        ]);
+    }
+}

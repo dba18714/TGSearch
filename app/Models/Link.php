@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Jobs\UpdateLinkInfoJob;
+use App\Jobs\ProcessUpdateLinkInfoJob;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -138,7 +138,7 @@ class Link extends Model
         $this->verified_start_at = now();
         $this->save();
 
-        UpdateLinkInfoJob::dispatch($this);
+        ProcessUpdateLinkInfoJob::dispatch($this);
 
         return $this;
     }

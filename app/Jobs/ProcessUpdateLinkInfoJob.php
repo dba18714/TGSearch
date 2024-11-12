@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class UpdateLinkInfoJob implements ShouldQueue
+class ProcessUpdateLinkInfoJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -36,7 +36,7 @@ class UpdateLinkInfoJob implements ShouldQueue
      */
     public function handle(TelegramCrawlerService $crawler): void
     {
-        Cache::lock('telegram-crawler', 1)->block(60, function () use ($crawler) {
+        Cache::lock('telegram-crawler', 1)->block(20, function () use ($crawler) {
             $data = $crawler->crawl($this->link->url);
             if ($data) {
                 $this->link->update($data);

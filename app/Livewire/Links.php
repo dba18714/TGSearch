@@ -2,12 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Jobs\ProcessGoogleCustomSearchJob;
 use App\Models\Link;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
 use App\Services\TelegramCrawlerService;
-use App\Jobs\UpdateLinkInfoJob;
+use App\Jobs\ProcessUpdateLinkInfoJob;
 
 class Links extends Component
 {
@@ -66,9 +67,7 @@ class Links extends Component
             return;
         }
 
-        $results = $this->googleSearchService->search($this->search);
-
-        $this->processSearchResults($results);
+        ProcessGoogleCustomSearchJob::dispatch($this->search);
 
         $this->resetPage();
     }

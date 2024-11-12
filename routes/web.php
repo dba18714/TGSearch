@@ -9,7 +9,7 @@ use App\Models\Tmp2;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use App\Jobs\ProcessPodcast;
-use App\Jobs\UpdateLinkInfoJob;
+use App\Jobs\ProcessUpdateLinkInfoJob;
 use App\Models\Link;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
