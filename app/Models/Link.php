@@ -154,6 +154,22 @@ class Link extends Model
     }
 
     /**
+     * 获取模型的可索引数据数组。
+     *
+     * @return array<string, mixed>
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'introduction' => $this->introduction,
+            'message' => $this->message,
+            'telegram_username' => $this->telegram_username,
+        ];
+    }
+
+    /**
      * Get a single link for verification, prioritizing unverified and in-progress links
      *
      * @return void
