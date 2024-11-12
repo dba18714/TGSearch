@@ -146,7 +146,6 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    {{ $link->name }}
                                     @if(isset($link->_formatted['name']))
                                     {!! $link->_formatted['name'] !!}
                                     @else

@@ -25,6 +25,7 @@ services:
             - pgsql
             - redis
             - meilisearch
+            - typesense
             - mailpit
             - selenium
     pgsql:
@@ -86,6 +87,20 @@ services:
                 - 'http://localhost:7700/health'
             retries: 3
             timeout: 5s
+    typesense:
+        image: typesense/typesense:27.1
+        restart: on-failure
+        ports:
+            - "8108:8108"
+        volumes:
+            - 'sail-typesense-data:/data'
+        networks:
+            - sail
+        command: '--data-dir /data --api-key=xyz --enable-cors'
+        healthcheck:
+            test: [ "CMD-SHELL", "curl http://localhost:8108/health" ]
+            retries: 3
+            timeout: 5s
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:
@@ -110,4 +125,6 @@ volumes:
     sail-redis:
         driver: local
     sail-meilisearch:
+        driver: local
+    sail-typesense-data:
         driver: local
