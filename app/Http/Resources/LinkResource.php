@@ -20,7 +20,7 @@ class LinkResource extends JsonResource
             'introduction' => $this->introduction,
             'url' => $this->url,
             'type' => $this->type,
-            'telegram_username' => $this->telegram_username,
+            'username' => $this->username,
             'member_count' => $this->member_count,
             'view_count' => $this->view_count,
             'is_by_user' => $this->is_by_user,

@@ -47,7 +47,7 @@ class LinkResource extends Resource
                         'person' => '个人',
                         'message' => '消息',
                     ]),
-                Forms\Components\TextInput::make('telegram_username')
+                Forms\Components\TextInput::make('username')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('member_count')
                 ->dehydrated(fn($state) => filled($state))
@@ -83,7 +83,7 @@ class LinkResource extends Resource
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type'),
-                Tables\Columns\TextColumn::make('telegram_username')
+                Tables\Columns\TextColumn::make('username')
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();

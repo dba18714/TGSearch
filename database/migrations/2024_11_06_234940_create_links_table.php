@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('message')->default('None')->nullable();
             $table->string('url')->unique();
             $table->string('type')->default('unknown')->comment('bot or channel or group or person or message')->nullable();
-            $table->string('telegram_username')->unique()->nullable();
+            $table->string('username')->unique()->nullable();
             $table->integer('member_count')->default(0)->nullable();
             $table->integer('view_count')->default(0)->nullable();
             $table->boolean('is_by_user')->default(false)->nullable()->comment('true: 由用户添加 or false: 由爬虫添加');

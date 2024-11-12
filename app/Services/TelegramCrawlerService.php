@@ -9,8 +9,11 @@ use Illuminate\Support\Str;
 
 class TelegramCrawlerService
 {
+    protected $url;
+
     public function crawl($url)
     {
+        $this->url = $url;
         try {
             $response = Http::withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
                 ->get($url);
@@ -22,6 +25,7 @@ class TelegramCrawlerService
             @$dom->loadHTML($html);
             $xpath = new \DOMXPath($dom);
 
+            $username = $this->extractUsername();
             $name = $this->extractName($xpath);
             $introduction = $this->extractDescription($xpath);
             $message = $this->extractMessageText($xpath);
@@ -30,6 +34,7 @@ class TelegramCrawlerService
             $isValid = $this->checkValidity($xpath);
 
             return [
+                'username' => $username,
                 'name' => $name,
                 'introduction' => $introduction,
                 'message' => $message,
@@ -43,50 +48,66 @@ class TelegramCrawlerService
         }
     }
 
-
+    /* 
+    提取用户名
+    https://t.me/dillfrash
+    https://t.me/dillfrash/17394
+    https://t.me/s/dillfrash/17394
+    url 的 dillfrash 就是用户名
+    */
+    private function extractUsername()
+    {
+        $pattern = '/\/(?:s\/)?([^\/]+)/';
+        preg_match($pattern, $this->url, $matches);
+        return $matches[1] ?? null;
+    }
 
     private function extractMessageText($xpath)
     {
-        $messageNode = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
-        if ($messageNode) {
-            // 先替换 <br/> 为换行符，然后再去除其他HTML标签
-            $html = $messageNode->ownerDocument->saveHTML($messageNode);
-            $text = str_replace(['<br>', '<br/>', '<br />'], "\n", $html);
-            $text = strip_tags($text);
-
-            // 处理可能出现的连续换行和空格
-            $text = preg_replace('/\n\s+/', "\n", $text);
-            $text = trim($text);
-
-            return $text;
+        $node = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
+        if ($node) {
+            $html = $node->ownerDocument->saveHTML($node);
+            $text = br2nl($html);
+            $text = strip_tags($text); // 去除HTML标签
+            return trim($text);
         }
         return null;
     }
-
 
     private function extractName($xpath)
     {
         $ogTitleNode = $xpath->query('//meta[@property="og:title"]')->item(0);
         return $ogTitleNode ? $ogTitleNode->getAttribute('content') : 'None';
-
-        // $nameNode = $xpath->query('//div[contains(@class, "tgme_page_title")]/span')->item(0);
-        // return $nameNode ? $nameNode->textContent : 'None';
     }
 
     private function extractDescription($xpath)
     {
-        $ogDescNode = $xpath->query('//meta[@property="og:description"]')->item(0);
-        return $ogDescNode ? str_replace("\t", "\n", $ogDescNode->getAttribute('content')) : 'None';
+        $node = $xpath->query('//div[contains(@class, "tgme_page_description")]')->item(0);
+        if ($node) {
+            $html = $node->ownerDocument->saveHTML($node);
+            $text = br2nl($html);
+            $text = strip_tags($text); // 去除HTML标签
+            return trim($text);
+        }
 
-        // $descNode = $xpath->query('//div[contains(@class, "tgme_page_description")]')->item(0);
-        // return $descNode ? $descNode->textContent : 'None';
+        $node = $xpath->query('//div[contains(@class, "tgme_channel_info_description")]')->item(0);
+        if ($node) {
+            $html = $node->ownerDocument->saveHTML($node);
+            $text = br2nl($html);
+            $text = strip_tags($text); // 去除HTML标签
+            return trim($text);
+        }
+
+        // TODO 当 url 类似于 https://t.me/dillfrash/17394 时，需要通过 https://t.me/dillfrash 来获取 description。目前可以在任务调度里通过用户名来获取 description，但这样会导致一个问题：如果频道的介绍本来就是空的会到导致重复获取 description。
+
+        return 'None';
     }
 
     private function extractMemberCount($xpath)
     {
-        $memberNode = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
-        if ($memberNode) {
-            $text = $memberNode->textContent;
+        $node = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
+        if ($node) {
+            $text = $node->textContent;
             if (preg_match('/(\d[\d\s,]*)members/', $text, $matches)) {
                 return (int) preg_replace('/\D/', '', $matches[1]);
             }
@@ -99,9 +120,14 @@ class TelegramCrawlerService
 
     private function determineType($xpath)
     {
-        $extraNode = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
-        if ($extraNode) {
-            $text = $extraNode->textContent;
+        $node = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
+        if ($node) {
+            return 'message';
+        }
+
+        $node = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
+        if ($node) {
+            $text = $node->textContent;
             if (strpos($text, 'members') !== false) {
                 return 'group';
             }
@@ -113,10 +139,6 @@ class TelegramCrawlerService
             }
         }
 
-        $messageNode = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
-        if ($messageNode) {
-            return 'message';
-        }
         return 'unknown';
     }
 

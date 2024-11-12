@@ -23,7 +23,7 @@
                                     {{ strtoupper(substr($link->name, 0, 1)) }}
                                 </div>
                                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $link->name }}</h1>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $link->telegram_username }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $link->username }}</p>
                                 <span class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                                     {{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
                                     {{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
@@ -119,7 +119,7 @@
                                             </div>
                                             <div class="ml-4">
                                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $relatedLink->name }}</h3>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $relatedLink->telegram_username }}</p>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $relatedLink->username }}</p>
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -177,7 +177,7 @@
                                     </div>
                                     <div class="ml-4">
                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $relatedLink->name }}</h3>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $relatedLink->telegram_username }}</p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $relatedLink->username }}</p>
                                     </div>
                                 </div>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium

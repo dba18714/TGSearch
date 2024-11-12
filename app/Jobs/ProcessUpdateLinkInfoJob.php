@@ -39,6 +39,7 @@ class ProcessUpdateLinkInfoJob implements ShouldQueue
         Cache::lock('telegram-crawler', 1)->block(20, function () use ($crawler) {
             $data = $crawler->crawl($this->link->url);
             if ($data) {
+                $data['verified_at'] = now();
                 $this->link->update($data);
             }
         });

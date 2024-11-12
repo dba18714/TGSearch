@@ -28,7 +28,7 @@ class LinkController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('introduction', 'like', "%{$search}%")
-                    ->orWhere('telegram_username', 'like', "%{$search}%");
+                    ->orWhere('username', 'like', "%{$search}%");
             });
         }
 
@@ -60,7 +60,7 @@ class LinkController extends Controller
             'introduction' => 'required|string',
             'url' => 'required|url|unique:telegram_links',
             'type' => 'required|in:bot,channel,group,person,message',
-            'telegram_username' => 'required|string|max:255',
+            'username' => 'required|string|max:255',
         ]);
 
         $validated['is_by_user'] = true;

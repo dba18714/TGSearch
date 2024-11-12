@@ -150,7 +150,7 @@
                                     {{ $link->name }}
                                     @endif
                                 </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $link->telegram_username }}</p>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $link->username }}</p>
                             </div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                             {{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}

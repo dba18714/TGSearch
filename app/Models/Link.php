@@ -25,7 +25,7 @@ class Link extends Model
         'message',
         'url',
         'type',
-        'telegram_username',
+        'username',
         'member_count',
         'view_count',
         'is_by_user',
@@ -165,7 +165,7 @@ class Link extends Model
             'name' => $this->name,
             'introduction' => $this->introduction,
             'message' => $this->message,
-            'telegram_username' => $this->telegram_username,
+            'username' => $this->username,
         ];
     }
 

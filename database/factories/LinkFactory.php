@@ -21,7 +21,7 @@ class LinkFactory extends Factory
             'introduction' => $this->faker->sentence(),
             'url' => "https://t.me/{$username}",
             'type' => $type,
-            'telegram_username' => "@{$username}",
+            'username' => "@{$username}",
             'member_count' => $this->faker->numberBetween(100, 100000),
             'view_count' => $this->faker->numberBetween(1000, 1000000),
             'is_by_user' => $this->faker->boolean(70), // 70% 概率是用户添加的
