@@ -66,9 +66,6 @@ class Links extends Component
             return;
         }
 
-        $this->sortField = '';
-        $this->sortDirection = '';
-
         $results = $this->googleSearchService->search($this->search);
 
         $this->processSearchResults($results);

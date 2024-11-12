@@ -154,23 +154,6 @@ class Link extends Model
     }
 
     /**
-     * 获取模型的可索引数据数组。
-     * 
-     * 在使用 Typesense 时，
-     * 你的可搜索模型必须定义一个 toSearchableArray 方法，
-     * 将你的模型的主键转换为字符串，并将创建日期转换为 UNIX 时间戳：
-     *
-     * @return array<string, mixed>
-     */
-    public function toSearchableArray()
-    {
-        return array_merge($this->toArray(), [
-            'id' => (string) $this->id,
-            'created_at' => $this->created_at->timestamp,
-        ]);
-    }
-
-    /**
      * Get a single link for verification, prioritizing unverified and in-progress links
      *
      * @return void

@@ -136,12 +136,21 @@ return [
     'meilisearch' => [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
         'key' => env('MEILISEARCH_KEY'),
+
+        /* 
+        在配置应用程序的索引设置后，
+        你必须调用 scout:sync-index-settings Artisan 命令。
+        该命令将通知 Meilisearch 您当前配置的索引设置。
+        为方便起见，你可能希望将此命令作为部署过程的一部分：
+        sail php artisan scout:sync-index-settings 
+        */
         'index-settings' => [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
             Link::class => [
-                'filterableAttributes' => ['id', 'type'],
+                'filterableAttributes' => ['type'],
+                'sortableAttributes' => ['id', 'member_count'],
             ],
         ],
     ],

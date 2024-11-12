@@ -81,7 +81,6 @@
                             </div>
                         </div>
 
-                        @if(!$search)
                         <!-- Sort Toggle -->
                         <div class="flex items-center space-x-4">
                             <span class="text-sm text-gray-600 dark:text-gray-400">排序:</span>
@@ -92,9 +91,9 @@
                                     默认
                                 </button>
                                 <button
-                                    wire:click="sortBy('name')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'name' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
-                                    名称 {{ $sortField === 'name' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
+                                    wire:click="sortBy('id')"
+                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'id' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    收录时间 {{ $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
                                 </button>
                                 <button
                                     wire:click="sortBy('member_count')"
@@ -103,7 +102,6 @@
                                 </button>
                             </div>
                         </div>
-                        @endif
                     </div>
                 </div>
             </div>
