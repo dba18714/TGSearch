@@ -72,30 +72,6 @@ class Links extends Component
         $this->resetPage();
     }
 
-    protected function processSearchResults($results)
-    {
-        app('debugbar')->debug($results);
-        foreach ($results as $item) {
-            // if 以 https://web.t.me 开头的链接，跳过
-            if (strpos($item['link'], 'https://web.t.me') === 0) {
-                continue;
-            }
-            $link = Link::firstOrCreate(
-                [
-                    'url' => $item['link']
-                ],
-                [
-                    'name' => $item['title'],
-                    'type' => 'message',
-                ]
-            );
-
-            app('debugbar')->debug($link);
-
-            $link->dispatchUpdateJob();
-        }
-    }
-
     public function render()
     {
         $query = Link::query();

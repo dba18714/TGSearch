@@ -13,6 +13,7 @@ class FooterStats extends Component
     public $totalGroups;
     public $totalBots;
     public $totalPersons;
+    public $totalMessages;
 
     public function mount()
     {
@@ -39,6 +40,10 @@ class FooterStats extends Component
         
         $this->totalPersons = Cache::remember('total_persons', now()->addHours(1), function () {
             return Link::where('type', 'person')->count();
+        });
+        
+        $this->totalMessages = Cache::remember('total_messages', now()->addHours(1), function () {
+            return Link::where('type', 'message')->count();
         });
     }
 

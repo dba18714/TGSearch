@@ -25,10 +25,11 @@
                                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $link->name }}</h1>
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $link->username }}</p>
                                 <span class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                    {{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-                                    {{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-                                    {{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-                                    {{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}">
+    {{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+    {{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+    {{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+    {{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+    {{ $link->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}">
                                     {{ $link->type_name }}
                                 </span>
                             </div>
@@ -53,9 +54,9 @@
 
                         <!-- 访问按钮 -->
                         <div class="p-6 bg-gray-50 dark:bg-gray-700">
-                            <a href="{{ $link->url }}" 
-                               target="_blank"
-                               class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 
+                            <a href="{{ $link->url }}"
+                                target="_blank"
+                                class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 
                                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                                  dark:bg-indigo-500 dark:hover:bg-indigo-600
                                  transition-all duration-200">
@@ -70,8 +71,8 @@
                 </div>
 
                 <!-- 右侧消息内容 -->
-                @if($link->message && $link->message !== 'None')
                 <div class="lg:w-2/3">
+                    @if($link->message && $link->message !== 'None')
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                         <div class="p-6">
                             <div class="flex">
@@ -101,10 +102,11 @@
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <!-- 相关推荐 -->
                     @if($relatedLinks->isNotEmpty())
-                    <div class="mt-6">
+                    <div class="mt-6 p-6">
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">相关推荐</h2>
                         <div class="grid grid-cols-1 gap-6">
                             @foreach($relatedLinks as $relatedLink)
@@ -123,10 +125,11 @@
                                             </div>
                                         </div>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            {{ $relatedLink->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-                                            {{ $relatedLink->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-                                            {{ $relatedLink->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-                                            {{ $relatedLink->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}">
+    {{ $relatedLink->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+    {{ $relatedLink->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+    {{ $relatedLink->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+    {{ $relatedLink->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+    {{ $relatedLink->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}">
                                             {{ $relatedLink->type_name }}
                                         </span>
                                     </div>
@@ -142,9 +145,9 @@
                                             </svg>
                                             {{ number_format($relatedLink->member_count) }}
                                         </div>
-                                        <a href="{{ route('link.show', $relatedLink) }}" 
-                                           wire:navigate 
-                                           class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
+                                        <a href="{{ route('link.show', $relatedLink) }}"
+                                            wire:navigate
+                                            class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
                                                   dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 
                                                   transition-colors duration-200">
                                             查看详情
@@ -157,63 +160,7 @@
                     </div>
                     @endif
                 </div>
-                @endif
             </div>
-
-            <!-- 如果没有消息，将相关推荐移到下方居中显示 -->
-            @if($relatedLinks->isNotEmpty())
-            <div class="mt-12 max-w-3xl mx-auto">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">相关推荐</h2>
-                <div class="grid grid-cols-1 gap-6">
-                    @foreach($relatedLinks as $relatedLink)
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200">
-                        <div class="p-6">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-bold">
-                                            {{ strtoupper(substr($relatedLink->name, 0, 1)) }}
-                                        </div>
-                                    </div>
-                                    <div class="ml-4">
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $relatedLink->name }}</h3>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $relatedLink->username }}</p>
-                                    </div>
-                                </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {{ $relatedLink->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-                                    {{ $relatedLink->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-                                    {{ $relatedLink->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-                                    {{ $relatedLink->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}">
-                                    {{ $relatedLink->type_name }}
-                                </span>
-                            </div>
-
-                            @if($relatedLink->introduction && $relatedLink->introduction !== 'None')
-                            <p class="mt-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{{ $relatedLink->introduction }}</p>
-                            @endif
-
-                            <div class="mt-6 flex items-center justify-between">
-                                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                    <svg class="h-5 w-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    {{ number_format($relatedLink->member_count) }}
-                                </div>
-                                <a href="{{ route('link.show', $relatedLink) }}" 
-                                   wire:navigate 
-                                   class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
-                                          dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 
-                                          transition-colors duration-200">
-                                    查看详情
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endif
         </div>
     </div>
     <x-loading-indicator />
