@@ -12,15 +12,14 @@
             <div class="max-w-3xl mx-auto mb-12" id="paginated-posts">
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
                     <!-- Search Input -->
-                    <!-- TODO 输入框添加清除按钮 -->
                     <div class="relative flex items-center space-x-2">
                         <div class="relative flex-1">
                             <input
                                 wire:model="search"
                                 wire:key="search-input-{{ $search }}"
                                 wire:keydown.enter="doSearch"
-                                type="text"
-                                placeholder="搜索名称/用户名/介绍..."
+                                type="search"
+                                placeholder="名称/用户名/介绍/消息..."
                                 class="w-full pl-12 pr-4 py-3.5 text-base border-0 bg-gray-200 dark:bg-gray-700 
             rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
             text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400
@@ -78,6 +77,11 @@
                                     wire:click="$set('type', 'person')"
                                     class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'person' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     个人
+                                </button>
+                                <button
+                                    wire:click="$set('type', 'message')"
+                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'message' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    消息
                                 </button>
                             </div>
                         </div>
@@ -153,12 +157,13 @@
                                 </h3>
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $link->username }}</p>
                             </div>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                            {{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-                            {{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-                            {{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-                            {{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
-                        ">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 whitespace-nowrap
+{{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+{{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+{{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+{{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+{{ $link->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}
+">
                                 {{ $link->type_name }}
                             </span>
                         </div>
