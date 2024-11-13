@@ -48,66 +48,67 @@
 
 
                     <!-- Type and Sort Toggles -->
-                    <div class="mt-4 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+                    <div class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-start sm:justify-center space-y-4 sm:space-y-0 sm:space-x-8">
                         <!-- Type Toggle -->
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">类型:</span>
-                            <div class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                        <div class="w-full sm:w-auto">
+                            <div class="flex flex-wrap items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                                <span class="m-1 px-3 py-1 text-sm text-gray-600 dark:text-gray-400 font-medium">类型:</span>
                                 <button
                                     wire:click="$set('type', '')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === '' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === '' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     全部
                                 </button>
                                 <button
                                     wire:click="$set('type', 'bot')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'bot' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'bot' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     机器人
                                 </button>
                                 <button
                                     wire:click="$set('type', 'channel')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'channel' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'channel' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     频道
                                 </button>
                                 <button
                                     wire:click="$set('type', 'group')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'group' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'group' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     群组
                                 </button>
                                 <button
                                     wire:click="$set('type', 'person')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'person' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'person' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     个人
                                 </button>
                                 <button
                                     wire:click="$set('type', 'message')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'message' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'message' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     消息
                                 </button>
                             </div>
                         </div>
 
                         <!-- Sort Toggle -->
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">排序:</span>
-                            <div class="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                        <div class="w-full sm:w-auto">
+                            <div class="flex flex-wrap items-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                                <span class="m-1 px-3 py-1 text-sm text-gray-600 dark:text-gray-400 font-medium">排序:</span>
                                 <button
                                     wire:click="sortBy('')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === '' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === '' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     默认
                                 </button>
                                 <button
                                     wire:click="sortBy('id')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'id' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'id' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     收录时间 {{ $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
                                 </button>
                                 <button
                                     wire:click="sortBy('member_count')"
-                                    class="px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'member_count' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'member_count' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     成员数 {{ $sortField === 'member_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
                                 </button>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
