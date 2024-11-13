@@ -10,7 +10,7 @@
 
             <!-- Search and Sort Section -->
             <div class="max-w-3xl mx-auto mb-12" id="paginated-posts">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+                <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-md">
                     <!-- Search Input -->
                     <div class="relative flex items-center space-x-2">
                         <div class="relative flex-1">
