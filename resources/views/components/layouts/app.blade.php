@@ -9,12 +9,9 @@
 
     <x-theme-script />
 
-    @vite('resources/js/theme-init.js')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <wireui:scripts />
-    <!-- TODO 用laravel推荐的方式安装这个包 -->
-    <script src="//unpkg.com/alpinejs" defer></script>
 
 </head>
 
