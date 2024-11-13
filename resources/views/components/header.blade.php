@@ -3,31 +3,15 @@
         <div class="flex h-16 items-center justify-between">
             <!-- Logo -->
             <div class="flex-shrink-0">
-                <a href="/" wire:navigate class="text-2xl font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">
+                <a href="/" wire:navigate class="text-2xl mr-4 font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">
                     TNav.me
                 </a>
             </div>
 
-            <!-- Navigation -->
-            <nav class="hidden md:flex space-x-8">
-                <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    首页
-                </a>
-                <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    频道
-                </a>
-                <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    群组
-                </a>
-                <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    机器人
-                </a>
-            </nav>
-
             <!-- Right Section -->
             <div class="flex items-center space-x-4">
                 <!-- Search -->
-                <div class="hidden md:block">
+                <div class="block">
                     <div class="relative">
                         <input type="text"
                             class="w-full bg-gray-100 dark:bg-gray-700 border-0 rounded-lg pl-10 pr-4 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
@@ -71,33 +55,7 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Mobile menu button -->
-                <button type="button"
-                    class="md:hidden bg-gray-200 dark:bg-gray-700 p-2 rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Mobile Navigation Menu (Hidden by default) -->
-    <div class="hidden md:hidden">
-        <div class="px-2 pt-2 pb-3 space-y-1">
-            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:text-white">
-                首页
-            </a>
-            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:text-white">
-                频道
-            </a>
-            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:text-white">
-                群组
-            </a>
-            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700 dark:hover:text-white">
-                机器人
-            </a>
         </div>
     </div>
 </header>

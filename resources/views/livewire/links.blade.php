@@ -1,15 +1,14 @@
 <div>
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 transition-colors duration-200">
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 pt-8 pb-12 transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Header Section -->
-            <div class="mb-12 text-center">
+            <div class="mb-8 text-center">
                 <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Telegram 资源导航</h1>
-                <p class="mt-3 text-xl text-gray-600 dark:text-gray-300">发现优质的 Telegram 频道、群组、机器人和个人</p>
             </div>
 
             <!-- Search and Sort Section -->
-            <div class="max-w-3xl mx-auto mb-12" id="paginated-posts">
+            <div class="max-w-3xl mx-auto mb-8" id="paginated-posts">
                 <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-md">
                     <!-- Search Input -->
                     <div class="relative flex items-center space-x-2">
