@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('livewire:navigated', function() {
     const themeToggle = document.getElementById('themeToggle');
     const themeMenu = document.getElementById('themeMenu');
     const html = document.documentElement;
