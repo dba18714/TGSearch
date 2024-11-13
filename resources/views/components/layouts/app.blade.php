@@ -7,7 +7,7 @@
 
     <title>{{ $title ?? 'Page Title' }}</title>
 
-    <x-theme-script />
+    <x-theme-init-script />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
