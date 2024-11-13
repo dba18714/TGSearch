@@ -4,7 +4,7 @@
             <h1 class="text-3xl tracking-tight text-gray-900">冲上云霄</h1>
             <div class="text-right flex-1">
                 @auth
-                    <x-button flat label="进入控制台" :href="" />
+                    <x-button flat label="进入控制台" href="" />
                 @else
                     <x-button flat label="登录" href="" />
                     <x-button label="注册" href="" />
