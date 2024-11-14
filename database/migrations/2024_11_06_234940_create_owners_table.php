@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('type')->default('unknown')->comment('bot or channel or group or person');
             $table->string('username')->unique();
             $table->integer('member_count')->default(0);
-            $table->integer('view_count')->default(0);
+            // $table->integer('view_count')->default(0);
             // $table->boolean('is_by_user')->default(false)->comment('true: 由用户添加 or false: 由爬虫添加');
             $table->string('source')->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
             $table->ulid('user_id')->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');

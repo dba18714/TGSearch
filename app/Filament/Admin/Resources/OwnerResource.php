@@ -53,10 +53,10 @@ class OwnerResource extends Resource
                 Forms\Components\TextInput::make('member_count')
                     ->dehydrated(fn($state) => filled($state))
                     ->numeric(),
-                Forms\Components\TextInput::make('view_count')
-                    ->dehydrated(fn($state) => filled($state))
-                    ->numeric(),
-                    Forms\Components\Select::make('source')
+                // Forms\Components\TextInput::make('view_count')
+                //     ->dehydrated(fn($state) => filled($state))
+                //     ->numeric(),
+                Forms\Components\Select::make('source')
                     ->dehydrated(fn($state) => filled($state))
                     ->options([
                         'manual' => '用户提交',
@@ -117,9 +117,9 @@ class OwnerResource extends Resource
                 Tables\Columns\TextColumn::make('member_count')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('view_count')
-                    ->numeric()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('view_count')
+                //     ->numeric()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('verified_start_at')
                     ->timezone('PRC')
                     ->dateTime()

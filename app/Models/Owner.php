@@ -27,7 +27,7 @@ class Owner extends Model
         'type',
         'username',
         'member_count',
-        'view_count',
+        // 'view_count',
         'source',
         'user_id',
         'is_valid',
@@ -45,7 +45,7 @@ class Owner extends Model
         'verified_at' => 'datetime',
         'verified_start_at' => 'datetime',
         'member_count' => 'integer',
-        'view_count' => 'integer',
+        // 'view_count' => 'integer',
     ];
 
     public function messages()

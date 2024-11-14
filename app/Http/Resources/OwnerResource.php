@@ -22,7 +22,7 @@ class OwnerResource extends JsonResource
             'type' => $this->type,
             'username' => $this->username,
             'member_count' => $this->member_count,
-            'view_count' => $this->view_count,
+            // 'view_count' => $this->view_count,
             'source' => $this->source,
             'is_valid' => $this->is_valid,
             'verified_at' => $this->verified_at,

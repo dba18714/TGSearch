@@ -35,10 +35,10 @@
                                     <div class="text-xl font-semibold text-gray-900 dark:text-white">{{ number_format($owner->member_count) }}</div>
                                     <div class="text-sm text-gray-500 dark:text-gray-400">订阅者</div>
                                 </div>
-                                <div class="text-center">
+                                {{-- <div class="text-center">
                                     <div class="text-xl font-semibold text-gray-900 dark:text-white">{{ number_format($owner->view_count) }}</div>
                                     <div class="text-sm text-gray-500 dark:text-gray-400">次浏览</div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
 

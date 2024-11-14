@@ -23,7 +23,7 @@ class OwnerFactory extends Factory
             'type' => $type,
             'username' => "@{$username}",
             'member_count' => $this->faker->numberBetween(100, 100000),
-            'view_count' => $this->faker->numberBetween(1000, 1000000),
+            // 'view_count' => $this->faker->numberBetween(1000, 1000000),
             'source' => $source,
             'user_id' => User::factory(),
             'is_valid' => $this->faker->boolean(90), // 90% 概率是有效的
