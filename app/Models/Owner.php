@@ -193,7 +193,7 @@ class Owner extends Model
     {
         $owner = self::selectForVerification()->first();
 
-        if (!$owner) return false;
+        if (!$owner->exists) return false;
 
         // 如果1小时之内已经验证过了，就跳过
         if (
