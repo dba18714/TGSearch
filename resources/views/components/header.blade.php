@@ -3,7 +3,7 @@
         <div class="flex h-16 items-center justify-between">
             <!-- Logo -->
             <div class="flex-shrink-0">
-                <a href="/" class="text-2xl mr-4 font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">
+                <a href="{{ route('home') }}" class="text-2xl mr-4 font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">
                     TNav.me
                 </a>
             </div>
@@ -33,7 +33,7 @@
                 </div>
                 @endif
 
-                <a href="{{ route('home') }}"
+                <a href="{{ route('links.create') }}"
                     class="inline-flex items-center px-2 sm:px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-md">
                     <svg class="h-5 w-5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Links;
 use App\Livewire\LinkShow;
+use App\Livewire\LinkCreate;
 use App\Models\Tmp;
 use App\Models\Tmp2;
 use Carbon\Carbon;
@@ -21,7 +22,6 @@ Route::get('/tmp', function () {
     $link = Link::find('01jcdr9bqrzfvxs08awhjy17jv');
     if($link) $link->dispatchUpdateJob();
     dump($link);
-    
 });
 
 Route::get('/tmp2', function () {
@@ -31,4 +31,5 @@ Route::get('/tmp2', function () {
 });
 
 Route::get('/', Links::class)->name('home');
+Route::get('/links/create', LinkCreate::class)->name('links.create');
 Route::get('/links/{link}', LinkShow::class)->name('link.show');
