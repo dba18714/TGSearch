@@ -48,6 +48,11 @@ class Owner extends Model
         'view_count' => 'integer',
     ];
 
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
     public function getUrlAttribute(): ?string
     {
         return "https://t.me/{$this->username}";

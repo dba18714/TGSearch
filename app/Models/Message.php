@@ -52,7 +52,7 @@ class Message extends Model
      */
     public function owner()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsTo(Owner::class);
     }
 
     /**
@@ -70,5 +70,4 @@ class Message extends Model
     {
         return $this->source === 'manual';
     }
-
 }
