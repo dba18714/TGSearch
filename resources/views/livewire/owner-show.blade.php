@@ -62,7 +62,7 @@
 
                 <!-- 右侧消息内容 -->
                 <div class="lg:w-2/3">
-                    @if($owner->messages)
+                    @if($owner->messages->count() > 0)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                         <div class="p-6">
                             <div class="flex">
@@ -78,12 +78,13 @@
                                             {{ $owner->created_at->format('Y-m-d H:i') }}
                                         </span>
                                     </div>
-                                    @foreach ($owner->messages as $message)
+                                    @foreach($messages as $message)
                                     <div class="prose dark:prose-invert max-w-none">
                                         <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">{!! nl2br(e($message->text)) !!}</p>
                                     </div>
                                      <hr class="my-4 border-gray-200 dark:border-gray-700" />
                                     @endforeach
+                                    {{ $messages->links() }}
                                     <div class="mt-4 flex items-center text-sm text-gray-500 dark:text-gray-400">
                                         <svg class="h-5 w-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

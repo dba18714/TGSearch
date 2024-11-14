@@ -15,6 +15,7 @@ class OwnerShow extends Component
 
     public function mount(Owner $owner, ?Message $message)
     {
+        app('debugbar')->debug('message', $message);
         $this->owner = $owner;
         $this->message = $message;
     }
@@ -35,7 +36,12 @@ class OwnerShow extends Component
     {
         app('debugbar')->debug('owner', $this->owner);
         return view('livewire.owner-show', [
-            'relatedOwners' => $this->getRelatedOwners()
+            'relatedOwners' => $this->getRelatedOwners(),
+            'messages' => $this->owner->messages()
+                ->when($this->message->exists, function ($query) {
+                    $query->where('id', $this->message->id);
+                })
+                ->paginate(5)
         ]);
     }
 }
