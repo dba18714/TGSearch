@@ -19,7 +19,7 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            'owner_id' => Owner::factory(), // 修改为 Owner 模型
+            'owner_id' => Owner::factory(),
             'original_id' => fake()->unique()->numberBetween(1000, 999999),
             'text' => fake()->paragraph(),
             'view_count' => fake()->numberBetween(0, 10000),
