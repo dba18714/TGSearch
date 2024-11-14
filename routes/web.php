@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use App\Jobs\ProcessPodcast;
 use App\Jobs\ProcessUpdateOwnerInfoJob;
+use App\Models\Message;
 use App\Models\Owner;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,15 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function () {
+    $message = Message::firstOrCreate(
+        ['owner_id' => '01jcnh2hfyzcqt380f6apz3b3k', 'original_id' => '874791'],
+        [
+            'source' => 'manual',
+        ]
+    );
+    dd($message);
+    return $message;
+    
     function tmp(Model $model) {
         return class_basename($model);
     };

@@ -2,13 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Models\Message;
 use Livewire\Component;
 use App\Models\Owner;
 
 class OwnerCreate extends Component
 {
     public $urls = '';
-    
+
     public function submit()
     {
         $this->validate([
@@ -16,36 +17,46 @@ class OwnerCreate extends Component
         ]);
 
         $lines = array_filter(explode("\n", $this->urls));
-        
+
         $count = 0;
         foreach ($lines as $line) {
-            $url = trim($line);
-            if (empty($url)) continue;
-            
+            $line = trim($line);
+            if (empty($line)) continue;
+
             // 如果是以@开头或者不包含/的，认为是用户名
-            if (str_starts_with($url, '@') || !str_contains($url, '/')) {
-                $username = ltrim($url, '@');
-                $url = "https://t.me/{$username}";
+            if (str_starts_with($line, '@') || !str_contains($line, '/')) {
+                $username = ltrim($line, '@');
+            } else {
+                $username = extract_telegram_username_by_url($line);
+                $message_id = extract_telegram_message_id_by_url($line);
             }
-            
-            // 创建或更新链接
-            Owner::firstOrCreate(
-                ['url' => $url],
-                [
-                    'type' => 'message', // 默认类型
-                    'source' => 'manual',
-                ]
-            );
-            
+
+            // 创建或更新模型
+            if ($username) {
+                $owner = Owner::firstOrCreate(
+                    ['username' => $username],
+                    [
+                        'source' => 'manual',
+                    ]
+                );
+                if (isset($message_id)) {
+                    Message::firstOrCreate(
+                        ['owner_id' => $owner->id, 'original_id' => $message_id],
+                        [
+                            'source' => 'manual',
+                        ]
+                    );
+                }    
+            }
+
             $count++;
         }
 
         session()->flash('message', "成功添加 {$count} 条链接");
-        $this->urls = ''; // 清空输入
     }
 
     public function render()
     {
-        return view('livewire.link-create');
+        return view('livewire.owner-create');
     }
 }

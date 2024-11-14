@@ -43,7 +43,10 @@ class Message extends Model
 
     public function getUrlAttribute(): ?string
     {
-        return "https://t.me/{$this->owner->username}/{$this->original_id}";
+        if ($this->owner) {
+            return "https://t.me/s/{$this->owner->username}/{$this->original_id}";
+        }
+        return "404";
     }
 
     /**

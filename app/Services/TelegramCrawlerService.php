@@ -29,6 +29,7 @@ class TelegramCrawlerService
             $name = $this->extractName($xpath);
             $introduction = $this->extractDescription($xpath);
             $message = $this->extractMessageText($xpath);
+            $view_count = $this->extractViewCount($xpath);
             $memberCount = $this->extractMemberCount($xpath);
             $type = $this->determineType($xpath);
             $isValid = $this->checkValidity($xpath);
@@ -38,6 +39,7 @@ class TelegramCrawlerService
                 'name' => $name,
                 'introduction' => $introduction,
                 'message' => $message,
+                'view_count' => $view_count,
                 'member_count' => $memberCount,
                 'type' => $type,
                 'is_valid' => $isValid,
@@ -62,9 +64,19 @@ class TelegramCrawlerService
         return $matches[1] ?? null;
     }
 
+    private function extractViewCount($xpath)
+    {
+        $node = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
+        if ($node) {
+            $text = $node->textContent;
+            return humanNumberToInteger($text);
+        }
+        return null;
+    }
+
     private function extractMessageText($xpath)
     {
-        $node = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
+        $node = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")][@dir="auto"]')->item(0);
         if ($node) {
             $html = $node->ownerDocument->saveHTML($node);
             $text = br2nl($html);

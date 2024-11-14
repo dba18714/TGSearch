@@ -98,14 +98,14 @@ class OwnerResource extends Resource
                         return $column->getState();
                     })
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('url')
-                //     ->url(fn(Owner $record): string => $record->url)
-                //     ->openUrlInNewTab()
-                //     ->limit(16)
-                //     ->tooltip(function (Tables\Columns\TextColumn $column): string {
-                //         return $column->getState();
-                //     })
-                //     ->searchable(),
+                Tables\Columns\TextColumn::make('url')
+                    ->url(fn(Owner $record): string => $record->url)
+                    ->openUrlInNewTab()
+                    ->limit(16)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    })
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('introduction')
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column) {

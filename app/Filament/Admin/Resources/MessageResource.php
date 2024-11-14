@@ -76,6 +76,14 @@ class MessageResource extends Resource
                         return $column->getState();
                     })
                     ->searchable(),
+                Tables\Columns\TextColumn::make('url')
+                    ->url(fn(Message $record): string => $record->url)
+                    ->openUrlInNewTab()
+                    ->limit(16)
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    })
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('is_valid')
                     ->boolean()
                     ->sortable(),
@@ -113,6 +121,16 @@ class MessageResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('update')
+                        ->label('爬取更新信息')
+                        ->icon('heroicon-o-arrow-path')
+                        ->action(function (Collection $records) {
+                            $records->each->dispatchUpdateJob();
+                            Notification::make()
+                                ->title('已派发爬取更新任务')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ]);
     }

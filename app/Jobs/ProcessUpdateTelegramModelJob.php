@@ -48,7 +48,6 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
             if ($model_class_name == 'Owner') {
                 $this->model->update([
                     'verified_at' => now(),
-                    'username' => $data['username'],
                     'name' => $data['name'],
                     'introduction' => $data['introduction'],
                     'member_count' => $data['member_count'],
@@ -56,13 +55,14 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                     'is_valid' => $data['is_valid'],
                 ]);
             } elseif ($model_class_name == 'Message') {
-                $this->model->update([
-                    'verified_at' => now(),
-                    'original_id' => $data['message_id'],
-                    'text' => $data['message'],
-                    'view_count' => $data['view_count'],
-                    'is_valid' => $data['is_valid'],
-                ]);
+                \Log::info('Update message url: ' . $this->model->url);
+                \Log::info('Update message data: ', $data);
+
+                $new_data['verified_at'] = now();
+                if ($data['message'] !== null) $new_data['text'] = $data['message'];
+                if ($data['view_count'] !== null) $new_data['view_count'] = $data['view_count'];
+                $new_data['is_valid'] = $data['is_valid'];
+                $this->model->update($new_data);
             } else {
                 throw new \Exception('Unknown model class name: ' . $model_class_name);
             }
