@@ -48,6 +48,12 @@ class Owner extends Model
         // 'view_count' => 'integer',
     ];
 
+    // 存库时将 username 前面的@去掉
+    public function setUsernameAttribute($value)
+    {
+        $this->attributes['username'] = ltrim($value, '@');
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class);

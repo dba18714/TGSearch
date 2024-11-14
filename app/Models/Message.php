@@ -39,6 +39,11 @@ class Message extends Model
         'view_count' => 'integer',
     ];
 
+    public function getUrlAttribute(): ?string
+    {
+        return "https://t.me/{$this->owner->username}/{$this->original_id}";
+    }
+
     /**
      * 获取添加此消息的用户
      */

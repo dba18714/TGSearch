@@ -19,6 +19,12 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function () {
+    return Owner::create([
+        'username' => '@test'.time(),
+    ])->url;
+    return;
+
+
     $url1 = 'https://t.me/jichang_list/3675';
     $url2 = 'https://t.me/s/jichang_list?before=3676';
     $url3 = 'https://t.me/s/jichang_list?q=%23%E5%B9%B2%E5%90%A7%E6%9C%BA%E5%9C%BA&before=3676';
