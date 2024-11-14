@@ -10,10 +10,18 @@ use Illuminate\Support\Str;
 class TelegramCrawlerService
 {
     protected $url;
+    protected $username;
+    protected $message_id;
 
-    public function crawl($url)
+    public function crawl(string $username, ?int $message_id = null)
     {
+        $this->username = $username;
+        $this->message_id = $message_id;
+
+        $url = "https://t.me/{$username}";
+        if ($message_id) $url = "https://t.me/s/{$username}/{$message_id}";
         $this->url = $url;
+
         try {
             $response = Http::withUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
                 ->get($url);
@@ -66,7 +74,8 @@ class TelegramCrawlerService
 
     private function extractViewCount($xpath)
     {
-        $node = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
+        $str = "{$this->username}/{$this->message_id}";
+        $node = $xpath->query('//div[@data-post="' . $str . '"]//span[contains(@class, "tgme_widget_message_views")]')->item(0);
         if ($node) {
             $text = $node->textContent;
             return humanNumberToInteger($text);
@@ -76,7 +85,8 @@ class TelegramCrawlerService
 
     private function extractMessageText($xpath)
     {
-        $node = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")][@dir="auto"]')->item(0);
+        $str = "{$this->username}/{$this->message_id}";
+        $node = $xpath->query('//div[@data-post="' . $str . '"]//div[contains(@class, "tgme_widget_message_text js-message_text")][@dir="auto"]')->item(0);
         if ($node) {
             $html = $node->ownerDocument->saveHTML($node);
             $text = br2nl($html);

@@ -42,10 +42,10 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
 
             // 获取模型类名
             $model_class_name = class_basename($this->model);
-            $data = $crawler->crawl($this->model->url);
-            if (!$data) return;
-
             if ($model_class_name == 'Owner') {
+                $data = $crawler->crawl($this->model->username);
+                if (!$data) return;
+    
                 $this->model->update([
                     'verified_at' => now(),
                     'name' => $data['name'],
@@ -55,6 +55,9 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                     'is_valid' => $data['is_valid'],
                 ]);
             } elseif ($model_class_name == 'Message') {
+                $data = $crawler->crawl($this->model->owner->username, $this->model->original_id);
+                if (!$data) return;
+    
                 \Log::info('Update message url: ' . $this->model->url);
                 \Log::info('Update message data: ', $data);
 
@@ -65,20 +68,6 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                 $this->model->update($new_data);
             } else {
                 throw new \Exception('Unknown model class name: ' . $model_class_name);
-            }
-        });
-    }
-    public function handle2(TelegramCrawlerService $crawler): void
-    {
-        Cache::lock('telegram-crawler', 1)->block(20, function () use ($crawler) {
-
-            // 获取模型类名
-            $modelClassName = class_basename($this->model);
-            $data = $crawler->crawl($this->model->url, $modelClassName);
-            if ($data) {
-                // TODO 删除空键
-                $data['verified_at'] = now();
-                $this->model->update($data);
             }
         });
     }
