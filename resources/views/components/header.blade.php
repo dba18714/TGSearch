@@ -13,7 +13,7 @@
             </div>
 
             <!-- Right Section -->
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 sm:space-x-4">
                 <!-- Search -->
                 @if (Route::currentRouteName() !== 'home')
                 <div class="block">
@@ -32,6 +32,14 @@
                     </form>
                 </div>
                 @endif
+
+                <a href="{{ route('home') }}"
+                    class="inline-flex items-center px-2 sm:px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-md">
+                    <svg class="h-5 w-5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span class="hidden sm:inline">添加新的</span>
+                </a>
 
                 <!-- Theme Toggle -->
                 <div class="relative">
