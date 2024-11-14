@@ -3,14 +3,14 @@
 namespace App\Livewire;
 
 use App\Jobs\ProcessGoogleCustomSearchJob;
-use App\Models\Link;
+use App\Models\Owner;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
 use App\Services\TelegramCrawlerService;
-use App\Jobs\ProcessUpdateLinkInfoJob;
+use App\Jobs\ProcessUpdateOwnerInfoJob;
 
-class Links extends Component
+class Owners extends Component
 {
     use WithPagination;
 
@@ -74,13 +74,13 @@ class Links extends Component
 
     public function render()
     {
-        $query = Link::query();
+        $query = Owner::query();
 
         if (!empty($this->search)) {
-            $query = Link::search($this->search);
+            $query = Owner::search($this->search);
         }
 
-        $links = $query
+        $owners = $query
             ->when($this->type, function ($query) {
                 $query->where('type', $this->type);
             })
@@ -89,10 +89,10 @@ class Links extends Component
             })
             ->paginate(12);
         app('debugbar')->debug('$this->sortField: ' . $this->sortField);
-        app('debugbar')->debug($links);
+        app('debugbar')->debug($owners);
 
-        return view('livewire.links', [
-            'links' => $links
+        return view('livewire.owners', [
+            'owners' => $owners
         ]);
     }
 }

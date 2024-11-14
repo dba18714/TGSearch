@@ -9,5 +9,5 @@ use Illuminate\Support\Facades\Schedule;
 // })->purpose('Display an inspiring quote')->hourly();
 
 
-Schedule::command('links:verify-links')
+Schedule::command('owners:verify-owners')
 ->everyTenSeconds();

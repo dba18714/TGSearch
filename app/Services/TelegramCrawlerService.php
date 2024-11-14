@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Link;
+use App\Models\Owner;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;

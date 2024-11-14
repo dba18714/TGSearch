@@ -3,12 +3,12 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Link;
+use App\Models\Owner;
 use Illuminate\Support\Facades\Cache;
 
 class FooterStats extends Component
 {
-    public $totalLinks;
+    public $totalOwners;
     public $totalChannels;
     public $totalGroups;
     public $totalBots;
@@ -22,28 +22,28 @@ class FooterStats extends Component
 
     private function loadStats()
     {
-        $this->totalLinks = Cache::remember('total_links', now()->addHours(1), function () {
-            return Link::count();
+        $this->totalOwners = Cache::remember('total_owners', now()->addHours(1), function () {
+            return Owner::count();
         });
         
         $this->totalChannels = Cache::remember('total_channels', now()->addHours(1), function () {
-            return Link::where('type', 'channel')->count();
+            return Owner::where('type', 'channel')->count();
         });
         
         $this->totalGroups = Cache::remember('total_groups', now()->addHours(1), function () {
-            return Link::where('type', 'group')->count();
+            return Owner::where('type', 'group')->count();
         });
         
         $this->totalBots = Cache::remember('total_bots', now()->addHours(1), function () {
-            return Link::where('type', 'bot')->count();
+            return Owner::where('type', 'bot')->count();
         });
         
         $this->totalPersons = Cache::remember('total_persons', now()->addHours(1), function () {
-            return Link::where('type', 'person')->count();
+            return Owner::where('type', 'person')->count();
         });
         
         $this->totalMessages = Cache::remember('total_messages', now()->addHours(1), function () {
-            return Link::where('type', 'message')->count();
+            return Owner::where('type', 'message')->count();
         });
     }
 

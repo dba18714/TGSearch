@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\LinkResource;
-use App\Models\Link;
+use App\Http\Resources\OwnerResource;
+use App\Models\Owner;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class LinkController extends Controller
+class OwnerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Link::query()->valid();
+        $query = Owner::query()->valid();
 
         // 根据类型筛选
         if ($request->has('type')) {
@@ -37,7 +37,7 @@ class LinkController extends Controller
         $order = $request->input('order', 'desc');
         $query->orderBy($sort, $order);
 
-        return LinkResource::collection(
+        return OwnerResource::collection(
             $query->paginate($request->input('per_page', 15))
         );
     }
@@ -45,9 +45,9 @@ class LinkController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Link $Link): LinkResource
+    public function show(Owner $owner): OwnerResource
     {
-        return new LinkResource($Link);
+        return new OwnerResource($owner);
     }
 
     /**
@@ -58,17 +58,17 @@ class LinkController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'introduction' => 'required|string',
-            'url' => 'required|url|unique:telegram_links',
+            // 'url' => 'required|url|unique:telegram_owners',
             'type' => 'required|in:bot,channel,group,person,message',
             'username' => 'required|string|max:255',
         ]);
 
-        $validated['is_by_user'] = true;
+        $validated['source'] = 'manual';
         $validated['user_id'] = auth()->id;
         $validated['is_valid'] = false; // 需要管理员审核
 
-        $Link = Link::create($validated);
+        $owner = Owner::create($validated);
 
-        return new LinkResource($Link);
+        return new OwnerResource($owner);
     }
 }

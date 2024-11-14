@@ -2,29 +2,29 @@
 
 namespace Database\Factories;
 
-use App\Models\Link;
+use App\Models\Owner;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class LinkFactory extends Factory
+class OwnerFactory extends Factory
 {
-    protected $model = Link::class;
+    protected $model = Owner::class;
     
     public function definition(): array
     {
         $type = $this->faker->randomElement(['bot', 'channel', 'group', 'person', 'message']);
+        $source = $this->faker->randomElement(['manual', 'crawler']);
         $name = $this->getNameByType($type);
         $username = strtolower(str_replace(' ', '_', $name));
 
         return [
             'name' => $name,
             'introduction' => $this->faker->sentence(),
-            'url' => "https://t.me/{$username}",
             'type' => $type,
             'username' => "@{$username}",
             'member_count' => $this->faker->numberBetween(100, 100000),
             'view_count' => $this->faker->numberBetween(1000, 1000000),
-            'is_by_user' => $this->faker->boolean(70), // 70% 概率是用户添加的
+            'source' => $source,
             'user_id' => User::factory(),
             'is_valid' => $this->faker->boolean(90), // 90% 概率是有效的
             'verified_at' => $this->faker->dateTimeBetween('-1 year', 'now'),

@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Jobs\ProcessUpdateLinkInfoJob;
+use App\Jobs\ProcessUpdateOwnerInfoJob;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Scout\Searchable;
 
-class Link extends Model
+class Owner extends Model
 {
     use HasUlids, HasFactory;
     use Searchable;
@@ -23,12 +23,12 @@ class Link extends Model
         'name',
         'introduction',
         'message',
-        'url',
+        // 'url',
         'type',
         'username',
         'member_count',
         'view_count',
-        'is_by_user',
+        'source',
         'user_id',
         'is_valid',
         'verified_at',
@@ -41,13 +41,17 @@ class Link extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_by_user' => 'boolean',
         'is_valid' => 'boolean',
         'verified_at' => 'datetime',
         'verified_start_at' => 'datetime',
         'member_count' => 'integer',
         'view_count' => 'integer',
     ];
+
+    public function getUrlAttribute(): ?string
+    {
+        return "https://t.me/{$this->username}";
+    }
 
     /**
      * Get the user that added this telegram link.
@@ -58,7 +62,7 @@ class Link extends Model
     }
 
     /**
-     * Scope a query to only include valid links.
+     * Scope a query to only include valid owners.
      */
     public function scopeValid($query)
     {
@@ -66,19 +70,19 @@ class Link extends Model
     }
 
     /**
-     * Scope a query to only include user submitted links.
+     * Scope a query to only include user submitted owners.
      */
     public function scopeByUser($query)
     {
-        return $query->where('is_by_user', true);
+        return $query->where('source', 'manual');
     }
 
     /**
-     * Scope a query to only include crawler submitted links.
+     * Scope a query to only include crawler submitted owners.
      */
     public function scopeByCrawler($query)
     {
-        return $query->where('is_by_user', false);
+        return $query->where('source', 'crawler');
     }
 
     /**
@@ -138,7 +142,7 @@ class Link extends Model
         $this->verified_start_at = now();
         $this->save();
 
-        ProcessUpdateLinkInfoJob::dispatch($this);
+        ProcessUpdateOwnerInfoJob::dispatch($this);
 
         return $this;
     }
@@ -170,29 +174,29 @@ class Link extends Model
     }
 
     /**
-     * Get a single link for verification, prioritizing unverified and in-progress links
+     * Get a single link for verification, prioritizing unverified and in-progress owners
      *
      * @return void
      */
     public static function dispatchNextVerificationJob(): bool
     {
-        $link = self::selectForVerification()->first();
+        $owner = self::selectForVerification()->first();
 
-        if (!$link) return false;
+        if (!$owner) return false;
 
         // 如果1小时之内已经验证过了，就跳过
         if (
-            $link->verified_start_at &&
-            $link->verified_start_at->gt(now()->subHour())
+            $owner->verified_start_at &&
+            $owner->verified_start_at->gt(now()->subHour())
         ) return false;
 
-        $link->dispatchUpdateJob();
+        $owner->dispatchUpdateJob();
 
         return true;
     }
 
     /**
-     * Query scope for selecting links for verification
+     * Query scope for selecting owners for verification
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
@@ -206,8 +210,8 @@ class Link extends Model
 
     protected static function booted(): void
     {
-        static::created(function (Link $link) {
-            $link->dispatchUpdateJob();
+        static::created(function (Owner $owner) {
+            $owner->dispatchUpdateJob();
         });
     }
 

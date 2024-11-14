@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Link;
+use App\Models\Owner;
 
 return [
 
@@ -148,7 +148,7 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
-            Link::class => [
+            Owner::class => [
                 'filterableAttributes' => ['type'],
                 'sortableAttributes' => ['id', 'member_count'],
             ],
@@ -190,7 +190,7 @@ return [
         ],
         // 'max_total_results' => env('TYPESENSE_MAX_TOTAL_RESULTS', 1000),
         'model-settings' => [
-            Link::class => [
+            Owner::class => [
                 'collection-schema' => [
                     'fields' => [
                         [

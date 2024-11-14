@@ -3,9 +3,9 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Link;
+use App\Models\Owner;
 
-class LinkCreate extends Component
+class OwnerCreate extends Component
 {
     public $urls = '';
     
@@ -29,11 +29,11 @@ class LinkCreate extends Component
             }
             
             // 创建或更新链接
-            Link::firstOrCreate(
+            Owner::firstOrCreate(
                 ['url' => $url],
                 [
                     'type' => 'message', // 默认类型
-                    'is_by_user' => true,
+                    'source' => 'manual',
                 ]
             );
             

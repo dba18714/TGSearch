@@ -111,8 +111,8 @@
                 </div>
             </div>
 
-            <!-- Links Grid -->
-            @if($links->isEmpty())
+            <!-- Owners Grid -->
+            @if($owners->isEmpty())
             <div class="text-center py-12">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
@@ -143,42 +143,42 @@
             </div>
             @else
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach($links as $link)
+                @foreach($owners as $owner)
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-200">
                     <div class="p-6">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    @if(isset($link->_formatted['name']))
-                                    {!! $link->_formatted['name'] !!}
+                                    @if(isset($owner->_formatted['name']))
+                                    {!! $owner->_formatted['name'] !!}
                                     @else
-                                    {{ $link->name }}
+                                    {{ $owner->name }}
                                     @endif
                                 </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $link->username }}</p>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $owner->username }}</p>
                             </div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 whitespace-nowrap
-{{ $link->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-{{ $link->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-{{ $link->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-{{ $link->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
-{{ $link->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}
+{{ $owner->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+{{ $owner->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+{{ $owner->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+{{ $owner->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+{{ $owner->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}
 ">
-                                {{ $link->type_name }}
+                                {{ $owner->type_name }}
                             </span>
                         </div>
 
-                        <p class="mt-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{{ $link->introduction }}</p>
+                        <p class="mt-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{{ $owner->introduction }}</p>
 
                         <div class="mt-6 flex items-center justify-between">
                             <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
                                 <svg class="h-5 w-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
-                                {{ number_format($link->member_count) }}
+                                {{ number_format($owner->member_count) }}
                             </div>
                             <a
-                                href="{{ $link->url }}"
+                                href="{{ $owner->url }}"
                                 target="_blank"
                                 class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
                                 访问链接
@@ -187,7 +187,7 @@
                                     <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
                                 </svg>
                             </a>
-                            <a href="{{ route('link.show', $link) }}" wire:navigate class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
+                            <a href="{{ route('link.show', $owner) }}" wire:navigate class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
                                 详情 >>
                             </a>
                         </div>
@@ -199,7 +199,7 @@
 
             <!-- Pagination -->
             <div class="mt-12">
-                {{ $links->links(data: ['scrollTo' => '#paginated-posts']) }}
+                {{ $owners->links(data: ['scrollTo' => '#paginated-posts']) }}
             </div>
         </div>
     </div>

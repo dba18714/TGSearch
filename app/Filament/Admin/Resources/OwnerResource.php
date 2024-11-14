@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\LinkResource\Pages;
-use App\Models\Link;
+use App\Filament\Admin\Resources\OwnerResource\Pages;
+use App\Models\Owner;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,9 +12,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Notifications\Notification;
 
-class LinkResource extends Resource
+class OwnerResource extends Resource
 {
-    protected static ?string $model = Link::class;
+    protected static ?string $model = Owner::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -34,10 +34,10 @@ class LinkResource extends Resource
                 Forms\Components\Textarea::make('message')
                     ->dehydrated(fn($state) => filled($state))
                     ->maxLength(65535),
-                Forms\Components\TextInput::make('url')
-                    ->required()
-                    ->url()
-                    ->maxLength(255),
+                // Forms\Components\TextInput::make('url')
+                //     ->required()
+                //     ->url()
+                //     ->maxLength(255),
                 Forms\Components\Select::make('type')
                     ->dehydrated(fn($state) => filled($state))
                     ->options([
@@ -48,6 +48,7 @@ class LinkResource extends Resource
                         'message' => '消息',
                     ]),
                 Forms\Components\TextInput::make('username')
+                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('member_count')
                     ->dehydrated(fn($state) => filled($state))
@@ -55,8 +56,12 @@ class LinkResource extends Resource
                 Forms\Components\TextInput::make('view_count')
                     ->dehydrated(fn($state) => filled($state))
                     ->numeric(),
-                Forms\Components\Toggle::make('is_by_user')
-                    ->dehydrated(fn($state) => filled($state)),
+                    Forms\Components\Select::make('source')
+                    ->dehydrated(fn($state) => filled($state))
+                    ->options([
+                        'manual' => '用户提交',
+                        'crawler' => '爬虫',
+                    ]),
                 Forms\Components\Toggle::make('is_valid')
                     ->dehydrated(fn($state) => filled($state)),
                 Forms\Components\DateTimePicker::make('verified_at')
@@ -82,7 +87,7 @@ class LinkResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
                     ->limit(16)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                    ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();
                     })
                     ->searchable(),
@@ -93,14 +98,14 @@ class LinkResource extends Resource
                         return $column->getState();
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('url')
-                    ->url(fn(Link $record): string => $record->url)
-                    ->openUrlInNewTab()
-                    ->limit(16)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
-                        return $column->getState();
-                    })
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('url')
+                //     ->url(fn(Owner $record): string => $record->url)
+                //     ->openUrlInNewTab()
+                //     ->limit(16)
+                //     ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                //         return $column->getState();
+                //     })
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('introduction')
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column) {
@@ -139,11 +144,11 @@ class LinkResource extends Resource
                         '1' => '是',
                         '0' => '否',
                     ]),
-                Tables\Filters\SelectFilter::make('is_by_user')
-                    ->label('由用户创建')
+                Tables\Filters\SelectFilter::make('source')
+                    ->label('来源')
                     ->options([
-                        '1' => '是',
-                        '0' => '否',
+                        'manual' => '用户提交',
+                        'crawler' => '爬虫',
                     ]),
                 Tables\Filters\SelectFilter::make('type')
                     ->label('类型')
@@ -186,10 +191,10 @@ class LinkResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLinks::route('/'),
-            'create' => Pages\CreateLink::route('/create'),
-            // 'view' => Pages\ViewLink::route('/{record}'),
-            // 'edit' => Pages\EditLink::route('/{record}/edit'),
+            'index' => Pages\ListOwners::route('/'),
+            'create' => Pages\CreateOwner::route('/create'),
+            // 'view' => Pages\ViewOwner::route('/{record}'),
+            // 'edit' => Pages\EditOwner::route('/{record}/edit'),
         ];
     }
 }

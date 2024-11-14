@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Link;
+use App\Models\Owner;
 use App\Services\GoogleCustomSearchService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -92,7 +92,7 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
             }
 
             try {
-                $link = Link::firstOrCreate(
+                $owner = Owner::firstOrCreate(
                     ['url' => $item['link']],
                     [
                         'name' => $item['title'],
@@ -100,7 +100,7 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
                     ]
                 );
 
-                $link->dispatchUpdateJob();
+                $owner->dispatchUpdateJob();
             } catch (\Exception $e) {
                 Log::error('Failed to process search result item', [
                     'item' => $item,

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Admin\Resources\LinkResource\Pages;
+namespace App\Filament\Admin\Resources\OwnerResource\Pages;
 
-use App\Filament\Admin\Resources\LinkResource;
+use App\Filament\Admin\Resources\OwnerResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListLinks extends ListRecords
+class ListOwners extends ListRecords
 {
-    protected static string $resource = LinkResource::class;
+    protected static string $resource = OwnerResource::class;
 
     protected function getHeaderActions(): array
     {

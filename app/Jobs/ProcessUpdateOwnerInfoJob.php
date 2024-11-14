@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Link;
+use App\Models\Owner;
 use App\Services\TelegramCrawlerService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class ProcessUpdateLinkInfoJob implements ShouldQueue
+class ProcessUpdateOwnerInfoJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -27,12 +27,12 @@ class ProcessUpdateLinkInfoJob implements ShouldQueue
     public $timeout = 30;
 
     public function __construct(
-        protected Link $link
+        protected Owner $owner
     ) {}
 
     /**
      * Execute the job.
-     * 必须使用模型的 $link->dispatchUpdateJob(); 方法派遣本任务，以防止队列执行失败时，任务被重新调度。
+     * 必须使用模型的 $owner->dispatchUpdateJob(); 方法派遣本任务，以防止队列执行失败时，任务被重新调度。
      */
     public function handle(TelegramCrawlerService $crawler): void
     {
@@ -50,7 +50,7 @@ class ProcessUpdateLinkInfoJob implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error('Link update job failed', [
+        Log::error('Owner update job failed', [
             'link_id' => $this->link->id,
             'url' => $this->link->url,
             'error' => $exception->getMessage(),

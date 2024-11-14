@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LinkResource extends JsonResource
+class OwnerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,12 +18,12 @@ class LinkResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'introduction' => $this->introduction,
-            'url' => $this->url,
+            // 'url' => $this->url,
             'type' => $this->type,
             'username' => $this->username,
             'member_count' => $this->member_count,
             'view_count' => $this->view_count,
-            'is_by_user' => $this->is_by_user,
+            'source' => $this->source,
             'is_valid' => $this->is_valid,
             'verified_at' => $this->verified_at,
             'created_at' => $this->created_at,

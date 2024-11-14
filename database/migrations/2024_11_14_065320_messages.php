@@ -11,22 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('links', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('name')->default('None')->nullable();
-            $table->string('introduction')->default('None')->nullable();
-            $table->text('message')->default('None')->nullable();
-            $table->string('url')->unique();
-            $table->string('type')->default('unknown')->comment('bot or channel or group or person or message')->nullable();
-            $table->string('username')->unique()->nullable();
-            $table->integer('member_count')->default(0)->nullable();
-            $table->integer('view_count')->default(0)->nullable();
-            $table->boolean('is_by_user')->default(false)->nullable()->comment('true: 由用户添加 or false: 由爬虫添加');
+            $table->ulid('owner_id')->index();
+            $table->integer('original_id')->comment('Telegram 的原始消息id');
+            $table->text('text')->nullable();
+            $table->integer('view_count')->default(0);
+            $table->string('source')->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
             $table->ulid('user_id')->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
             $table->boolean('is_valid')->default(false)->nullable()->comment('是否有效');
             $table->timestamp('verified_at')->nullable();
             $table->timestamp('verified_start_at')->nullable()->comment('验证开始时间，不管是否验证成功');
             $table->timestamps();
+
+            $table->unique(['owner_id', 'original_id']);
         });
     }
 
@@ -35,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('links');
+        Schema::dropIfExists('messages');
     }
 };
