@@ -16,7 +16,7 @@ class MessageSeeder extends Seeder
     {
         // 创建一些用户和频道所有者
         $users = User::factory(3)->create();
-        $owners = Owner::factory(5)->create();
+        $owners = Owner::factory(20)->create();
         
         // 为每个频道所有者创建一些消息
         foreach ($owners as $owner) {

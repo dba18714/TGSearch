@@ -12,7 +12,7 @@ class OwnerFactory extends Factory
     
     public function definition(): array
     {
-        $type = $this->faker->randomElement(['bot', 'channel', 'group', 'person', 'message']);
+        $type = $this->faker->randomElement(['bot', 'channel', 'group', 'person']);
         $source = $this->faker->randomElement(['manual', 'crawler']);
         $name = $this->getNameByType($type);
         $username = strtolower(str_replace(' ', '_', $name));
@@ -39,7 +39,6 @@ class OwnerFactory extends Factory
             'channel' => $this->faker->words(3, true) . ' Channel',
             'group' => $this->faker->words(2, true) . ' Group',
             'person' => $this->faker->name(),
-            'message' => $this->faker->sentence(2) . ' Message',
             default => $this->faker->name(),
         };
     }

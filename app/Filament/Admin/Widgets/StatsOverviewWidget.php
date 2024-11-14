@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Models\Message;
 use App\Models\Owner;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -26,7 +27,7 @@ class StatsOverviewWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('info'),
 
-            Stat::make('消息', Owner::where('type', 'message')->count())
+            Stat::make('消息', Message::count())
                 ->description('消息链接数量')
                 ->descriptionIcon('heroicon-m-chat-bubble-left-right')
                 ->color('info'),
