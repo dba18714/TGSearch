@@ -13,12 +13,21 @@ use App\Jobs\ProcessPodcast;
 use App\Jobs\ProcessUpdateOwnerInfoJob;
 use App\Models\Owner;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function () {
+    function tmp(Model $model) {
+        return class_basename($model);
+    };
+    
+    return tmp(Owner::first());
+
+
+
     return Owner::create([
         'username' => '@test'.time(),
     ])->url;

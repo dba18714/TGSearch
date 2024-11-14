@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Jobs\ProcessUpdateOwnerInfoJob;
+use App\Jobs\ProcessUpdateTelegramModelJob;
+use App\Models\Traits\HasVerification;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +15,7 @@ class Owner extends Model
 {
     use HasUlids, HasFactory;
     use Searchable;
+    use HasVerification;
 
     /**
      * The attributes that are mass assignable.
@@ -148,15 +151,15 @@ class Owner extends Model
         };
     }
 
-    public function dispatchUpdateJob()
-    {
-        $this->verified_start_at = now();
-        $this->save();
+    // public function dispatchUpdateJob()
+    // {
+    //     $this->verified_start_at = now();
+    //     $this->save();
 
-        ProcessUpdateOwnerInfoJob::dispatch($this);
+    //     ProcessUpdateTelegramModelJob::dispatch($this);
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * Determine if the model should be searchable.
@@ -189,57 +192,57 @@ class Owner extends Model
      *
      * @return void
      */
-    public static function dispatchNextVerificationJob(): bool
-    {
-        $owner = self::selectForVerification()->first();
+    // public static function dispatchNextVerificationJob(): bool
+    // {
+    //     $owner = self::selectForVerification()->first();
 
-        if (!$owner->exists) return false;
+    //     if (!$owner->exists) return false;
 
-        // 如果1小时之内已经验证过了，就跳过
-        if (
-            $owner->verified_start_at &&
-            $owner->verified_start_at->gt(now()->subHour())
-        ) return false;
+    //     // 如果1小时之内已经验证过了，就跳过
+    //     if (
+    //         $owner->verified_start_at &&
+    //         $owner->verified_start_at->gt(now()->subHour())
+    //     ) return false;
 
-        $owner->dispatchUpdateJob();
+    //     $owner->dispatchUpdateJob();
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    /**
-     * Query scope for selecting owners for verification
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeSelectForVerification($query)
-    {
-        return $query->orderByRaw('verified_start_at ASC NULLS FIRST')
-            ->orderByRaw('verified_at ASC NULLS FIRST')
-            ->orderBy('created_at');
-    }
+    // /**
+    //  * Query scope for selecting owners for verification
+    //  *
+    //  * @param \Illuminate\Database\Eloquent\Builder $query
+    //  * @return \Illuminate\Database\Eloquent\Builder
+    //  */
+    // public function scopeSelectForVerification($query)
+    // {
+    //     return $query->orderByRaw('verified_start_at ASC NULLS FIRST')
+    //         ->orderByRaw('verified_at ASC NULLS FIRST')
+    //         ->orderBy('created_at');
+    // }
 
-    protected static function booted(): void
-    {
-        static::created(function (Owner $owner) {
-            $owner->dispatchUpdateJob();
-        });
-    }
+    // protected static function booted(): void
+    // {
+    //     static::created(function (Owner $owner) {
+    //         $owner->dispatchUpdateJob();
+    //     });
+    // }
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        static::saving(function ($model) {
+    //     static::saving(function ($model) {
 
-            // 自动修剪字符串前后空格, 并且如果修剪后是空字符串,则设置为 null
-            foreach ($model->getAttributes() as $key => $value) {
-                if (is_string($value)) {
-                    $value = trim($value);
-                    if ($value === '') $value = null;
-                    $model->{$key} = $value;
-                }
-            }
-        });
-    }
+    //         // 自动修剪字符串前后空格, 并且如果修剪后是空字符串,则设置为 null
+    //         foreach ($model->getAttributes() as $key => $value) {
+    //             if (is_string($value)) {
+    //                 $value = trim($value);
+    //                 if ($value === '') $value = null;
+    //                 $model->{$key} = $value;
+    //             }
+    //         }
+    //     });
+    // }
 }

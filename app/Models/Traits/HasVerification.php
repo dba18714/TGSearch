@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Models\Traits;
+
+use App\Jobs\ProcessUpdateTelegramModelJob;
+use Carbon\Carbon;
+
+trait HasVerification
+{
+    public function dispatchUpdateJob()
+    {
+        $this->verified_start_at = now();
+        $this->save();
+
+        ProcessUpdateTelegramModelJob::dispatch($this);
+
+        return $this;
+    }
+
+    public static function dispatchNextVerificationJob(): bool
+    {
+        $model = static::selectForVerification()->first();
+
+        if (!$model->exists) return false;
+
+        // 如果1小时之内已经验证过了，就跳过
+        if (
+            $model->verified_start_at &&
+            $model->verified_start_at->gt(now()->subHour())
+        ) return false;
+
+        $model->dispatchUpdateJob();
+
+        return true;
+    }
+
+    public function scopeSelectForVerification($query)
+    {
+        return $query->orderByRaw('verified_start_at ASC NULLS FIRST')
+            ->orderByRaw('verified_at ASC NULLS FIRST')
+            ->orderBy('created_at');
+    }
+
+    protected static function bootHasVerification()
+    {
+        static::created(function ($model) {
+            $model->dispatchUpdateJob();
+        });
+
+        static::saving(function ($model) {
+            // 自动修剪字符串前后空格, 并且如果修剪后是空字符串,则设置为 null
+            foreach ($model->getAttributes() as $key => $value) {
+                if (is_string($value)) {
+                    $value = trim($value);
+                    if ($value === '') $value = null;
+                    $model->{$key} = $value;
+                }
+            }
+        });
+    }
+}
