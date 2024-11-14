@@ -37,10 +37,10 @@ class ProcessUpdateOwnerInfoJob implements ShouldQueue
     public function handle(TelegramCrawlerService $crawler): void
     {
         Cache::lock('telegram-crawler', 1)->block(20, function () use ($crawler) {
-            $data = $crawler->crawl($this->link->url);
+            $data = $crawler->crawl($this->owner->url);
             if ($data) {
                 $data['verified_at'] = now();
-                $this->link->update($data);
+                $this->owner->update($data);
             }
         });
     }
@@ -51,8 +51,8 @@ class ProcessUpdateOwnerInfoJob implements ShouldQueue
     public function failed(\Throwable $exception): void
     {
         Log::error('Owner update job failed', [
-            'link_id' => $this->link->id,
-            'url' => $this->link->url,
+            'link_id' => $this->owner->id,
+            'url' => $this->owner->url,
             'error' => $exception->getMessage(),
         ]);
     }

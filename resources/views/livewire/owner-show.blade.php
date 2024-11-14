@@ -1,11 +1,11 @@
 <div>
     <div class="bg-gray-100 dark:bg-gray-900 min-h-screen py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">            
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- 左右布局容器 -->
-            <div class="{{ $owner->message && $owner->message !== 'None' ? 'flex flex-col lg:flex-row gap-6' : 'flex justify-center' }}">
+            <div class="{{ $owner->messages ? 'flex flex-col lg:flex-row gap-6' : 'flex justify-center' }}">
                 <!-- 左侧名片信息 -->
                 <div class="lg:w-1/3 lg:min-w-[320px]">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden {{ $owner->message && $owner->message !== 'None' ? 'lg:sticky lg:top-6' : '' }}">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden {{ $owner->messages ? 'lg:sticky lg:top-6' : '' }}">
                         <!-- 频道/群组头部信息 -->
                         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                             <div class="flex flex-col items-center text-center">
@@ -62,7 +62,7 @@
 
                 <!-- 右侧消息内容 -->
                 <div class="lg:w-2/3">
-                    @if($owner->message && $owner->message !== 'None')
+                    @if($owner->messages)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                         <div class="p-6">
                             <div class="flex">
@@ -78,9 +78,12 @@
                                             {{ $owner->created_at->format('Y-m-d H:i') }}
                                         </span>
                                     </div>
+                                    @foreach ($owner->messages as $message)
                                     <div class="prose dark:prose-invert max-w-none">
-                                        <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">{!! nl2br(e($owner->message)) !!}</p>
+                                        <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">{!! nl2br(e($message->text)) !!}</p>
                                     </div>
+                                     <hr class="my-4 border-gray-200 dark:border-gray-700" />
+                                    @endforeach
                                     <div class="mt-4 flex items-center text-sm text-gray-500 dark:text-gray-400">
                                         <svg class="h-5 w-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

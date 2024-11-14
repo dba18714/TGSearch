@@ -31,9 +31,9 @@ class OwnerResource extends Resource
                 Forms\Components\Textarea::make('introduction')
                     ->dehydrated(fn($state) => filled($state))
                     ->maxLength(255),
-                Forms\Components\Textarea::make('message')
-                    ->dehydrated(fn($state) => filled($state))
-                    ->maxLength(65535),
+                // Forms\Components\Textarea::make('message')
+                //     ->dehydrated(fn($state) => filled($state))
+                //     ->maxLength(65535),
                 // Forms\Components\TextInput::make('url')
                 //     ->required()
                 //     ->url()
@@ -45,7 +45,7 @@ class OwnerResource extends Resource
                         'channel' => '频道',
                         'group' => '群组',
                         'person' => '个人',
-                        'message' => '消息',
+                        // 'message' => '消息',
                     ]),
                 Forms\Components\TextInput::make('username')
                     ->required()
@@ -157,7 +157,7 @@ class OwnerResource extends Resource
                         'channel' => '频道',
                         'group' => '群组',
                         'person' => '个人',
-                        'message' => '消息',
+                        // 'message' => '消息',
                     ]),
             ])
             ->actions([
