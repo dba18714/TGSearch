@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Header Section -->
-            <div class="mb-8 text-center">
+            <div class="mb-8 text-center sm:hidden">
                 <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Telegram 资源导航</h1>
             </div>
 

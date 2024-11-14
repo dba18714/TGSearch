@@ -3,9 +3,13 @@
         <div class="flex h-16 items-center justify-between">
             <!-- Logo -->
             <div class="flex-shrink-0">
-                <a href="/" wire:navigate class="text-2xl mr-4 font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">
+                <a href="/" class="text-2xl mr-4 font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300">
                     TNav.me
                 </a>
+            </div>
+
+            <div class="hidden sm:flex">
+                <h1 class="text-2xl text-gray-900 dark:text-white">Telegram 资源导航</h1>
             </div>
 
             <!-- Right Section -->

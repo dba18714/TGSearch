@@ -1,20 +1,26 @@
 <script>
-    // 立即执行的函数来设置初始主题
+    // 立即执行，在页面加载前设置主题
     (function() {
-        function getInitialTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                return savedTheme;
+        function getThemePreference() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                return 'dark';
             }
-            // 如果没有保存的主题，默认使用系统主题
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            return 'light';
         }
-
-        const theme = getInitialTheme();
-
-        // 立即应用主题
-        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        
+        // 在页面加载前应用主题
+        if (getThemePreference() === 'dark') {
             document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
     })();
 </script>
+
+<style>
+    /* 预设图标尺寸，防止加载时的尺寸跳动 */
+    #themeToggle svg {
+        width: 1.25rem; /* w-5 = 1.25rem */
+        height: 1.25rem; /* h-5 = 1.25rem */
+    }
+</style>
