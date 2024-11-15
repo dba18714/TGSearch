@@ -51,21 +51,13 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
         $executed = RateLimiter::attempt(
             'google-custom-search',  // 限流器的key
             100,                     // 每天允许100次
-            function() use ($googleSearchService) {
+            function () use ($googleSearchService) {
                 Log::info('Starting Google custom search job', [
                     'search' => $this->search
                 ]);
-                
-                try {
-                    $results = $googleSearchService->search($this->search);
-                    $this->processSearchResults($results);
-                } catch (\Exception $e) {
-                    Log::error('Google custom search processing failed', [
-                        'search' => $this->search,
-                        'error' => $e->getMessage(),
-                    ]);
-                    throw $e;
-                }
+
+                $results = $googleSearchService->search($this->search);
+                $this->processSearchResults($results);
             },
             60 * 60 * 24           // 24小时后重置
         );
@@ -91,21 +83,20 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
                 continue;
             }
 
-            try {
-                $owner = Owner::firstOrCreate(
-                    ['url' => $item['link']],
-                    [
-                        'name' => $item['title'],
-                        'type' => 'message',
-                    ]
-                );
+            $username = extract_telegram_username_by_url($item['link']);
+            $message_id = extract_telegram_message_id_by_url($item['link']);
 
+            if ($username) {
+                $owner = Owner::firstOrCreate(
+                    ['username' => $username]
+                );
                 $owner->dispatchUpdateJob();
-            } catch (\Exception $e) {
-                Log::error('Failed to process search result item', [
-                    'item' => $item,
-                    'error' => $e->getMessage(),
-                ]);
+                if ($message_id) {
+                    $message = $owner->messages()->firstOrCreate(
+                        ['original_id' => $message_id]
+                    );
+                    $message->dispatchUpdateJob();
+                }
             }
         }
     }
