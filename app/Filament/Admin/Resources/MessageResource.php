@@ -49,6 +49,16 @@ class MessageResource extends Resource
                 Forms\Components\DateTimePicker::make('verified_start_at')
                     ->dehydrated(fn($state) => filled($state))
                     ->timezone('PRC'),
+                Forms\Components\DateTimePicker::make('created_at')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->label('创建时间')
+                    ->timezone('PRC'),
+                Forms\Components\DateTimePicker::make('updated_at')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->label('更新时间')
+                    ->timezone('PRC'),
             ]);
     }
 
@@ -65,13 +75,14 @@ class MessageResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('owner_id')
+                    ->limit(4)
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('original_id')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('text')
-                    ->limit(30)
+                    ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();
                     })

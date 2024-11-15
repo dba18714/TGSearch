@@ -70,6 +70,16 @@ class OwnerResource extends Resource
                 Forms\Components\DateTimePicker::make('verified_start_at')
                     ->dehydrated(fn($state) => filled($state))
                     ->timezone('PRC'),
+                Forms\Components\DateTimePicker::make('created_at')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->label('创建时间')
+                    ->timezone('PRC'),
+                Forms\Components\DateTimePicker::make('updated_at')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->label('更新时间')
+                    ->timezone('PRC'),
             ]);
     }
 

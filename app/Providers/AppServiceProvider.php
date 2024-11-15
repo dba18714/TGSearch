@@ -26,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        
+        config([
+            'app.url' => 'http://1.qq',
+        ]);
     }
 }
