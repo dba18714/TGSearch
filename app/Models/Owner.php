@@ -66,6 +66,11 @@ class Owner extends Model
         return $this->hasMany(Message::class);
     }
 
+    public function getRouteAttribute()
+    {
+        return route('owner.show', $this);
+    }
+
     public function getUrlAttribute(): ?string
     {
         return "https://t.me/s/{$this->username}";

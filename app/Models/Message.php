@@ -65,6 +65,14 @@ class Message extends Model
         return $this->belongsTo(Owner::class);
     }
 
+    public function getRouteAttribute()
+    {
+        if ($this->owner) {
+            return route('owner.show', $this->owner, $this);
+        }
+        return null;
+    }
+
     /**
      * 判断消息是否由爬虫添加
      */

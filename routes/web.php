@@ -86,7 +86,7 @@ Route::get('/tmp2', function () {
 
 Route::get('/', Owners::class)->name('home');
 Route::get('/owners/create', OwnerCreate::class)->name('owners.create');
-Route::get('/owners/{owner}/{message?}', OwnerShow::class)->name('link.show');
+Route::get('/owners/{owner}/{message?}', OwnerShow::class)->name('owner.show');
 
 Route::get('/owner/{id}/{message_id?}', function (string $id = null, ?string $message_id = null) {
     return $id . '-' . $message_id;
