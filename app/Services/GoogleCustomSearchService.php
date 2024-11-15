@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Factory as HttpFactory;
+use Illuminate\Support\Facades\Log;
 
 class GoogleCustomSearchService
 {
@@ -27,7 +28,7 @@ class GoogleCustomSearchService
         ]);
 
         if ($response->failed()) {
-            \Log::error('Google Custom Search API request failed', [
+            Log::error('Google Custom Search API request failed', [
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);
@@ -37,14 +38,14 @@ class GoogleCustomSearchService
         $data = $response->json();
 
         if (!is_array($data)) {
-            \Log::error('Google Custom Search API returned invalid JSON', [
+            Log::error('Google Custom Search API returned invalid JSON', [
                 'data' => $data,
             ]);
             return [];
         }
 
         if (!isset($data['items'])) {
-            \Log::error('Google Custom Search API did not return any items', [
+            Log::error('Google Custom Search API did not return any items', [
                 'data' => $data,
             ]);
             return [];
