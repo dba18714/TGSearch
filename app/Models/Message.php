@@ -6,11 +6,13 @@ use App\Models\Traits\HasVerification;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 
 class Message extends Model
 {
     use HasUlids, HasFactory;
     use HasVerification;
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -49,6 +51,15 @@ class Message extends Model
         return "404";
     }
 
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'text' => $this->text,
+            'owner_id' => $this->owner_id
+        ];
+    }
+
     /**
      * 获取添加此消息的用户
      */
@@ -68,7 +79,7 @@ class Message extends Model
     public function getRouteAttribute()
     {
         if ($this->owner) {
-            return route('owner.show', $this->owner, $this);
+            return route('owner.show', [$this->owner, $this]);
         }
         return null;
     }

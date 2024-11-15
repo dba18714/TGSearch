@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
 use App\Services\TelegramCrawlerService;
 use App\Jobs\ProcessUpdateOwnerInfoJob;
+use App\Models\Message;
 
 class Owners extends Component
 {
@@ -73,6 +74,46 @@ class Owners extends Component
     }
 
     public function render()
+    {
+        $query = Owner::query();
+
+        if (!empty($this->search)) {
+            // 搜索消息
+            $messageOwnerIds = Message::search($this->search)
+                ->get(['id', 'owner_id', 'text'])
+                ->groupBy('owner_id');
+
+            // 搜索所有者
+            $owners = Owner::search($this->search)->get();
+
+            // 合并两种搜索结果的 owner_id
+            $allOwnerIds = $messageOwnerIds->keys()->merge($owners->pluck('id'))->unique();
+
+            $query->whereIn('id', $allOwnerIds);
+        }
+
+        $owners = $query
+            ->when($this->type, function ($query) {
+                $query->where('type', $this->type);
+            })
+            ->when($this->sortField, function ($query) {
+                $query->orderBy($this->sortField, $this->sortDirection);
+            })
+            ->paginate(12);
+
+        // 如果有搜索词，添加匹配的消息到结果中
+        if (!empty($this->search) && isset($messageOwnerIds)) {
+            $owners->each(function ($owner) use ($messageOwnerIds) {
+                $owner->matched_messages = $messageOwnerIds->get($owner->id);
+            });
+        }
+
+        return view('livewire.owners', [
+            'owners' => $owners
+        ]);
+    }
+
+    public function render2()
     {
         $query = Owner::query();
 
