@@ -45,7 +45,10 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
             if ($model_class_name == 'Owner') {
                 $data = $crawler->crawl($this->model->username);
                 if (!$data) return;
-                if ($data['is_valid'] && $data['name'] === null) return; // TODO 这里应该抛出异常或写错误日志
+                if ($data['is_valid'] && $data['name'] === null) {
+                    throw new \Exception('Telegram 爬虫返回的数据有误');
+                }
+                
     
                 $new_data['verified_at'] = now();
                 $new_data['name'] = $data['name'];
@@ -61,7 +64,9 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
             } elseif ($model_class_name == 'Message') {
                 $data = $crawler->crawl($this->model->owner->username, $this->model->original_id);
                 if (!$data) return;
-                if ($data['is_valid'] && $data['message'] === null) return; // TODO 这里应该抛出异常或写错误日志
+                if ($data['is_valid'] && $data['message'] === null) {
+                    throw new \Exception('Telegram 爬虫返回的数据有误');
+                }
     
                 Log::info('Update message url: ' . $this->model->url);
                 Log::info('Update message data: ', $data);
