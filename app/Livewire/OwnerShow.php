@@ -15,9 +15,11 @@ class OwnerShow extends Component
 
     public function mount(Owner $owner, ?Message $message)
     {
-        app('debugbar')->debug('message', $message);
+        app('debugbar')->debug('message', $message->exists);
         $this->owner = $owner;
         $this->message = $message;
+        app('debugbar')->debug('message', $this->message->exists);
+
     }
 
     public function getRelatedOwners()

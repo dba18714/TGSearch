@@ -72,9 +72,9 @@
                     </div>
                 </div>
 
-                <!-- 右侧消息内容 -->
+                <!-- 右侧消息列表 -->
                 <div class="lg:w-2/3">
-                    @foreach ($messages as $message)
+                    @foreach ($messages as $item)
                         <div class="mb-3 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                             <div class="p-6">
                                 <div class="flex">
@@ -95,7 +95,7 @@
 
                                         <div class="prose dark:prose-invert max-w-none">
                                             <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                                                {!! nl2br(e($message->text)) !!}</p>
+                                                {!! nl2br(e($item->text)) !!}</p>
                                         </div>
 
                                         <div class="mt-4 flex items-center text-sm text-gray-500 dark:text-gray-400">
@@ -106,8 +106,8 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
-                                            {{ number_format($message->view_count) }} 次浏览
-                                            <a class="ml-2" href="{{ $message->url }}" target="_blank">查看原文</a>
+                                            {{ number_format($item->view_count) }} 次浏览
+                                            <a class="ml-2" href="{{ $item->url }}" target="_blank">查看原文</a>
                                         </div>
                                     </div>
                                 </div>
@@ -115,6 +115,11 @@
                         </div>
                     @endforeach
                     {{ $messages->links() }}
+                    @if ($message->exists && $owner->messages->count() > 1)
+                        <div class="text-center mt-6">
+                            <a href="{{ route('owner.show', $owner) }}" class="text-indigo-600 dark:text-indigo-500">查看所有消息</a>
+                        </div>
+                    @endif
 
                     <!-- 相关推荐 -->
                     @if ($relatedOwners->isNotEmpty())
