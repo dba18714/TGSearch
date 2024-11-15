@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Owner;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class UpdateOwners extends Command
 {
@@ -13,7 +14,7 @@ class UpdateOwners extends Command
     public function handle()
     {
         try {
-            \Log::info("owners:verify-owners command started.");
+            Log::info("owners:verify-owners command started.");
             $result = Owner::dispatchNextVerificationJob();
             if (!$result) {
                 $this->info("No more owners to verify. Exiting.");
@@ -21,7 +22,7 @@ class UpdateOwners extends Command
             }
             $this->info("Dispatched verification job for the next owner.");
         } catch (\Exception $e) {
-            \Log::error("Error in owners:verify-owners command: " . $e->getMessage());
+            Log::error("Error in owners:verify-owners command: " . $e->getMessage());
         }
     }
 }
