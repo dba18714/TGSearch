@@ -19,7 +19,12 @@ return new class extends Migration
             // $table->string('url')->unique();
             $table->string('type')->default('unknown')->comment('bot or channel or group or person');
             $table->string('username')->unique();
-            $table->integer('member_count')->default(0);
+            $table->integer('member_count')->nullable();
+            $table->integer('photo_count')->nullable();
+            $table->integer('video_count')->nullable();
+            $table->integer('file_count')->nullable();
+            $table->integer('link_count')->nullable();
+
             // $table->integer('view_count')->default(0);
             // $table->boolean('is_by_user')->default(false)->comment('true: 由用户添加 or false: 由爬虫添加');
             $table->string('source')->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');

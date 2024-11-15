@@ -18,7 +18,7 @@ class TelegramCrawlerService
         $this->username = $username;
         $this->message_id = $message_id;
 
-        $url = "https://t.me/{$username}";
+        $url = "https://t.me/s/{$username}";
         if ($message_id) $url = "https://t.me/s/{$username}/{$message_id}";
         $this->url = $url;
 
@@ -38,20 +38,30 @@ class TelegramCrawlerService
             $introduction = $this->extractDescription($xpath);
             $message = $this->extractMessageText($xpath);
             $view_count = $this->extractViewCount($xpath);
-            $memberCount = $this->extractMemberCount($xpath);
             $type = $this->determineType($xpath);
+
+            $member_count = $this->extractMemberCount($xpath);
+            $counters = $this->extractCounters($xpath);
+            if($member_count === null) $member_count = $counters['subscribers'];
+
             $isValid = $this->checkValidity($xpath);
 
-            return [
+            $data = [
                 'username' => $username,
                 'name' => $name,
                 'introduction' => $introduction,
                 'message' => $message,
                 'view_count' => $view_count,
-                'member_count' => $memberCount,
+                'member_count' => $member_count,
+                'photo_count' => $counters['photos'],
+                'video_count' => $counters['videos'],
+                'file_count' => $counters['files'],
+                'link_count' => $counters['links'],
                 'type' => $type,
                 'is_valid' => $isValid,
             ];
+            Log::debug("处理 URL:{$url} 成功 data:", $data);
+            return $data;
         } catch (\Exception $e) {
             Log::error("处理 URL:{$url} 时发生错误: " . $e->getMessage());
             return null;
@@ -125,6 +135,49 @@ class TelegramCrawlerService
         return 'None';
     }
 
+    private function extractCounters($xpath)
+    {
+        $counters = [
+            'subscribers' => null,
+            'photos' => null,
+            'videos' => null,
+            'files' => null,
+            'links' => null
+        ];
+
+        $counterNodes = $xpath->query('//div[contains(@class, "tgme_channel_info_counter")]');
+
+        foreach ($counterNodes as $node) {
+            $valueNode = $xpath->query('.//span[@class="counter_value"]', $node)->item(0);
+            $typeNode = $xpath->query('.//span[@class="counter_type"]', $node)->item(0);
+
+            if ($valueNode && $typeNode) {
+                $value = (int) trim($valueNode->textContent);
+                $type = trim($typeNode->textContent);
+
+                switch ($type) {
+                    case 'subscribers':
+                        $counters['subscribers'] = $value;
+                        break;
+                    case 'photos':
+                        $counters['photos'] = $value;
+                        break;
+                    case 'videos':
+                        $counters['videos'] = $value;
+                        break;
+                    case 'files':
+                        $counters['files'] = $value;
+                        break;
+                    case 'links':
+                        $counters['links'] = $value;
+                        break;
+                }
+            }
+        }
+
+        return $counters;
+    }
+
     private function extractMemberCount($xpath)
     {
         $node = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
@@ -137,7 +190,7 @@ class TelegramCrawlerService
                 return (int) preg_replace('/\D/', '', $matches[1]);
             }
         }
-        return 0;
+        return null;
     }
 
     private function determineType($xpath)

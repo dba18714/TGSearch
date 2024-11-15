@@ -117,6 +117,19 @@ class OwnerResource extends Resource
                 Tables\Columns\TextColumn::make('member_count')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('photo_count')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('video_count')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('file_count')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('link_count')
+                    ->numeric()
+                    ->sortable(),
+
                 // Tables\Columns\TextColumn::make('view_count')
                 //     ->numeric()
                 //     ->sortable(),

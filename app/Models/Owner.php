@@ -30,6 +30,10 @@ class Owner extends Model
         'type',
         'username',
         'member_count',
+        'photo_count',
+        'video_count',
+        'file_count',
+        'link_count',
         // 'view_count',
         'source',
         'user_id',
@@ -64,7 +68,7 @@ class Owner extends Model
 
     public function getUrlAttribute(): ?string
     {
-        return "https://t.me/{$this->username}";
+        return "https://t.me/s/{$this->username}";
     }
 
     /**

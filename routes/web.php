@@ -21,6 +21,10 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function () {
+    $owner = Owner::find('01jcq1y39hh0rbc7nxykrhayyj');
+    dump($owner);
+    dump($owner->photo_count);
+    return $owner->photo_count;
     $message = Message::firstOrCreate(
         ['owner_id' => '01jcnh2hfyzcqt380f6apz3b3k', 'original_id' => '874791'],
         [
