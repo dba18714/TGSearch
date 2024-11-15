@@ -82,8 +82,7 @@ class MessageResource extends Resource
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column): string {
                         return $column->getState();
-                    })
-                    ->searchable(),
+                    }),
                 Tables\Columns\IconColumn::make('is_valid')
                     ->boolean()
                     ->sortable(),

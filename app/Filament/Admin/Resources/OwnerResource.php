@@ -104,8 +104,7 @@ class OwnerResource extends Resource
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column): string {
                         return $column->getState();
-                    })
-                    ->searchable(),
+                    }),
                 Tables\Columns\TextColumn::make('introduction')
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column) {

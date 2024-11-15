@@ -12,6 +12,7 @@ class TelegramCrawlerService
     protected $url;
     protected $username;
     protected $message_id;
+    protected $type;
 
     public function crawl(string $username, ?int $message_id = null)
     {
@@ -36,9 +37,9 @@ class TelegramCrawlerService
             $username = $this->extractUsername();
             $name = $this->extractName($xpath);
             $introduction = $this->extractDescription($xpath);
+            $this->type = $type = $this->determineType($xpath);
             $message = $this->extractMessageText($xpath);
             $view_count = $this->extractViewCount($xpath);
-            $type = $this->determineType($xpath);
 
             $member_count = $this->extractMemberCount($xpath);
             $counters = $this->extractCounters($xpath);
@@ -103,13 +104,19 @@ class TelegramCrawlerService
             $text = strip_tags($text); // 去除HTML标签
             return trim($text);
         }
+
+        if ($this->message_id && $this->type == 'group') {
+            $node = $xpath->query('//meta[@property="og:description"]')->item(0);
+            if ($node) return $node->getAttribute('content');
+        }
+
         return null;
     }
 
     private function extractName($xpath)
     {
-        $ogTitleNode = $xpath->query('//meta[@property="og:title"]')->item(0);
-        return $ogTitleNode ? $ogTitleNode->getAttribute('content') : 'None';
+        $node = $xpath->query('//meta[@property="og:title"]')->item(0);
+        return $node ? $node->getAttribute('content') : 'None';
     }
 
     private function extractDescription($xpath)
@@ -145,14 +152,14 @@ class TelegramCrawlerService
             'links' => null
         ];
 
-        $counterNodes = $xpath->query('//div[contains(@class, "tgme_channel_info_counter")]');
+        $nodes = $xpath->query('//div[contains(@class, "tgme_channel_info_counter")]');
 
-        foreach ($counterNodes as $node) {
+        foreach ($nodes as $node) {
             $valueNode = $xpath->query('.//span[@class="counter_value"]', $node)->item(0);
             $typeNode = $xpath->query('.//span[@class="counter_type"]', $node)->item(0);
 
             if ($valueNode && $typeNode) {
-                $value = (int) trim($valueNode->textContent);
+                $value = humanNumberToInteger($valueNode->textContent);
                 $type = trim($typeNode->textContent);
 
                 switch ($type) {
@@ -195,9 +202,12 @@ class TelegramCrawlerService
 
     private function determineType($xpath)
     {
-        $node = $xpath->query('//div[contains(@class, "tgme_widget_message_text js-message_text")]')->item(0);
+        $node = $xpath->query('//div[contains(@class, "tgme_page_widget_action")]//a[contains(@class, "tgme_action_button_new shine")]')->item(0);
         if ($node) {
-            return 'message';
+            $text = $node->textContent;
+            if (strpos($text, 'Group') !== false) {
+                return 'group';
+            }
         }
 
         $node = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);

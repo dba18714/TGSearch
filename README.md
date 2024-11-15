@@ -17,5 +17,7 @@ php artisan horizon:terminate
 
 使用 Horizon 时，应使用 horizon:clear 命令从队列中清除作业，而不是使用 queue:clear 命令。
 
+sail artisan horizon:clear
+
 
 sail php artisan scout:flush "App\Models\Owner" && sail artisan migrate:fresh --seed

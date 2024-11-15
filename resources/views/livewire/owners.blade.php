@@ -77,11 +77,11 @@
                                     class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'person' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     个人
                                 </button>
-                                <button
+                                {{-- <button
                                     wire:click="$set('type', 'message')"
                                     class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'message' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     消息
-                                </button>
+                                </button> --}}
                             </div>
                         </div>
 

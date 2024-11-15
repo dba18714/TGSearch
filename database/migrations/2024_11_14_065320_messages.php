@@ -16,10 +16,10 @@ return new class extends Migration
             $table->ulid('owner_id')->index();
             $table->integer('original_id')->comment('Telegram 的原始消息id');
             $table->text('text')->nullable();
-            $table->integer('view_count')->default(0);
+            $table->integer('view_count')->nullable();
             $table->string('source')->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
             $table->ulid('user_id')->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
-            $table->boolean('is_valid')->default(false)->nullable()->comment('是否有效');
+            $table->boolean('is_valid')->default(false)->comment('是否有效');
             $table->timestamp('verified_at')->nullable();
             $table->timestamp('verified_start_at')->nullable()->comment('验证开始时间，不管是否验证成功');
             $table->timestamps();

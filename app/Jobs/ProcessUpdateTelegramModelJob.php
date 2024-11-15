@@ -21,7 +21,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
     /**
      * 任务最大尝试次数
      */
-    public $tries = 3;
+    public $tries = 2;
 
     /**
      * 任务可以执行的最大秒数
@@ -48,16 +48,26 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                 if ($data['is_valid'] && $data['name'] === null) {
                     throw new \Exception('Telegram 爬虫返回的数据有误');
                 }
-                
+
+                if ($data['is_valid']) {
+                    $new_data['name'] = $data['name'];
+                    $new_data['introduction'] = $data['introduction'];
+                    $new_data['member_count'] = $data['member_count'];
+                    if ($data['photo_count'] !== null) {
+                        $new_data['photo_count'] = $data['photo_count'];
+                    }
+                    if ($data['video_count'] !== null) {
+                        $new_data['video_count'] = $data['video_count'];
+                    }
+                    if ($data['file_count'] !== null) {
+                        $new_data['file_count'] = $data['file_count'];
+                    }
+                    if ($data['link_count'] !== null) {
+                        $new_data['link_count'] = $data['link_count'];
+                    }
+                    $new_data['type'] = $data['type'];
+                }
                 $new_data['verified_at'] = now();
-                $new_data['name'] = $data['name'];
-                $new_data['introduction'] = $data['introduction'];
-                $new_data['member_count'] = $data['member_count'];
-                if($data['photo_count'] !== null) $new_data['photo_count'] = $data['photo_count'];
-                if($data['video_count'] !== null) $new_data['video_count'] = $data['video_count'];
-                if($data['file_count'] !== null) $new_data['file_count'] = $data['file_count'];
-                if($data['link_count'] !== null) $new_data['link_count'] = $data['link_count'];
-                $new_data['type'] = $data['type'];
                 $new_data['is_valid'] = $data['is_valid'];
                 $this->model->update($new_data);
             } elseif ($model_class_name == 'Message') {
@@ -66,16 +76,17 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                 if ($data['is_valid'] && $data['message'] === null) {
                     throw new \Exception('Telegram 爬虫返回的数据有误');
                 }
-    
+
                 Log::info('Update message url: ' . $this->model->url);
                 Log::info('Update message data: ', $data);
 
+                if ($data['is_valid']) {
+                    $new_data['text'] = $data['message'];
+                    $new_data['view_count'] = $data['view_count'];
+                }
                 $new_data['verified_at'] = now();
-                $new_data['text'] = $data['message'];
-                $new_data['view_count'] = $data['view_count'];
                 $new_data['is_valid'] = $data['is_valid'];
                 $this->model->update($new_data);
-
             } else {
                 throw new \Exception('Unknown model class name: ' . $model_class_name);
             }
