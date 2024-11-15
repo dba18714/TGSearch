@@ -49,7 +49,6 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                     throw new \Exception('Telegram 爬虫返回的数据有误');
                 }
                 
-    
                 $new_data['verified_at'] = now();
                 $new_data['name'] = $data['name'];
                 $new_data['introduction'] = $data['introduction'];
