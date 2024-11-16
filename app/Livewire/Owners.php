@@ -103,9 +103,9 @@ class Owners extends Component
 
         // 如果有搜索词，添加匹配的消息到结果中
         if (!empty($this->search) && isset($messageOwnerIds)) {
-            $owners->each(function ($owner) use ($messageOwnerIds) {
+            foreach ($owners as $owner) {
                 $owner->matched_messages = $messageOwnerIds->get($owner->id);
-            });
+            }
         }
 
         return view('livewire.owners', [

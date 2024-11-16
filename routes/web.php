@@ -21,6 +21,11 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function () {
+    if (preg_match('/^@\w+$/', '@Nonnie25682')) {
+        return 'person';
+    }
+
+    return 'not person';
     $owner = Owner::find('01jcq1y39hh0rbc7nxykrhayyj');
     dump($owner);
     dump($owner->photo_count);

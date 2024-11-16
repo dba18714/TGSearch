@@ -202,6 +202,7 @@ class TelegramCrawlerService
 
     private function determineType($xpath)
     {
+        Log::debug('determineType start');
         $node = $xpath->query('//div[contains(@class, "tgme_page_widget_action")]//a[contains(@class, "tgme_action_button_new shine")]')->item(0);
         if ($node) {
             $text = $node->textContent;
@@ -213,14 +214,23 @@ class TelegramCrawlerService
         $node = $xpath->query('//div[contains(@class, "tgme_page_extra")]')->item(0);
         if ($node) {
             $text = $node->textContent;
+            Log::debug("text: -{$text}-");
             if (strpos($text, 'members') !== false) {
                 return 'group';
             }
             if (strpos($text, 'subscribers') !== false) {
                 return 'channel';
             }
-            if (preg_match('/^@\w+$/', $text)) {
+            if (preg_match('/^@\w+$/', trim($text))) {
                 return 'person';
+            }
+        }
+
+        $node = $xpath->query('//div[contains(@class, "tgme_channel_info_counters")]')->item(0);
+        if ($node) {
+            $text = $node->textContent;
+            if (strpos($text, 'subscribers') !== false) {
+                return 'channel';
             }
         }
 
