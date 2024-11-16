@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('introduction')->nullable();
             // $table->text('message')->nullable();
             // $table->string('url')->unique();
-            $table->string('type')->nullable()->comment('bot or channel or group or person');
+            $table->string('type')->index()->nullable()->comment('bot or channel or group or person');
             $table->string('username')->unique();
             $table->integer('member_count')->nullable();
             $table->integer('photo_count')->nullable();
@@ -32,9 +32,11 @@ return new class extends Migration
             $table->ulid('user_id')->index()->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
             // TODO is_valid 重命名为 is_active
             $table->boolean('is_valid')->default(false)->comment('是否有效');
-            $table->timestamp('verified_at')->nullable();
-            $table->timestamp('verified_start_at')->nullable()->comment('验证开始时间，不管是否验证成功');
+            $table->timestamp('verified_at')->index()->nullable();
+            $table->timestamp('verified_start_at')->index()->nullable()->comment('验证开始时间，不管是否验证成功');
             $table->timestamps();
+
+            $table->index(['type', 'is_valid']);
         });
     }
 

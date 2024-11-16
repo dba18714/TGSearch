@@ -21,11 +21,12 @@ return new class extends Migration
             $table->string('source_str')->nullable()->comment('未经过解析的原始 url or username');
             $table->ulid('user_id')->index()->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
             $table->boolean('is_valid')->default(false)->comment('是否有效');
-            $table->timestamp('verified_at')->nullable();
-            $table->timestamp('verified_start_at')->nullable()->comment('验证开始时间，不管是否验证成功');
+            $table->timestamp('verified_at')->index()->nullable();
+            $table->timestamp('verified_start_at')->index()->nullable()->comment('验证开始时间，不管是否验证成功');
             $table->timestamps();
 
             $table->unique(['owner_id', 'original_id']);
+            $table->index(['owner_id', 'is_valid']);
         });
     }
 
