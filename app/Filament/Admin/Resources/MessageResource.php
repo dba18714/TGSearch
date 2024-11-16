@@ -11,6 +11,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Notifications\Notification;
+use App\Models\Owner;
+use Filament\Support\Enums\IconPosition;
 
 class MessageResource extends Resource
 {
@@ -25,7 +27,11 @@ class MessageResource extends Resource
                 Forms\Components\TextInput::make('id')
                     ->disabled()
                     ->dehydrated(false),
-                Forms\Components\TextInput::make('owner_id')
+                Forms\Components\Select::make('owner_id')
+                    ->label('所有者')
+                    ->relationship('owner', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required(),
                 Forms\Components\TextInput::make('original_id')
                     ->dehydrated(fn($state) => filled($state)),
@@ -74,10 +80,31 @@ class MessageResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('owner_id')
-                    ->limit(4)
+                Tables\Columns\TextColumn::make('owner.name')
+                    ->limit(12)
+                    ->label('所有者')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->icon('heroicon-m-pencil-square')
+                    ->iconPosition(IconPosition::After)
+                    ->action(
+                        Tables\Actions\Action::make('viewOwner')
+                            ->label(fn(Message $record) => "所有者详情 #{$record->owner_id}")
+                            ->slideOver()
+                            ->modalWidth('lg')
+                            ->form(fn(Form $form) => OwnerResource::form($form)->getComponents())
+                            ->fillForm(fn(Message $record) => $record->owner->toArray())
+                            ->action(function (array $data, Message $record) {
+                                $record->owner->update($data);
+                                Notification::make()
+                                    ->title('所有者信息已更新')
+                                    ->success()
+                                    ->send();
+                            })
+                    )
+                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                        return $column->getState();
+                    }),
                 Tables\Columns\TextColumn::make('original_id')
                     ->searchable()
                     ->sortable(),
@@ -126,7 +153,8 @@ class MessageResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

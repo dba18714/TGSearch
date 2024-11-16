@@ -22,7 +22,7 @@ class MessageSeeder extends Seeder
         foreach ($owners as $owner) {
             // 创建爬虫添加的消息
             Message::factory()
-                ->count(5)
+                ->count(1)
                 ->crawler()
                 ->create([
                     'owner_id' => $owner->id
@@ -30,7 +30,7 @@ class MessageSeeder extends Seeder
 
             // 创建手动添加的消息
             Message::factory()
-                ->count(3)
+                ->count(1)
                 ->manual()
                 ->create([
                     'owner_id' => $owner->id,
@@ -39,7 +39,7 @@ class MessageSeeder extends Seeder
 
             // 创建一些已验证的消息
             Message::factory()
-                ->count(2)
+                ->count(1)
                 ->verified()
                 ->create([
                     'owner_id' => $owner->id

@@ -20,4 +20,4 @@ php artisan horizon:terminate
 sail artisan horizon:clear
 
 
-sail php artisan scout:flush "App\Models\Owner" && sail artisan migrate:fresh --seed
+sail php artisan scout:flush "App\Models\Owner" && sail php artisan scout:flush "App\Models\Message" && sail artisan migrate:fresh --seed

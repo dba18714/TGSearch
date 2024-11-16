@@ -88,12 +88,18 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
 
             if ($username) {
                 $owner = Owner::firstOrCreate(
-                    ['username' => $username]
+                    ['username' => $username],
+                    [
+                        'source_str' => $item['link'],
+                    ]
                 );
                 $owner->dispatchUpdateJob();
                 if ($message_id) {
                     $message = $owner->messages()->firstOrCreate(
-                        ['original_id' => $message_id]
+                        ['original_id' => $message_id],
+                        [
+                            'source_str' => $item['link'],
+                        ]
                     );
                     $message->dispatchUpdateJob();
                 }

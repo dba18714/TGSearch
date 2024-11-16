@@ -37,6 +37,7 @@ class OwnerCreate extends Component
                     ['username' => $username],
                     [
                         'source' => 'manual',
+                        'source_str' => $line,
                     ]
                 );
                 if (isset($message_id)) {
@@ -44,6 +45,7 @@ class OwnerCreate extends Component
                         ['owner_id' => $owner->id, 'original_id' => $message_id],
                         [
                             'source' => 'manual',
+                            'source_str' => $line,
                         ]
                     );
                 }    

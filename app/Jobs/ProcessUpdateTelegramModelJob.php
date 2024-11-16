@@ -21,7 +21,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
     /**
      * 任务最大尝试次数
      */
-    public $tries = 2;
+    public $tries = 1;
 
     /**
      * 任务可以执行的最大秒数
@@ -46,7 +46,9 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                 $data = $crawler->crawl($this->model->username);
                 if (!$data) return;
                 if ($data['is_valid'] && $data['name'] === null) {
-                    throw new \Exception('Telegram 爬虫返回的数据有误');
+                    $model_json = $this->model->toJson(JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    $data_json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    throw new \Exception("Telegram 爬虫返回的数据有误: model: {$model_json} data: {$data_json}");
                 }
 
                 if ($data['is_valid']) {
@@ -74,7 +76,9 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                 $data = $crawler->crawl($this->model->owner->username, $this->model->original_id);
                 if (!$data) return;
                 if ($data['is_valid'] && $data['message'] === null) {
-                    throw new \Exception('Telegram 爬虫返回的数据有误');
+                    $model_json = $this->model->toJson(JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    $data_json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    throw new \Exception("Telegram 爬虫返回的数据有误: model: {$model_json} data: {$data_json}");
                 }
 
                 Log::info('Update message url: ' . $this->model->url);

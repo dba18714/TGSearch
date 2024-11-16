@@ -18,6 +18,29 @@ if (!function_exists('extract_telegram_username_by_url')) {
     }
 }
 
+/* 
+Example usage:
+$urls = [
+    'https://t.me/username/123456',
+    'https://t.me/username?before=123456',
+    'https://t.me/username/something?before=123456&other=params'
+];
+foreach ($urls as $url) {
+    $result = extract_telegram_message_id_by_url($url);
+    echo "URL: $url\n";
+    echo "Result: $result\n\n";
+}
+
+Output:
+URL: https://t.me/username/123456
+Result: 123456
+
+URL: https://t.me/username?before=123456
+Result: 123455
+
+URL: https://t.me/username/something?before=123456&other=params
+Result: 123455
+*/
 if (!function_exists('extract_telegram_message_id_by_url')) {
     function extract_telegram_message_id_by_url($url)
     {
@@ -25,12 +48,12 @@ if (!function_exists('extract_telegram_message_id_by_url')) {
         if (preg_match('#^https?://(?:t|telegram)\.me/[^/]+/(\d+)#i', $url, $matches)) {
             return (int)$matches[1];
         }
-
-        // 匹配 URL 中 before 参数的消息 ID
+        
+        // 匹配 URL 中 before 参数的消息 ID，并返回 ID-1
         if (preg_match('#[?&]before=(\d+)#i', $url, $matches)) {
-            return (int)$matches[1];
+            return (int)$matches[1] - 1;
         }
-
+        
         return null;
     }
 }

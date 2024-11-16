@@ -17,7 +17,8 @@ return new class extends Migration
             $table->integer('original_id')->comment('Telegram 的原始消息id');
             $table->text('text')->nullable();
             $table->integer('view_count')->nullable();
-            $table->string('source')->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
+            $table->string('source')->index()->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
+            $table->string('source_str')->nullable()->comment('未经过解析的原始 url or username');
             $table->ulid('user_id')->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
             $table->boolean('is_valid')->default(false)->comment('是否有效');
             $table->timestamp('verified_at')->nullable();

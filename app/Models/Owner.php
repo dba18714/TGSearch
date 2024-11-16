@@ -36,6 +36,7 @@ class Owner extends Model
         'link_count',
         // 'view_count',
         'source',
+        'source_str',
         'user_id',
         'is_valid',
         'verified_at',
