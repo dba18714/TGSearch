@@ -141,9 +141,9 @@ class Owner extends Model
         return $this->type === 'person';
     }
 
-    public function isMessage(): bool
+    public function isUnknown(): bool
     {
-        return $this->type === 'message';
+        return $this->type === 'unknown';
     }
 
     /**
