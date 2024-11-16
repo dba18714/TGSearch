@@ -22,7 +22,7 @@
     {{ $owner->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
     {{ $owner->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
     {{ $owner->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
-    {{ $owner->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}">
+     ">
                                     {{ $owner->type_name }}
                                 </span>
                             </div>
@@ -117,7 +117,8 @@
                     {{ $messages->links() }}
                     @if ($message->exists && $owner->messages->count() > 1)
                         <div class="text-center mt-6">
-                            <a href="{{ route('owner.show', $owner) }}" class="text-indigo-600 dark:text-indigo-500">查看所有消息</a>
+                            <a href="{{ route('owner.show', $owner) }}"
+                                class="text-indigo-600 dark:text-indigo-500">查看所有消息</a>
                         </div>
                     @endif
 
@@ -151,7 +152,7 @@
     {{ $relatedOwner->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
     {{ $relatedOwner->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
     {{ $relatedOwner->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
-    {{ $relatedOwner->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}">
+    ">
                                                     {{ $relatedOwner->type_name }}
                                                 </span>
                                             </div>

@@ -10,6 +10,7 @@ use App\Services\GoogleCustomSearchService;
 use App\Services\TelegramCrawlerService;
 use App\Jobs\ProcessUpdateOwnerInfoJob;
 use App\Models\Message;
+use App\Models\Search;
 
 class Owners extends Component
 {
@@ -78,6 +79,8 @@ class Owners extends Component
         $query = Owner::query();
 
         if (!empty($this->search)) {
+            Search::recordSearch($this->search);
+
             // 搜索消息
             $messageOwnerIds = Message::search($this->search)
                 ->get(['id', 'owner_id', 'text'])
