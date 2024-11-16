@@ -16,9 +16,7 @@ return new class extends Migration
             $table->string('keyword')->unique();
             $table->integer('searched_count')->default(0)->index();
             $table->json('ip_history')->nullable();
-            $table->timestamp('last_searched_at')->index();
-
-
+            $table->timestamp('last_searched_at')->index()->nullable();
             $table->timestamps();
         });
     }
