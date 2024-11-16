@@ -15,9 +15,9 @@ class SearchResource extends Resource
     protected static ?string $model = Search::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-magnifying-glass';
-    
+
     protected static ?string $navigationLabel = '搜索记录';
-    
+
     protected static ?string $modelLabel = '搜索记录';
 
     protected static ?int $navigationSort = 3;
@@ -30,12 +30,15 @@ class SearchResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->label('搜索关键词'),
-                    
+
                 Forms\Components\TextInput::make('searched_count')
                     ->numeric()
                     ->default(0)
                     ->label('搜索次数'),
-                    
+
+                Forms\Components\KeyValue::make('ip_history')
+                    ->label('IP历史'),
+
                 Forms\Components\DateTimePicker::make('last_searched_at')
                     ->timezone('Asia/Shanghai')
                     ->label('最后搜索时间'),
@@ -44,23 +47,40 @@ class SearchResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $ipShow = function (Search $record) {
+            return empty($record->ip_history)
+                ? '无记录'
+                : implode(' / ', array_reverse($record->ip_history));
+        };
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('keyword')
                     ->searchable()
                     ->sortable()
-                    ->label('搜索关键词'),
-                    
+                    ->label('搜索关键词')
+                    ->url(fn(Search $record): string => "/?search=" . urlencode($record->keyword))
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->iconPosition('after'),
+
                 Tables\Columns\TextColumn::make('searched_count')
                     ->sortable()
                     ->label('搜索次数'),
-                    
+
+                Tables\Columns\TextColumn::make('ip_history')
+                    ->label('IP历史')
+                    ->formatStateUsing($ipShow)
+                    ->tooltip($ipShow)
+                    ->markdown()
+                    ->limit(20),
+
                 Tables\Columns\TextColumn::make('last_searched_at')
                     ->dateTime('Y-m-d H:i:s')
                     ->timezone('Asia/Shanghai')
                     ->sortable()
                     ->label('最后搜索时间'),
-                    
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('Y-m-d H:i:s')
                     ->timezone('Asia/Shanghai')
@@ -70,11 +90,11 @@ class SearchResource extends Resource
             ->defaultSort('searched_count', 'desc')
             ->filters([
                 Tables\Filters\Filter::make('popular')
-                    ->query(fn ($query) => $query->where('searched_count', '>', 10))
+                    ->query(fn($query) => $query->where('searched_count', '>', 10))
                     ->label('热门搜索'),
-                    
+
                 Tables\Filters\Filter::make('recent')
-                    ->query(fn ($query) => $query->where('last_searched_at', '>=', now()->subDays(7)))
+                    ->query(fn($query) => $query->where('last_searched_at', '>=', now()->subDays(7)))
                     ->label('最近7天'),
             ])
             ->actions([
