@@ -143,7 +143,7 @@ class Owner extends Model
 
     public function isUnknown(): bool
     {
-        return $this->type === 'unknown';
+        return $this->type === null;
     }
 
     /**

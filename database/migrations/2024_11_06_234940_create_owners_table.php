@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('introduction')->nullable();
             // $table->text('message')->nullable();
             // $table->string('url')->unique();
-            $table->string('type')->default('unknown')->comment('bot or channel or group or person');
+            $table->string('type')->nullable()->comment('bot or channel or group or person');
             $table->string('username')->unique();
             $table->integer('member_count')->nullable();
             $table->integer('photo_count')->nullable();

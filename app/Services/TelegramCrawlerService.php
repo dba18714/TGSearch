@@ -137,9 +137,7 @@ class TelegramCrawlerService
             return trim($text);
         }
 
-        // TODO 当 url 类似于 https://t.me/dillfrash/17394 时，需要通过 https://t.me/dillfrash 来获取 description。目前可以在任务调度里通过用户名来获取 description，但这样会导致一个问题：如果频道的介绍本来就是空的会到导致重复获取 description。
-
-        return 'None';
+        return null;
     }
 
     private function extractCounters($xpath)
@@ -234,7 +232,7 @@ class TelegramCrawlerService
             }
         }
 
-        return 'unknown';
+        return null;
     }
 
     private function checkValidity($xpath)
