@@ -78,11 +78,6 @@ class Owners extends Component
         $this->resetPage();
     }
 
-    public function updatedType()
-    {
-        $this->resetPage();
-    }
-
     public function sortBy($field)
     {
         if ($field === '') {
