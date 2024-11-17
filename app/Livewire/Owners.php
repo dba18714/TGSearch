@@ -7,8 +7,7 @@ use App\Models\Owner;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
-use App\Services\TelegramCrawlerService;
-use App\Jobs\ProcessUpdateOwnerInfoJob;
+use App\Services\GoogleSuggestService;
 use App\Models\Message;
 use App\Models\Search;
 
@@ -17,12 +16,15 @@ class Owners extends Component
     use WithPagination;
 
     protected GoogleCustomSearchService $googleSearchService;
+    protected $googleSuggestService;
 
     public $search = '';
+    public $searchInput = '';
     public $type = '';
     public $sortField = '';
     public $sortDirection = '';
-
+    public $suggestions = [];
+    public $showSuggestions = false;
     protected $queryString = [
         'search' => ['except' => ''],
         'type' => ['except' => ''],
@@ -31,14 +33,48 @@ class Owners extends Component
     ];
 
     public function boot(
-        GoogleCustomSearchService $googleSearchService
+        GoogleCustomSearchService $googleSearchService,
+        GoogleSuggestService $googleSuggestService
     ) {
         $this->googleSearchService = $googleSearchService;
+        $this->googleSuggestService = $googleSuggestService;
+    }
+
+    public function mount()
+    {
+        $this->searchInput = $this->search;
+    }
+
+    public function updatedSearchInput()
+    {
+        if ($this->searchInput === '') {
+            $this->suggestions = [];
+            $this->showSuggestions = false;
+            return;
+        }
+
+        $this->suggestions = $this->googleSuggestService->getSuggestions($this->searchInput);
+        app('debugbar')->debug('$this->suggestions', $this->suggestions);
+        app('debugbar')->debug('$this->searchInput', $this->searchInput);
+        $this->showSuggestions = !empty($this->suggestions);
+    }
+
+    public function selectSuggestion($suggestion)
+    {
+        $this->searchInput = $suggestion;
+        $this->showSuggestions = false;
+        $this->doSearch();
     }
 
     public function resetFilters()
     {
-        $this->reset(['search', 'type', 'sortField', 'sortDirection']);
+        $this->reset([
+            'search',
+            'searchInput',
+            'type',
+            'sortField',
+            'sortDirection'
+        ]);
         $this->resetPage();
     }
 
@@ -65,12 +101,13 @@ class Owners extends Component
 
     public function doSearch()
     {
-        if (empty($this->search)) {
+        if (empty($this->searchInput)) {
             return;
         }
 
+        $this->search = $this->searchInput;
         ProcessGoogleCustomSearchJob::dispatch($this->search);
-
+        $this->showSuggestions = false;
         $this->resetPage();
     }
 
@@ -110,30 +147,6 @@ class Owners extends Component
                 $owner->matched_messages = $messageOwnerIds->get($owner->id);
             }
         }
-
-        return view('livewire.owners', [
-            'owners' => $owners
-        ]);
-    }
-
-    public function render2()
-    {
-        $query = Owner::query();
-
-        if (!empty($this->search)) {
-            $query = Owner::search($this->search);
-        }
-
-        $owners = $query
-            ->when($this->type, function ($query) {
-                $query->where('type', $this->type);
-            })
-            ->when($this->sortField, function ($query) {
-                $query->orderBy($this->sortField, $this->sortDirection);
-            })
-            ->paginate(12);
-        app('debugbar')->debug('$this->sortField: ' . $this->sortField);
-        app('debugbar')->debug($owners);
 
         return view('livewire.owners', [
             'owners' => $owners
