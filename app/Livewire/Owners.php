@@ -18,7 +18,7 @@ class Owners extends Component
     protected GoogleCustomSearchService $googleSearchService;
     protected $googleSuggestService;
 
-    public $search = '';
+    public $q = '';
     public $searchInput = '';
     public $type = '';
     public $sortField = '';
@@ -26,7 +26,7 @@ class Owners extends Component
     public $suggestions = [];
     public $showSuggestions = false;
     protected $queryString = [
-        'search' => ['except' => ''],
+        'q' => ['except' => ''],
         'type' => ['except' => ''],
         'sortField' => ['except' => ''],
         'sortDirection' => ['except' => ''],
@@ -42,7 +42,7 @@ class Owners extends Component
 
     public function mount()
     {
-        $this->searchInput = $this->search;
+        $this->searchInput = $this->q;
     }
 
     public function updatedSearchInput()
@@ -69,7 +69,7 @@ class Owners extends Component
     public function resetFilters()
     {
         $this->reset([
-            'search',
+            'q',
             'searchInput',
             'type',
             'sortField',
@@ -100,8 +100,8 @@ class Owners extends Component
         //     return;
         // }
 
-        $this->search = $this->searchInput;
-        ProcessGoogleCustomSearchJob::dispatch($this->search);
+        $this->q = $this->searchInput;
+        ProcessGoogleCustomSearchJob::dispatch($this->q);
         $this->showSuggestions = false;
         $this->resetPage();
     }
@@ -110,11 +110,11 @@ class Owners extends Component
     {
         $query = Owner::query();
 
-        if (!empty($this->search)) {
-            Search::recordSearch($this->search);
+        if (!empty($this->q)) {
+            Search::recordSearch($this->q);
 
             // 搜索消息
-            $messageOwnerIds = Message::search($this->search)
+            $messageOwnerIds = Message::search($this->q)
                 ->get(['id', 'owner_id', 'text'])
                 ->groupBy('owner_id')
                 ->map(function ($messages) {
@@ -122,7 +122,7 @@ class Owners extends Component
                 });
 
             // 搜索所有者
-            $owners = Owner::search($this->search)->get();
+            $owners = Owner::search($this->q)->get();
 
             // 合并两种搜索结果的 owner_id
             $allOwnerIds = $messageOwnerIds->keys()->merge($owners->pluck('id'))->unique();
@@ -140,7 +140,7 @@ class Owners extends Component
             ->paginate(12);
 
         // 如果有搜索词，添加匹配的消息到结果中
-        if (!empty($this->search) && isset($messageOwnerIds)) {
+        if (!empty($this->q) && isset($messageOwnerIds)) {
             foreach ($owners as $owner) {
                 $owner->matched_messages = $messageOwnerIds->get($owner->id);
             }

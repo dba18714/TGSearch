@@ -32,8 +32,13 @@ class StatsOverviewWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-chat-bubble-left-right')
                 ->color('info'),
 
-            Stat::make('总链接数', Owner::count())
-                ->description('所有提交的链接总数')
+            Stat::make('总帐号数', Owner::count())
+                ->description('所有提交的帐号总数')
+                ->descriptionIcon('heroicon-m-link')
+                ->color('success'),
+
+            Stat::make('总消息数', Message::count())
+                ->description('所有提交的消息总数')
                 ->descriptionIcon('heroicon-m-link')
                 ->color('success'),
 

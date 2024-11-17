@@ -131,7 +131,7 @@
                         <span class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
                               x-data="{ 
                                   current: 0,
-                                  target: {{ $totalOwners }},
+                                  target: {{ $totalRecords }},
                                   init() {
                                       let start = 0;
                                       const duration = 2000;

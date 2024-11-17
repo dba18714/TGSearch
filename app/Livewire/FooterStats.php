@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 class FooterStats extends Component
 {
-    public $totalOwners;
+    public $totalRecords;
     public $totalChannels;
     public $totalGroups;
     public $totalBots;
@@ -25,10 +25,10 @@ class FooterStats extends Component
     {
         $cacheDuration = config('app.debug') ? now()->addSeconds(0) : now()->addHours(1);
 
-        $this->totalOwners = Cache::remember('total_owners', $cacheDuration, function () {
-            return Owner::count();
+        $this->totalRecords = Cache::remember('total_records', $cacheDuration, function () {
+            return Owner::count()+Message::count();
         });
-        
+
         $this->totalChannels = Cache::remember('total_channels', $cacheDuration, function () {
             return Owner::where('type', 'channel')->count();
         });

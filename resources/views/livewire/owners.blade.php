@@ -123,13 +123,13 @@
                     </svg>
                     <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">没有找到相关记录</h3>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        @if ($search || $type)
+                        @if ($q || $type)
                             当前搜索条件：
-                            @if ($search)
-                                搜索词 "{{ $search }}"
+                            @if ($q)
+                                搜索词 "{{ $q }}"
                             @endif
                             @if ($type)
-                                @if ($search)
+                                @if ($q)
                                     ,
                                 @endif
                                 类型 "{{ $type }}"
@@ -180,7 +180,7 @@
                                     {{ $owner->introduction }}</p>
 
                                 <!-- 添加匹配的消息显示 -->
-                                @if (!empty($search) && isset($owner->matched_messages))
+                                @if (!empty($q) && isset($owner->matched_messages))
                                     <div class="mt-4 space-y-2">
                                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">匹配的消息:</h4>
                                         @foreach ($owner->matched_messages as $message)
