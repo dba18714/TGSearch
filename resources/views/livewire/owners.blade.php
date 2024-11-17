@@ -9,12 +9,10 @@
             <div class="max-w-3xl mx-auto mb-8" id="paginated-posts">
                 <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-md">
                     <div class="relative flex items-center space-x-2">
-                        <div class="relative flex-1">
-                            <input type="search" 
-                                wire:model.live.debounce="searchInput" 
-                                wire:key="search-input"
-                                wire:keydown.enter="doSearch" 
-                                placeholder="名称/用户名/介绍/消息..."
+                        <div x-data="{ focused: false }" class="relative flex-1">
+                            <input type="search" wire:model.live.debounce.250ms="searchInput" wire:key="search-input"
+                                wire:keydown.enter="doSearch" @focus="focused = true"
+                                @blur="setTimeout(() => focused = false, 200)" placeholder="名称/用户名/介绍/消息..."
                                 class="w-full pl-12 pr-4 py-3.5 text-base border-0 bg-gray-200 dark:bg-gray-700
                                 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400
                                 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400
@@ -28,20 +26,18 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            
-                            <!-- 建议框移到这里 -->
-                            @if ($showSuggestions && !empty($suggestions))
-                                <div class="absolute left-0 right-0 z-50 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700">
-                                    @foreach ($suggestions as $suggestion)
-                                        <div wire:click="selectSuggestion('{{ $suggestion }}')"
-                                            class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-900 dark:text-gray-100">
-                                            {{ $suggestion }}
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
+
+                            <div x-show="focused && $wire.showSuggestions && $wire.suggestions.length" x-cloak
+                                class="absolute left-0 right-0 z-50 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700">
+                                @foreach ($suggestions as $suggestion)
+                                    <div wire:mousedown.prevent="selectSuggestion('{{ $suggestion }}'); $nextTick(() => doSearch())"
+                                        class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-900 dark:text-gray-100">
+                                        {{ $suggestion }}
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                        
+
                         <button wire:click="doSearch"
                             class="px-6 py-3.5 bg-indigo-600 text-white rounded-xl font-medium
                             hover:bg-indigo-700 active:bg-indigo-800
@@ -236,5 +232,5 @@
             </div>
         </div>
     </div>
-    {{-- <x-loading-indicator /> --}}
+    <x-loading-indicator />
 </div>

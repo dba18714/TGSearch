@@ -101,9 +101,9 @@ class Owners extends Component
 
     public function doSearch()
     {
-        if (empty($this->searchInput)) {
-            return;
-        }
+        // if (empty($this->searchInput)) {
+        //     return;
+        // }
 
         $this->search = $this->searchInput;
         ProcessGoogleCustomSearchJob::dispatch($this->search);
