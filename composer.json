@@ -8,6 +8,7 @@
         "php": "^8.2",
         "filament/filament": "^3.2",
         "http-interop/http-factory-guzzle": "^1.2",
+        "intervention/image": "^3.9",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.29",
         "laravel/sanctum": "^4.0",

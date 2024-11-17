@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ad {
+    @apply bg-white dark:bg-gray-800;
+}
+
+.ad.sidebar {
+    @apply w-full mb-4;
+}
+
+.ad.header {
+    @apply w-full mb-6;
+}
+
+.ad.footer {
+    @apply w-full mt-4;
+}
+
+.ad.content {
+    @apply w-full my-4;
+}

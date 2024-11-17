@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             OwnerSeeder::class,
             MessageSeeder::class,
+            AdSeeder::class,
         ]);
     }
 }

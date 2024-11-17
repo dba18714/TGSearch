@@ -5,6 +5,12 @@
             <div class="mb-8 text-center sm:hidden">
                 <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Telegram 资源导航</h1>
             </div>
+
+            <livewire:ad-display position="sidebar" />
+            <livewire:ad-display position="header" />
+            <livewire:ad-display position="content" />
+            <livewire:ad-display position="footer" />
+
             <!-- Search and Sort Section -->
             <div class="max-w-3xl mx-auto mb-8" id="paginated-posts">
                 <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-md">
@@ -207,8 +213,8 @@
                                     <a href="{{ $owner->url }}" target="_blank"
                                         class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
                                         访问链接
-                                        <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                            fill="currentColor">
+                                        <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20" fill="currentColor">
                                             <path
                                                 d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                                             <path
