@@ -72,7 +72,7 @@ class SearchResource extends Resource
                     ->label('IP历史')
                     ->formatStateUsing($ipShow)
                     ->tooltip($ipShow)
-                    ->markdown()
+                    ->searchable()
                     ->limit(20),
 
                 Tables\Columns\TextColumn::make('last_searched_at')

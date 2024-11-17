@@ -116,7 +116,10 @@ class Owners extends Component
             // 搜索消息
             $messageOwnerIds = Message::search($this->search)
                 ->get(['id', 'owner_id', 'text'])
-                ->groupBy('owner_id');
+                ->groupBy('owner_id')
+                ->map(function ($messages) {
+                    return $messages->take(1);
+                });
 
             // 搜索所有者
             $owners = Owner::search($this->search)->get();
