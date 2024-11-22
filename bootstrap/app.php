@@ -14,11 +14,10 @@ $app = Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // dd('Middleware loading');
 
-        $middleware->prependToGroup('web', Illuminatech\UrlTrailingSlash\Middleware\RedirectTrailingSlash::class); // enable automatic redirection on incorrect URL trailing slashes
-
         $middleware->prependToGroup('web', [
             \App\Http\Middleware\RemoveIndexPhp::class,
-        ]);
+            Illuminatech\UrlTrailingSlash\Middleware\RedirectTrailingSlash::class,
+        ]); // enable automatic redirection on incorrect URL trailing slashes
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
