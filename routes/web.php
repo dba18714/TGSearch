@@ -17,6 +17,18 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+Route::get('/robots.txt', function () {
+    $content = [
+        'User-agent: *',
+        'Disallow: /api/*',
+        '',
+        'Sitemap: ' . url('sitemap.xml'),
+    ];
+
+    return response(implode(PHP_EOL, $content))
+        ->header('Content-Type', 'text/plain');
+});
+
 Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 

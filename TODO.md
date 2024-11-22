@@ -14,3 +14,8 @@ TODO
 在部署过程中需要运行 schedule:clear-cache Artisan 命令，否则任务会被死锁卡住。
 
 在幕后，withoutOverlapping 方法使用应用程序的 cache 来获取锁。如果必要，你可以使用 schedule:clear-cache Artisan 命令清除这些缓存锁。通常只有在服务器出现意外问题导致任务卡住时才需要这样做。
+
+---
+
+TODO
+生成 sitemap.xml
