@@ -10,6 +10,7 @@ use App\Services\GoogleCustomSearchService;
 use App\Services\GoogleSuggestService;
 use App\Models\Message;
 use App\Models\Search;
+use Artesaos\SEOTools\Facades\SEOMeta;
 
 class Owners extends Component
 {
@@ -103,11 +104,14 @@ class Owners extends Component
         $this->q = $this->searchInput;
         ProcessGoogleCustomSearchJob::dispatch($this->q);
         $this->showSuggestions = false;
-        $this->resetPage();
+        // $this->resetPage();
     }
 
     public function render()
     {
+        $title = $this->q ? "搜索 - {$this->q}" : '首页';
+        SEOMeta::setTitle($title);
+
         $query = Owner::query();
 
         if (!empty($this->q)) {

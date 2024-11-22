@@ -12,7 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // dd('Middleware loading');
+        $middleware->prepend([
+            \App\Http\Middleware\RemoveIndexPhp::class,
+            \App\Http\Middleware\NormalizeUrls::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
