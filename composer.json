@@ -17,6 +17,7 @@
         "laravel/scout": "^10.11",
         "laravel/tinker": "^2.9",
         "meilisearch/meilisearch-php": "^1.11",
+        "openai-php/client": "^0.10.3",
         "typesense/typesense-php": "^4.9",
         "wireui/wireui": "^2.1"
     },

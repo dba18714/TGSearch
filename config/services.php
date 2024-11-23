@@ -35,5 +35,9 @@ return [
         'search_api_key' => env('GOOGLE_SEARCH_API_KEY'),
         'search_engine_id' => env('GOOGLE_SEARCH_ENGINE_ID'),
     ],
+    
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
 
 ];
