@@ -8,22 +8,22 @@ use Filament\Forms\Components\Card;
 use Filament\Forms\Form;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Services\OpenAiModerationService;
+use App\Services\TencentCloudModerationService;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
 use Filament\Support\Exceptions\Halt;
 use Filament\Actions\Action;
 
-class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
+class ContentModerationByTencent extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-    protected static ?string $navigationLabel = '内容审核 (by OpenAi)';
+    protected static ?string $navigationLabel = '内容审核 (by 腾讯云)';
     protected static ?string $title = '内容审核';
-    protected static ?string $slug = 'content-moderation';
+    protected static ?string $slug = 'content-moderation-tencent';
     protected static ?string $navigationGroup = '系统管理';
-    protected static string $view = 'filament.admin.pages.content-moderation-openai';
+    protected static string $view = 'filament.admin.pages.content-moderation-tencent';
 
     public array $data = [
         'content' => '',
@@ -69,7 +69,7 @@ class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
         try {
             $data = $this->form->getState();
 
-            $moderationService = app(OpenAiModerationService::class);
+            $moderationService = app(TencentCloudModerationService::class);
             $this->result = $moderationService->getDetailedAnalysis($data['content']);
 
             if ($this->result['safe']) {
@@ -81,7 +81,17 @@ class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
             } else {
                 $issues = collect($this->result['issues'])
                     ->pluck('category')
-                    ->join(', ');
+                    ->map(function ($category) {
+                        $categoryMap = [
+                            'Porn' => '色情',
+                            'Abuse' => '辱骂',
+                            'Ad' => '广告',
+                            'Illegal' => '违法',
+                            'Spam' => '垃圾信息'
+                        ];
+                        return $categoryMap[$category] ?? $category;
+                    })
+                    ->join('、');
 
                 Notification::make()
                     ->title('发现潜在问题')

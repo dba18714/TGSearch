@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05271bb8c0b501fd30d3f872a325df9f",
+    "content-hash": "5fe282a9d87170f93b5be3b551dcece7",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -8504,6 +8504,93 @@
                 }
             ],
             "time": "2024-11-08T15:46:42+00:00"
+        },
+        {
+            "name": "tencentcloud/common",
+            "version": "3.0.1266",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tencentcloud-sdk-php/common.git",
+                "reference": "c9dc4d75ccc5178a19dcbf03da03a70dce18cc81"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tencentcloud-sdk-php/common/zipball/c9dc4d75ccc5178a19dcbf03da03a70dce18cc81",
+                "reference": "c9dc4d75ccc5178a19dcbf03da03a70dce18cc81",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3||^7.0",
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TencentCloud\\": "./src/TencentCloud"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "tencentcloudapi",
+                    "email": "tencentcloudapi@tencent.com",
+                    "homepage": "https://cloud.tencent.com/document/sdk/PHP",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TencentCloudApi php sdk",
+            "homepage": "https://github.com/tencentcloud-sdk-php/common",
+            "support": {
+                "issues": "https://github.com/tencentcloud-sdk-php/common/issues",
+                "source": "https://github.com/tencentcloud-sdk-php/common/tree/3.0.1266"
+            },
+            "time": "2024-11-22T06:46:08+00:00"
+        },
+        {
+            "name": "tencentcloud/tms",
+            "version": "3.0.1266",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tencentcloud-sdk-php/tms.git",
+                "reference": "221f6fbc5c7215b3f758c4117cc08b2e047b1b5a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tencentcloud-sdk-php/tms/zipball/221f6fbc5c7215b3f758c4117cc08b2e047b1b5a",
+                "reference": "221f6fbc5c7215b3f758c4117cc08b2e047b1b5a",
+                "shasum": ""
+            },
+            "require": {
+                "tencentcloud/common": "3.0.1266"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TencentCloud\\": "./src/TencentCloud"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "tencentcloudapi",
+                    "email": "tencentcloudapi@tencent.com",
+                    "homepage": "https://github.com/tencentcloud-sdk-php/tms",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TencentCloudApi php sdk tms",
+            "homepage": "https://github.com/tencentcloud-sdk-php/tms",
+            "support": {
+                "issues": "https://github.com/tencentcloud-sdk-php/tms/issues",
+                "source": "https://github.com/tencentcloud-sdk-php/tms/tree/3.0.1266"
+            },
+            "time": "2024-11-22T07:41:46+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
