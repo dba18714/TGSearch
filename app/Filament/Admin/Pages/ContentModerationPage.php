@@ -5,43 +5,53 @@ namespace App\Filament\Admin\Pages;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Services\OpenAiModerationService;
+use App\Facades\ContentModeration;
 use Filament\Notifications\Notification;
-use Illuminate\Contracts\View\View;
-use Filament\Support\Exceptions\Halt;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Section;
 
-class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
+class ContentModerationPage extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-    protected static ?string $navigationLabel = '内容审核 (by OpenAi)';
+    protected static ?string $navigationLabel = '内容审核';
     protected static ?string $title = '内容审核';
     protected static ?string $slug = 'content-moderation';
     protected static ?string $navigationGroup = '系统管理';
-    protected static string $view = 'filament.admin.pages.content-moderation-openai';
+    protected static string $view = 'filament.admin.pages.content-moderation';
 
     public array $data = [
         'content' => '',
+        'service' => null,
     ];
 
     public ?array $result = null;
 
     public function mount(): void
     {
-        $this->form->fill();
+        $this->form->fill([
+            'service' => config('moderation.default'),
+        ]);
     }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Card::make()
+                Section::make()
                     ->schema([
+                        Select::make('service')
+                            ->label('服务提供商')
+                            ->options([
+                                'tencent' => '腾讯云内容审核',
+                                'openai' => 'OpenAI 内容审核',
+                            ])
+                            ->required(),
                         Textarea::make('content')
                             ->label('待检测内容')
                             ->required()
@@ -69,8 +79,8 @@ class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
         try {
             $data = $this->form->getState();
 
-            $moderationService = app(OpenAiModerationService::class);
-            $this->result = $moderationService->getDetailedAnalysis($data['content']);
+            $this->result = ContentModeration::driver($data['service'])
+                ->getDetailedAnalysis($data['content']);
 
             if ($this->result['safe']) {
                 Notification::make()
@@ -81,7 +91,17 @@ class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
             } else {
                 $issues = collect($this->result['issues'])
                     ->pluck('category')
-                    ->join(', ');
+                    ->map(function ($category) {
+                        $categoryMap = [
+                            'Porn' => '色情',
+                            'Abuse' => '辱骂',
+                            'Ad' => '广告',
+                            'Illegal' => '违法',
+                            'Spam' => '垃圾信息'
+                        ];
+                        return $categoryMap[$category] ?? $category;
+                    })
+                    ->join('、');
 
                 Notification::make()
                     ->title('发现潜在问题')
@@ -96,7 +116,6 @@ class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
                 ->body('API 调用失败：' . $e->getMessage())
                 ->send();
 
-            // 清空结果，避免显示旧的结果
             $this->result = null;
         }
     }
@@ -106,10 +125,5 @@ class ContentModerationByOpenAi extends \Filament\Pages\Page implements HasForms
         return [
             'result' => $this->result,
         ];
-    }
-
-    public static function shouldRegisterNavigation(): bool
-    {
-        return true;
     }
 }

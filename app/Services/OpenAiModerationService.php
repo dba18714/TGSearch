@@ -2,30 +2,29 @@
 
 namespace App\Services;
 
+use App\Contracts\ContentModerationService;
 use OpenAI\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class OpenAiModerationService
+class OpenaiModerationService implements ContentModerationService
 {
-    protected Client $client;
-
-    public function __construct(Client $client)
-    {
-        $this->client = $client;
-    }
+    public function __construct(
+        private Client $client
+    ) {}
 
     /**
      * 检查内容
      * 
      * @param string $content 需要检查的内容
      */
-    public function checkContent(string $content)
+    public function checkContent(string $content): array
     {
         // 使用缓存避免重复请求
         $cacheDuration = config('app.debug') ? now()->addSeconds(0) : now()->addDay();
-        return Cache::remember(
-            'moderation_' . md5($content),
+        $cacheKey = 'moderation_' . md5($content);
+        return cache()->remember(
+            $cacheKey,
             $cacheDuration,
             function () use ($content) {
                 try {
@@ -42,7 +41,7 @@ class OpenAiModerationService
                     return [
                         'flagged' => $result->flagged ?? false,
                         'categories' => $result->categories ?? [],
-                        'category_scores' => $moderationResult->category_scores ?? $moderationResult->scores ?? [],
+                        'category_scores' => $result->category_scores ?? $result->scores ?? [],
                     ];
                 } catch (\Exception $e) {
                     Log::error('OpenAI Moderation API error', [
@@ -50,7 +49,7 @@ class OpenAiModerationService
                         'content' => $content
                     ]);
 
-                    throw $e; // 直接抛出异常，而不是返回安全结果
+                    throw $e;
                 }
             }
         );
