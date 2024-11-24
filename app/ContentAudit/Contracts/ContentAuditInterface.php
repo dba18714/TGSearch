@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Contracts;
+namespace App\ContentAudit\Contracts;
 
-interface ContentModerationService
+interface ContentAuditInterface
 {
     /**
      * 检查内容并返回详细结果

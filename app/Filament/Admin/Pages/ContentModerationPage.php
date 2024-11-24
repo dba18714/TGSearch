@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\ContentAudit\Facades\ContentAudit;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Card;
@@ -35,7 +36,7 @@ class ContentModerationPage extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill([
-            'service' => config('moderation.default'),
+            'service' => config('content-audit.default'),
         ]);
     }
 
@@ -79,7 +80,7 @@ class ContentModerationPage extends Page implements HasForms
         try {
             $data = $this->form->getState();
 
-            $this->result = ContentModeration::driver($data['service'])
+            $this->result = ContentAudit::driver($data['service'])
                 ->getDetailedAnalysis($data['content']);
 
             if ($this->result['safe']) {

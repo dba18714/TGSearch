@@ -1,26 +1,28 @@
 <?php
 
-namespace App\Services;
+namespace App\ContentAudit;
 
-use App\Contracts\ContentModerationService;
+use App\ContentAudit\Contracts\ContentAuditInterface;
+use App\ContentAudit\Drivers\OpenaiDriver;
+use App\ContentAudit\Drivers\TencentDriver;
 use Illuminate\Support\Manager;
 use OpenAI;
-use OpenAI\Client;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Tms\V20201229\TmsClient;
-class ContentModerationManager extends Manager
+
+class ContentAuditManager extends Manager
 {
-    public function createOpenaiDriver(): ContentModerationService
+    public function createOpenaiDriver(): ContentAuditInterface
     {
         $config = $this->config->get('services.openai');
-        return new OpenaiModerationService(
+        return new OpenaiDriver(
             OpenAI::client($config['api_key'])
         );
     }
 
-    public function createTencentDriver(): ContentModerationService
+    public function createTencentDriver(): ContentAuditInterface
     {
         $config = $this->config->get('services.tencent');
         
@@ -37,16 +39,11 @@ class ContentModerationManager extends Manager
         
         $client = new TmsClient($cred, $config['region'], $clientProfile);
         
-        return new TencentModerationService($client);
+        return new TencentDriver($client);
     }
 
     public function getDefaultDriver(): string
     {
-        return $this->config->get('moderation.default', 'tencent');
+        return $this->config->get('content-audit.default', 'tencent');
     }
-
-    public function driver($driver = null): ContentModerationService
-    {
-        return parent::driver($driver);
-}
 }

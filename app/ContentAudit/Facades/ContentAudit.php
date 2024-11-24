@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Facades;
+namespace App\ContentAudit\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \App\Contracts\ContentModerationService driver(string $driver = null)
+ * @method static \App\ContentAudit\Contracts\ContentAuditInterface driver(string $driver = null)
  * @method static array checkContent(string $content)
  * @method static bool isSafe(string $content)
  * @method static array getDetailedAnalysis(string $content)
  */
-class ContentModeration extends Facade
+class ContentAudit extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'moderation';
+        return 'content-audit';
     }
 }

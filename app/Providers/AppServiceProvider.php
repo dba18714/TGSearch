@@ -23,13 +23,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('moderation', function ($app) {
-            return new ContentModerationManager($app);
-        });
+        // $this->app->singleton('moderation', function ($app) {
+        //     return new ContentModerationManager($app);
+        // });
 
-        $this->app->singleton(ContentModerationService::class, function ($app) {
-            return $app->make('moderation')->driver();
-        });
+        // $this->app->singleton(ContentModerationService::class, function ($app) {
+        //     return $app->make('moderation')->driver();
+        // });
 
         // $this->app->singleton(TmsClient::class, function () {
         //     $cred = new Credential(

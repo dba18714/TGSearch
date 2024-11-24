@@ -3,10 +3,10 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Content Moderation Service
+    | Content Audit Service
     |--------------------------------------------------------------------------
     |
-    | This option controls which service will be used for content moderation.
+    | This option controls which service will be used for content auditing.
     | Supported: "openai", "tencent"
     |
     */

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Services;
+namespace App\ContentAudit\Drivers;
 
-use App\Contracts\ContentModerationService;
+use App\ContentAudit\Contracts\ContentAuditInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use TencentCloud\Tms\V20201229\TmsClient;
 use TencentCloud\Tms\V20201229\Models\TextModerationRequest;
 
-class TencentModerationService implements ContentModerationService
+class TencentDriver implements ContentAuditInterface
 {
     public function __construct(
         private TmsClient $client
@@ -17,7 +17,7 @@ class TencentModerationService implements ContentModerationService
     public function checkContent(string $content): array
     {
         $cacheDuration = config('app.debug') ? now()->addSeconds(0) : now()->addDay();
-        $cacheKey = 'moderation_' . md5($content);
+        $cacheKey = 'content_audit_' . md5($content);
         return cache()->remember(
             $cacheKey,
             $cacheDuration,

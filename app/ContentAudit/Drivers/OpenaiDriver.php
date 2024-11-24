@@ -1,28 +1,22 @@
 <?php
 
-namespace App\Services;
+namespace App\ContentAudit\Drivers;
 
-use App\Contracts\ContentModerationService;
+use App\ContentAudit\Contracts\ContentAuditInterface;
 use OpenAI\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class OpenaiModerationService implements ContentModerationService
+class OpenaiDriver implements ContentAuditInterface
 {
     public function __construct(
         private Client $client
     ) {}
 
-    /**
-     * 检查内容
-     * 
-     * @param string $content 需要检查的内容
-     */
     public function checkContent(string $content): array
     {
-        // 使用缓存避免重复请求
         $cacheDuration = config('app.debug') ? now()->addSeconds(0) : now()->addDay();
-        $cacheKey = 'moderation_' . md5($content);
+        $cacheKey = 'content_audit_' . md5($content);
         return cache()->remember(
             $cacheKey,
             $cacheDuration,
@@ -55,18 +49,12 @@ class OpenaiModerationService implements ContentModerationService
         );
     }
 
-    /**
-     * 检查内容是否安全
-     */
     public function isSafe(string $content): bool
     {
         $result = $this->checkContent($content);
         return !($result['flagged'] ?? false);
     }
 
-    /**
-     * 获取详细的审核结果
-     */
     public function getDetailedAnalysis(string $content): array
     {
         $result = $this->checkContent($content);
@@ -86,7 +74,6 @@ class OpenaiModerationService implements ContentModerationService
             'issues' => []
         ];
 
-        // 检查每个分类
         foreach ($categories as $category => $flagged) {
             if ($flagged) {
                 $analysis['issues'][] = [
