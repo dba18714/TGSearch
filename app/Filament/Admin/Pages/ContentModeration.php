@@ -115,6 +115,7 @@ class ContentModeration extends Page implements HasForms
                     ->body("该内容包含以下问题：{$issues}")
                     ->send();
             }
+            $this->dispatch('content-checked');
         } catch (\Exception $e) {
             Notification::make()
                 ->title('检测失败')
