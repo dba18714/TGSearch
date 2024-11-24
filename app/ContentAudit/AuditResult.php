@@ -6,8 +6,8 @@ class AuditResult
 {
     public function __construct(
         private bool $isPassed,
-        private array $risk,
-        private float $overallRiskLevel,
+        private array $maxRisk,
+        private array $risks,
     ) {}
 
     public function isPassed(): bool
@@ -15,13 +15,25 @@ class AuditResult
         return $this->isPassed;
     }
 
-    public function getRisk(): array
+    /* 
+    $risks[] = [
+        'category' => 'Porn',
+        'score' => 0.99,
+    ];
+    */
+    public function getRisks(): array
     {
-        return $this->risk;
+        return $this->risks;
     }
 
-    public function getOverallRiskLevel(): int // 0-100
+    /* 
+    $maxRisk = [
+        'category' => 'Porn',
+        'score' => 0.99,
+    ];
+    */
+    public function getMaxRisk(): array
     {
-        return $this->overallRiskLevel;
+        return $this->maxRisk;
     }
 }

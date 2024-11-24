@@ -32,8 +32,8 @@ class ContentModeration extends Page implements HasForms
     ];
 
     public ?bool $isPassed = null;
-    public ?array $risk = null;
-    public ?int $overallRiskLevel = null;
+    public ?array $risks = null;
+    public ?array $maxRisk = null;
 
     public function mount(): void
     {
@@ -85,8 +85,8 @@ class ContentModeration extends Page implements HasForms
             $result = ContentAudit::driver($data['service'])
                 ->audit($data['content']);
             $this->isPassed = $result->isPassed();
-            $this->risk = $result->getRisk();
-            $this->overallRiskLevel = $result->getOverallRiskLevel();
+            $this->risks = $result->getRisks();
+            $this->maxRisk = $result->getMaxRisk();
 
             if ($this->isPassed) {
                 Notification::make()
@@ -95,7 +95,7 @@ class ContentModeration extends Page implements HasForms
                     ->body('该内容未发现问题')
                     ->send();
             } else {
-                $issues = collect($this->risk)
+                $issues = collect($this->risks)
                     ->pluck('category')
                     ->map(function ($category) {
                         $categoryMap = [
@@ -125,8 +125,8 @@ class ContentModeration extends Page implements HasForms
 
             $this->reset([
                 'isPassed',
-                'risk',
-                'overallRiskLevel',
+                'risks',
+                'maxRisk',
             ]);
         }
     }

@@ -34,20 +34,7 @@ class TencentDriver implements ContentAuditInterface
                         'response' => $result
                     ]);
 
-                    return [
-                        'flagged' => ($result['Suggestion'] ?? 'Pass') === 'Block',
-                        'categories' => [
-                            'Porn' => ($result['Label'] ?? 'Normal') === 'Porn',
-                            'Abuse' => ($result['Label'] ?? 'Normal') === 'Abuse',
-                            'Ad' => ($result['Label'] ?? 'Normal') === 'Ad',
-                            'Illegal' => ($result['Label'] ?? 'Normal') === 'Illegal',
-                            'Spam' => ($result['Label'] ?? 'Normal') === 'Spam',
-                        ],
-                        'category_scores' => $result['Score'] ?? 0,
-                        'suggestion' => $result['Suggestion'] ?? 'Pass',
-                        'label' => $result['Label'] ?? 'Normal',
-                        'raw_response' => $result,
-                    ];
+                    return $result;
                 } catch (\Exception $e) {
                     Log::error('Tencent Cloud Moderation API error', [
                         'error' => $e->getMessage(),
@@ -60,30 +47,32 @@ class TencentDriver implements ContentAuditInterface
         );
     }
 
-    // public function isSafe(string $content): bool
-    // {
-    //     $result = $this->checkContent($content);
-    //     return ($result['suggestion'] ?? 'Pass') !== 'Block';
-    // }
-
     public function audit(string $content): AuditResult
     {
         $result = $this->checkContent($content);
 
-        $isPassed = ($result['suggestion'] ?? 'Pass') !== 'Block';
-        $risk = [];
+        $isPassed = $result['Suggestion'] !== 'Block';
+        $risks = [];
 
-        if ($result['suggestion'] === 'Block') {
-            $risk = [
-                'category' => $result['label'],
-                'score' => $result['category_scores']
-            ];
+        $maxRisk = [
+            'category' => $result['Label'],
+            'score' => $result['Score']/100,
+        ];
+
+        foreach ($result['DetailResults'] as $item) {
+            if ($item['Suggestion'] === 'Block') {
+                $score = $item['Score']/100;
+                $risks[] = [
+                    'category' => $item['Label'],
+                    'score' => $score,
+                ];
+            }
         }
 
         return new AuditResult(
             isPassed: $isPassed,
-            risk: $risk,
-            overallRiskLevel: $result['category_scores'],
+            risks: $risks,
+            maxRisk: $maxRisk,
         );
     }
 }

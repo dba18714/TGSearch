@@ -25,21 +25,31 @@
                         @endif
                     </div>
 
-                    @if (!empty($risk))
+                    @if (!$isPassed)
                         <div class="mt-4">
-                            <h4 class="font-medium text-gray-700 dark:text-gray-300">发现的问题：</h4>
+                            <h4 class="font-medium text-gray-700 dark:text-gray-300">最严重的问题：</h4>
                             <ul class="mt-2 space-y-2">
-                                {{-- @foreach ($risks as $risk) --}}
                                 <li class="flex items-center">
                                     <span
                                         class="px-2 py-1 text-sm text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/50 rounded">
-                                        {{ $risk['category'] }}
-                                        {{-- @if (isset($risk['score'])) --}}
-                                        (置信度: {{ $risk['score'] }}%)
-                                        {{-- @endif --}}
+                                        {{ $maxRisk['category'] }}
+                                        (置信度: {{ $maxRisk['score'] * 100 }}%)
                                     </span>
                                 </li>
-                                {{-- @endforeach --}}
+                            </ul>
+                        </div>
+                        <div class="mt-4">
+                            <h4 class="font-medium text-gray-700 dark:text-gray-300">所有问题：</h4>
+                            <ul class="mt-2 space-y-2">
+                                @foreach ($risks as $risk)
+                                    <li class="flex items-center">
+                                        <span
+                                            class="px-2 py-1 text-sm text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/50 rounded">
+                                            {{ $risk['category'] }}
+                                            (置信度: {{ $risk['score'] * 100 }}%)
+                                        </span>
+                                    </li>
+                                @endforeach
                             </ul>
                         </div>
                     @endif

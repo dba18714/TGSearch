@@ -25,7 +25,12 @@ class OpenaiDriver implements ContentAuditInterface
                 try {
                     $response = $this->client->moderations()->create([
                         'model' => 'text-moderation-latest',
-                        // 'model' => 'omni-moderation-latest',
+
+                        // omni-moderation-latest 当前不可用，
+                        // 会出错：{"status":500,"body":{"error":{"message":"Unexpected error","type":"server_error","param":null,"code":null}}} 
+                        // 社区有人也遇到同样的问题： https://community.openai.com/t/content-moderation-api-throwing-internal-server-errors/959809
+                        // 'model' => 'omni-moderation-latest', 
+
                         'input' => $content,
                     ]);
 
@@ -54,42 +59,33 @@ class OpenaiDriver implements ContentAuditInterface
         );
     }
 
-    // public function isSafe(string $content): bool
-    // {
-    //     $result = $this->checkContent($content);
-    //     return !($result['flagged'] ?? false);
-    // }
-
     public function audit(string $content): AuditResult
     {
         $result = $this->checkContent($content);
 
-        if (isset($result['error'])) {
-            return new AuditResult(
-                isPassed: true,
-                risk: [],
-                overallRiskLevel: 0.0,
-            );
-        }
+        $risks = [];
+        $maxRisk = [];
 
-        $risk = [];
-        $maxScore = 0.0;
-
-        foreach ($result['categories'] ?? [] as $category => $flagged) {
+        foreach ($result['categories'] as $category => $flagged) {
             if ($flagged) {
                 $score = $result['category_scores']->{$category} ?? 0.0;
-                $risk = [
+                $risks[] = [
                     'category' => $category,
                     'score' => $score
                 ];
-                $maxScore = max($maxScore, $score);
+                if (empty($maxRisk) || $score > $maxRisk['score']) {
+                    $maxRisk = [
+                        'category' => $category,
+                        'score' => $score
+                    ];
+                }
             }
         }
 
         return new AuditResult(
             isPassed: !($result['flagged'] ?? false),
-            risk: $risk,
-            overallRiskLevel: $maxScore,
+            risks: $risks,
+            maxRisk: $maxRisk,
         );
     }
 }
