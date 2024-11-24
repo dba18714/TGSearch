@@ -10,12 +10,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Facades\ContentModeration;
 use Filament\Notifications\Notification;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
 
-class ContentModerationPage extends Page implements HasForms
+class ContentModeration extends Page implements HasForms
 {
     use InteractsWithForms;
 
