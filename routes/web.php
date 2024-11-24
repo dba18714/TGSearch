@@ -1,5 +1,6 @@
 <?php
 
+use App\ContentAudit\Facades\ContentAudit;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
 use App\Livewire\Owners;
@@ -33,6 +34,11 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function () {
+
+    $result = ContentAudit::driver('openai')
+                ->audit('rgdsfd');
+
+                return $result;
     if (preg_match('/^@\w+$/', '@Nonnie25682')) {
         return 'person';
     }

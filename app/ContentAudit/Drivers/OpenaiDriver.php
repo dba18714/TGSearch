@@ -2,6 +2,7 @@
 
 namespace App\ContentAudit\Drivers;
 
+use App\ContentAudit\AuditResult;
 use App\ContentAudit\Contracts\ContentAuditInterface;
 use OpenAI\Client;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +14,7 @@ class OpenaiDriver implements ContentAuditInterface
         private Client $client
     ) {}
 
-    public function checkContent(string $content): array
+    protected function checkContent(string $content): array
     {
         $cacheDuration = config('app.debug') ? now()->addSeconds(0) : now()->addDay();
         $cacheKey = 'content_audit_' . md5($content);
@@ -23,8 +24,12 @@ class OpenaiDriver implements ContentAuditInterface
             function () use ($content) {
                 try {
                     $response = $this->client->moderations()->create([
+                        'model' => 'text-moderation-latest',
+                        // 'model' => 'omni-moderation-latest',
                         'input' => $content,
                     ]);
+
+                    Log::debug('OpenAI Moderation API error', $response);
 
                     $result = $response->results[0] ?? null;
 
@@ -49,40 +54,42 @@ class OpenaiDriver implements ContentAuditInterface
         );
     }
 
-    public function isSafe(string $content): bool
-    {
-        $result = $this->checkContent($content);
-        return !($result['flagged'] ?? false);
-    }
+    // public function isSafe(string $content): bool
+    // {
+    //     $result = $this->checkContent($content);
+    //     return !($result['flagged'] ?? false);
+    // }
 
-    public function getDetailedAnalysis(string $content): array
+    public function audit(string $content): AuditResult
     {
         $result = $this->checkContent($content);
 
         if (isset($result['error'])) {
-            return [
-                'safe' => true,
-                'error' => $result['error']
-            ];
+            return new AuditResult(
+                isPassed: true,
+                risk: [],
+                overallRiskLevel: 0.0,
+            );
         }
 
-        $categories = $result['categories'] ?? [];
-        $scores = $result['category_scores'] ?? [];
+        $risk = [];
+        $maxScore = 0.0;
 
-        $analysis = [
-            'safe' => !($result['flagged'] ?? false),
-            'issues' => []
-        ];
-
-        foreach ($categories as $category => $flagged) {
+        foreach ($result['categories'] ?? [] as $category => $flagged) {
             if ($flagged) {
-                $analysis['issues'][] = [
+                $score = $result['category_scores']->{$category} ?? 0.0;
+                $risk = [
                     'category' => $category,
-                    'score' => $scores->{$category} ?? null
+                    'score' => $score
                 ];
+                $maxScore = max($maxScore, $score);
             }
         }
 
-        return $analysis;
+        return new AuditResult(
+            isPassed: !($result['flagged'] ?? false),
+            risk: $risk,
+            overallRiskLevel: $maxScore,
+        );
     }
 }

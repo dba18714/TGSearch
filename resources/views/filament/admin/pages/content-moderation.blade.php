@@ -5,14 +5,14 @@
         <x-filament::actions :actions="$this->getFormActions()" />
     </div>
 
-    @if ($result)
+    @if ($isPassed !== null)
         <div class="mt-4">
             <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">检测结果</h3>
                 <div class="mt-2">
                     <div class="flex items-center">
                         <span class="mr-2 text-gray-700 dark:text-gray-300">状态:</span>
-                        @if ($result['safe'])
+                        @if ($isPassed)
                             <span
                                 class="px-2 py-1 text-sm text-green-800 dark:text-green-300 bg-green-100 dark:bg-green-900/50 rounded-full">
                                 安全
@@ -25,21 +25,21 @@
                         @endif
                     </div>
 
-                    @if (!empty($result['issues']))
+                    @if (!empty($risk))
                         <div class="mt-4">
                             <h4 class="font-medium text-gray-700 dark:text-gray-300">发现的问题：</h4>
                             <ul class="mt-2 space-y-2">
-                                @foreach ($result['issues'] as $issue)
-                                    <li class="flex items-center">
-                                        <span
-                                            class="px-2 py-1 text-sm text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/50 rounded">
-                                            {{ $issue['category'] }}
-                                            @if (isset($issue['score']))
-                                                (置信度: {{ number_format($issue['score'] * 100, 1) }}%)
-                                            @endif
-                                        </span>
-                                    </li>
-                                @endforeach
+                                {{-- @foreach ($risks as $risk) --}}
+                                <li class="flex items-center">
+                                    <span
+                                        class="px-2 py-1 text-sm text-yellow-800 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/50 rounded">
+                                        {{ $risk['category'] }}
+                                        {{-- @if (isset($risk['score'])) --}}
+                                        (置信度: {{ $risk['score'] }}%)
+                                        {{-- @endif --}}
+                                    </span>
+                                </li>
+                                {{-- @endforeach --}}
                             </ul>
                         </div>
                     @endif

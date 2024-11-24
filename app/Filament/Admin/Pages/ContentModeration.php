@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\ContentAudit\AuditResult;
 use App\ContentAudit\Facades\ContentAudit;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Textarea;
@@ -30,7 +31,9 @@ class ContentModeration extends Page implements HasForms
         'service' => null,
     ];
 
-    public ?array $result = null;
+    public ?bool $isPassed = null;
+    public ?array $risk = null;
+    public ?int $overallRiskLevel = null;
 
     public function mount(): void
     {
@@ -79,17 +82,20 @@ class ContentModeration extends Page implements HasForms
         try {
             $data = $this->form->getState();
 
-            $this->result = ContentAudit::driver($data['service'])
-                ->getDetailedAnalysis($data['content']);
+            $result = ContentAudit::driver($data['service'])
+                ->audit($data['content']);
+            $this->isPassed = $result->isPassed();
+            $this->risk = $result->getRisk();
+            $this->overallRiskLevel = $result->getOverallRiskLevel();
 
-            if ($this->result['safe']) {
+            if ($this->isPassed) {
                 Notification::make()
                     ->title('内容检测完成')
                     ->success()
                     ->body('该内容未发现问题')
                     ->send();
             } else {
-                $issues = collect($this->result['issues'])
+                $issues = collect($this->risk)
                     ->pluck('category')
                     ->map(function ($category) {
                         $categoryMap = [
@@ -116,14 +122,13 @@ class ContentModeration extends Page implements HasForms
                 ->body('API 调用失败：' . $e->getMessage())
                 ->send();
 
-            $this->result = null;
+
+            $this->reset([
+                'isPassed',
+                'risk',
+                'overallRiskLevel',
+            ]);
         }
     }
 
-    public function getViewData(): array
-    {
-        return [
-            'result' => $this->result,
-        ];
-    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\ContentAudit\Drivers;
 
+use App\ContentAudit\AuditResult;
 use App\ContentAudit\Contracts\ContentAuditInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
@@ -14,7 +15,7 @@ class TencentDriver implements ContentAuditInterface
         private TmsClient $client
     ) {}
 
-    public function checkContent(string $content): array
+    protected function checkContent(string $content): array
     {
         $cacheDuration = config('app.debug') ? now()->addSeconds(0) : now()->addDay();
         $cacheKey = 'content_audit_' . md5($content);
@@ -59,28 +60,30 @@ class TencentDriver implements ContentAuditInterface
         );
     }
 
-    public function isSafe(string $content): bool
+    // public function isSafe(string $content): bool
+    // {
+    //     $result = $this->checkContent($content);
+    //     return ($result['suggestion'] ?? 'Pass') !== 'Block';
+    // }
+
+    public function audit(string $content): AuditResult
     {
         $result = $this->checkContent($content);
-        return ($result['suggestion'] ?? 'Pass') !== 'Block';
-    }
 
-    public function getDetailedAnalysis(string $content): array
-    {
-        $result = $this->checkContent($content);
-
-        $analysis = [
-            'safe' => ($result['suggestion'] ?? 'Pass') !== 'Block',
-            'issues' => []
-        ];
+        $isPassed = ($result['suggestion'] ?? 'Pass') !== 'Block';
+        $risk = [];
 
         if ($result['suggestion'] === 'Block') {
-            $analysis['issues'][] = [
+            $risk = [
                 'category' => $result['label'],
                 'score' => $result['category_scores']
             ];
         }
 
-        return $analysis;
+        return new AuditResult(
+            isPassed: $isPassed,
+            risk: $risk,
+            overallRiskLevel: $result['category_scores'],
+        );
     }
 }
