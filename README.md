@@ -21,3 +21,9 @@ sail artisan horizon:clear
 
 
 sail php artisan scout:flush "App\Models\Owner" && sail php artisan scout:flush "App\Models\Message" && sail artisan migrate:fresh --seed
+
+## 启动长轮训
+sail artisan nutgram:run
+
+## 测试 Telegram bot 
+sail artisan telegram:test

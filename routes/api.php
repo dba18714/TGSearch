@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OwnerController;
+use SergiX44\Nutgram\Nutgram;
 
 // 公开接口
 Route::get('/owners', [OwnerController::class, 'index']);
@@ -19,4 +20,8 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/tmp', function () {
     return 123;
+});
+
+Route::post('telegram/webhook', function (Nutgram $bot) {
+    $bot->run();
 });
