@@ -10,12 +10,8 @@ return new class extends Migration
     {
         Schema::create('entity_impressions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('entity_id')->constrained()->onDelete('cascade');
+            $table->ulid('entity_id')->index();
             $table->timestamp('impressed_at')->index();
-            $table->string('source')->nullable()->index();
-            $table->string('user_id')->nullable()->index();
-            $table->string('session_id')->nullable()->index();
-            $table->timestamps();
         });
     }
 

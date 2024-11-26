@@ -10,9 +10,6 @@ class EntityImpression extends Model
     protected $fillable = [
         'entity_id',
         'impressed_at',
-        'source',
-        'user_id',
-        'session_id'
     ];
 
     protected $casts = [

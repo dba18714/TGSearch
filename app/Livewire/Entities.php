@@ -10,6 +10,7 @@ use App\Services\GoogleCustomSearchService;
 use App\Services\GoogleSuggestService;
 use App\Models\Message;
 use App\Models\Search;
+use App\Services\EntityStatsService;
 use Artesaos\SEOTools\Facades\SEOMeta;
 
 class Entities extends Component
@@ -18,6 +19,7 @@ class Entities extends Component
 
     protected GoogleCustomSearchService $googleSearchService;
     protected $googleSuggestService;
+    protected $entityStatsService;
 
     public $q = '';
     public $searchInput = '';
@@ -35,10 +37,12 @@ class Entities extends Component
 
     public function boot(
         GoogleCustomSearchService $googleSearchService,
-        GoogleSuggestService $googleSuggestService
+        GoogleSuggestService $googleSuggestService,
+        EntityStatsService $entityStatsService,
     ) {
         $this->googleSearchService = $googleSearchService;
         $this->googleSuggestService = $googleSuggestService;
+        $this->entityStatsService = $entityStatsService;
     }
 
     public function mount()
@@ -149,6 +153,8 @@ class Entities extends Component
                 $entity->matched_messages = $messageEntityIds->get($entity->id);
             }
         }
+
+        $this->entityStatsService->recordBulkImpressions($entities->items(), 'search_result');
 
         return view('livewire.entities', [
             'entities' => $entities
