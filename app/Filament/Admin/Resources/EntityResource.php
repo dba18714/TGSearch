@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\OwnerResource\Pages;
-use App\Models\Owner;
+use App\Filament\Admin\Resources\EntityResource\Pages;
+use App\Models\Entity;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,9 +12,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Notifications\Notification;
 
-class OwnerResource extends Resource
+class EntityResource extends Resource
 {
-    protected static ?string $model = Owner::class;
+    protected static ?string $model = Entity::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -109,7 +109,7 @@ class OwnerResource extends Resource
                     })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('url')
-                    ->url(fn(Owner $record): string => $record->url)
+                    ->url(fn(Entity $record): string => $record->url)
                     ->openUrlInNewTab()
                     ->limit(16)
                     ->tooltip(function (Tables\Columns\TextColumn $column): string {
@@ -214,10 +214,10 @@ class OwnerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOwners::route('/'),
-            'create' => Pages\CreateOwner::route('/create'),
-            // 'view' => Pages\ViewOwner::route('/{record}'),
-            // 'edit' => Pages\EditOwner::route('/{record}/edit'),
+            'index' => Pages\ListEntities::route('/'),
+            'create' => Pages\CreateEntity::route('/create'),
+            // 'view' => Pages\ViewEntity::route('/{record}'),
+            // 'edit' => Pages\EditEntity::route('/{record}/edit'),
         ];
     }
 }

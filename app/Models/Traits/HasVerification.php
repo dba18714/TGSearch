@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-use App\Jobs\ProcessUpdateTelegramModelJob;
+use App\Jobs\ProcessUpdateEntityModelJob;
 use Carbon\Carbon;
 
 trait HasVerification
@@ -12,7 +12,7 @@ trait HasVerification
         $this->verified_start_at = now();
         $this->save();
 
-        ProcessUpdateTelegramModelJob::dispatch($this);
+        ProcessUpdateEntityModelJob::dispatch($this);
 
         return $this;
     }

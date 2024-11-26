@@ -3,7 +3,7 @@
 namespace App\Telegram\Handlers;
 
 use App\Models\Message;
-use App\Models\Owner;
+use App\Models\Entity;
 use App\Models\Search;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
@@ -23,21 +23,21 @@ class SearchHandler
         Search::recordSearch($query);
 
         // 搜索消息
-        $messageOwnerIds = Message::search($query)
-            ->get(['id', 'owner_id', 'text'])
-            ->groupBy('owner_id')
+        $messageEntityIds = Message::search($query)
+            ->get(['id', 'entity_id', 'text'])
+            ->groupBy('entity_id')
             ->map(function ($messages) {
                 return $messages->take(1);
             });
 
         // 搜索所有者
-        $owners = Owner::search($query)->get();
+        $entities = Entity::search($query)->get();
 
-        // 合并两种搜索结果的 owner_id
-        $allOwnerIds = $messageOwnerIds->keys()->merge($owners->pluck('id'))->unique();
+        // 合并两种搜索结果的 entity_id
+        $allEntityIds = $messageEntityIds->keys()->merge($entities->pluck('id'))->unique();
 
         // 获取最终结果
-        $results = Owner::whereIn('id', $allOwnerIds)
+        $results = Entity::whereIn('id', $allEntityIds)
             ->take(10)
             ->get();
 
@@ -48,13 +48,13 @@ class SearchHandler
 
         $response = "🔍 搜索结果：\n\n";
         
-        foreach ($results as $owner) {
-            $response .= "📢 <b>{$owner->name}</b>\n";
-            $response .= "🔗 @{$owner->username}\n";
+        foreach ($results as $entity) {
+            $response .= "📢 <b>{$entity->name}</b>\n";
+            $response .= "🔗 @{$entity->username}\n";
             
             // 如果有匹配的消息，显示第一条
-            if (isset($messageOwnerIds[$owner->id])) {
-                foreach ($messageOwnerIds[$owner->id] as $message) {
+            if (isset($messageEntityIds[$entity->id])) {
+                foreach ($messageEntityIds[$entity->id] as $message) {
                     $response .= "💬 {$message->text}\n";
                     break;
                 }

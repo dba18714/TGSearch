@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Jobs\ProcessGoogleCustomSearchJob;
-use App\Models\Owner;
+use App\Models\Entity;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
@@ -12,7 +12,7 @@ use App\Models\Message;
 use App\Models\Search;
 use Artesaos\SEOTools\Facades\SEOMeta;
 
-class Owners extends Component
+class Entities extends Component
 {
     use WithPagination;
 
@@ -112,29 +112,29 @@ class Owners extends Component
         $title = $this->q ? "搜索 - {$this->q}" : '首页';
         SEOMeta::setTitle($title);
 
-        $query = Owner::query();
+        $query = Entity::query();
 
         if (!empty($this->q)) {
             Search::recordSearch($this->q);
 
             // 搜索消息
-            $messageOwnerIds = Message::search($this->q)
-                ->get(['id', 'owner_id', 'text'])
-                ->groupBy('owner_id')
+            $messageEntityIds = Message::search($this->q)
+                ->get(['id', 'entity_id', 'text'])
+                ->groupBy('entity_id')
                 ->map(function ($messages) {
                     return $messages->take(1);
                 });
 
             // 搜索所有者
-            $owners = Owner::search($this->q)->get();
+            $entities = Entity::search($this->q)->get();
 
-            // 合并两种搜索结果的 owner_id
-            $allOwnerIds = $messageOwnerIds->keys()->merge($owners->pluck('id'))->unique();
+            // 合并两种搜索结果的 entity_id
+            $allEntityIds = $messageEntityIds->keys()->merge($entities->pluck('id'))->unique();
 
-            $query->whereIn('id', $allOwnerIds);
+            $query->whereIn('id', $allEntityIds);
         }
 
-        $owners = $query
+        $entities = $query
             ->when($this->type, function ($query) {
                 $query->where('type', $this->type);
             })
@@ -144,14 +144,14 @@ class Owners extends Component
             ->paginate(12);
 
         // 如果有搜索词，添加匹配的消息到结果中
-        if (!empty($this->q) && isset($messageOwnerIds)) {
-            foreach ($owners as $owner) {
-                $owner->matched_messages = $messageOwnerIds->get($owner->id);
+        if (!empty($this->q) && isset($messageEntityIds)) {
+            foreach ($entities as $entity) {
+                $entity->matched_messages = $messageEntityIds->get($entity->id);
             }
         }
 
-        return view('livewire.owners', [
-            'owners' => $owners
+        return view('livewire.entities', [
+            'entities' => $entities
         ]);
     }
 }

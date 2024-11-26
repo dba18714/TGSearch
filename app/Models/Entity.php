@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Jobs\ProcessUpdateOwnerInfoJob;
-use App\Jobs\ProcessUpdateTelegramModelJob;
+use App\Jobs\ProcessUpdateEntityInfoJob;
+use App\Jobs\ProcessUpdateEntityModelJob;
 use App\Models\Traits\HasVerification;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Scout\Searchable;
 
-class Owner extends Model
+class Entity extends Model
 {
     use HasUlids, HasFactory;
     use Searchable;
@@ -69,7 +69,7 @@ class Owner extends Model
 
     public function getRouteAttribute()
     {
-        return route('owner.show', $this);
+        return route('entity.show', $this);
     }
 
     public function getUrlAttribute(): ?string
@@ -86,7 +86,7 @@ class Owner extends Model
     }
 
     /**
-     * Scope a query to only include valid owners.
+     * Scope a query to only include valid entities.
      */
     public function scopeValid($query)
     {
@@ -94,7 +94,7 @@ class Owner extends Model
     }
 
     /**
-     * Scope a query to only include user submitted owners.
+     * Scope a query to only include user submitted entities.
      */
     public function scopeByUser($query)
     {
@@ -102,7 +102,7 @@ class Owner extends Model
     }
 
     /**
-     * Scope a query to only include crawler submitted owners.
+     * Scope a query to only include crawler submitted entities.
      */
     public function scopeByCrawler($query)
     {
@@ -166,7 +166,7 @@ class Owner extends Model
     //     $this->verified_start_at = now();
     //     $this->save();
 
-    //     ProcessUpdateTelegramModelJob::dispatch($this);
+    //     ProcessUpdateEntityModelJob::dispatch($this);
 
     //     return $this;
     // }
@@ -198,29 +198,29 @@ class Owner extends Model
     }
 
     /**
-     * Get a single link for verification, prioritizing unverified and in-progress owners
+     * Get a single link for verification, prioritizing unverified and in-progress entities
      *
      * @return void
      */
     // public static function dispatchNextVerificationJob(): bool
     // {
-    //     $owner = self::selectForVerification()->first();
+    //     $entity = self::selectForVerification()->first();
 
-    //     if (!$owner->exists) return false;
+    //     if (!$entity->exists) return false;
 
     //     // 如果1小时之内已经验证过了，就跳过
     //     if (
-    //         $owner->verified_start_at &&
-    //         $owner->verified_start_at->gt(now()->subHour())
+    //         $entity->verified_start_at &&
+    //         $entity->verified_start_at->gt(now()->subHour())
     //     ) return false;
 
-    //     $owner->dispatchUpdateJob();
+    //     $entity->dispatchUpdateJob();
 
     //     return true;
     // }
 
     // /**
-    //  * Query scope for selecting owners for verification
+    //  * Query scope for selecting entities for verification
     //  *
     //  * @param \Illuminate\Database\Eloquent\Builder $query
     //  * @return \Illuminate\Database\Eloquent\Builder
@@ -234,8 +234,8 @@ class Owner extends Model
 
     // protected static function booted(): void
     // {
-    //     static::created(function (Owner $owner) {
-    //         $owner->dispatchUpdateJob();
+    //     static::created(function (Entity $entity) {
+    //         $entity->dispatchUpdateJob();
     //     });
     // }
 

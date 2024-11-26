@@ -2,50 +2,50 @@
     <div class="bg-gray-100 dark:bg-gray-900 min-h-screen py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- 左右布局容器 -->
-            <div class="{{ $owner->messages ? 'flex flex-col lg:flex-row gap-6' : 'flex justify-center' }}">
+            <div class="{{ $entity->messages ? 'flex flex-col lg:flex-row gap-6' : 'flex justify-center' }}">
                 <!-- 左侧名片信息 -->
                 <div class="lg:w-1/3 lg:min-w-[320px]">
                     <div
-                        class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden {{ $owner->messages ? 'lg:sticky lg:top-6' : '' }}">
+                        class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden {{ $entity->messages ? 'lg:sticky lg:top-6' : '' }}">
                         <!-- 频道/群组头部信息 -->
                         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                             <div class="flex flex-col items-center text-center">
                                 <div
                                     class="w-24 h-24 bg-indigo-500 rounded-full flex items-center justify-center text-white text-3xl font-bold mb-4">
-                                    {{ strtoupper(substr($owner->name, 0, 1)) }}
+                                    {{ strtoupper(substr($entity->name, 0, 1)) }}
                                 </div>
-                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $owner->name }}</h1>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $owner->username }}</p>
+                                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $entity->name }}</h1>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $entity->username }}</p>
                                 <span
                                     class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-    {{ $owner->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-    {{ $owner->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-    {{ $owner->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-    {{ $owner->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+    {{ $entity->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+    {{ $entity->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+    {{ $entity->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+    {{ $entity->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
      ">
-                                    {{ $owner->type_name }}
+                                    {{ $entity->type_name }}
                                 </span>
                             </div>
 
-                            @if ($owner->introduction && $owner->introduction !== 'None')
+                            @if ($entity->introduction && $entity->introduction !== 'None')
                                 <div class="mt-4 text-gray-600 dark:text-gray-300 text-sm">
-                                    {!! nl2br(e($owner->introduction)) !!}
+                                    {!! nl2br(e($entity->introduction)) !!}
                                 </div>
                             @endif
 
-                            @if (!$owner->isPerson())
+                            @if (!$entity->isPerson())
                                 <div class="mt-4 flex justify-center space-x-6">
                                     <div class="text-center">
                                         <div class="text-xl font-semibold text-gray-900 dark:text-white">
-                                            {{ number_format($owner->member_count) }}</div>
+                                            {{ number_format($entity->member_count) }}</div>
                                         <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $owner->isBot() ? '使用者' : '' }}
-                                            {{ $owner->isChannel() ? '订阅者' : '' }}
-                                            {{ $owner->isGroup() ? '成员' : '' }}
+                                            {{ $entity->isBot() ? '使用者' : '' }}
+                                            {{ $entity->isChannel() ? '订阅者' : '' }}
+                                            {{ $entity->isGroup() ? '成员' : '' }}
                                         </div>
                                     </div>
                                     {{-- <div class="text-center">
-                                    <div class="text-xl font-semibold text-gray-900 dark:text-white">{{ number_format($owner->view_count) }}</div>
+                                    <div class="text-xl font-semibold text-gray-900 dark:text-white">{{ number_format($entity->view_count) }}</div>
                                     <div class="text-sm text-gray-500 dark:text-gray-400">次浏览</div>
                                 </div> --}}
                                 </div>
@@ -54,12 +54,12 @@
 
                         <!-- 访问按钮 -->
                         <div class="p-6 bg-gray-50 dark:bg-gray-700">
-                            <a href="{{ $owner->url }}" target="_blank"
+                            <a href="{{ $entity->url }}" target="_blank"
                                 class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 
                                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
                                  dark:bg-indigo-500 dark:hover:bg-indigo-600
                                  transition-all duration-200">
-                                <span>访问{{ $owner->type_name }}</span>
+                                <span>访问{{ $entity->type_name }}</span>
                                 <svg class="ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path
@@ -81,15 +81,15 @@
                                     <div class="flex-shrink-0 mr-4">
                                         <div
                                             class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-bold">
-                                            {{ strtoupper(substr($owner->name, 0, 1)) }}
+                                            {{ strtoupper(substr($entity->name, 0, 1)) }}
                                         </div>
                                     </div>
                                     <div class="flex-grow">
                                         <div class="flex items-center mb-2">
                                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                                {{ $owner->name }}</h2>
+                                                {{ $entity->name }}</h2>
                                             <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $owner->created_at->format('Y-m-d H:i') }}
+                                                {{ $entity->created_at->format('Y-m-d H:i') }}
                                             </span>
                                         </div>
 
@@ -115,19 +115,19 @@
                         </div>
                     @endforeach
                     {{ $messages->links() }}
-                    @if ($message->exists && $owner->messages->count() > 1)
+                    @if ($message->exists && $entity->messages->count() > 1)
                         <div class="text-center mt-6">
-                            <a href="{{ route('owner.show', $owner) }}"
+                            <a href="{{ route('entity.show', $entity) }}"
                                 class="text-indigo-600 dark:text-indigo-500">查看所有消息</a>
                         </div>
                     @endif
 
                     <!-- 相关推荐 -->
-                    @if ($relatedOwners->isNotEmpty())
+                    @if ($relatedEntities->isNotEmpty())
                         <div class="mt-6 p-6">
                             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">相关推荐</h2>
                             <div class="grid grid-cols-1 gap-6">
-                                @foreach ($relatedOwners as $relatedOwner)
+                                @foreach ($relatedEntities as $relatedEntity)
                                     <div
                                         class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200">
                                         <div class="p-6">
@@ -136,30 +136,30 @@
                                                     <div class="flex-shrink-0">
                                                         <div
                                                             class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-bold">
-                                                            {{ strtoupper(substr($relatedOwner->name, 0, 1)) }}
+                                                            {{ strtoupper(substr($relatedEntity->name, 0, 1)) }}
                                                         </div>
                                                     </div>
                                                     <div class="ml-4">
                                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                                            {{ $relatedOwner->name }}</h3>
+                                                            {{ $relatedEntity->name }}</h3>
                                                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                                                            {{ $relatedOwner->username }}</p>
+                                                            {{ $relatedEntity->username }}</p>
                                                     </div>
                                                 </div>
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-    {{ $relatedOwner->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-    {{ $relatedOwner->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-    {{ $relatedOwner->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-    {{ $relatedOwner->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+    {{ $relatedEntity->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+    {{ $relatedEntity->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+    {{ $relatedEntity->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+    {{ $relatedEntity->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
     ">
-                                                    {{ $relatedOwner->type_name }}
+                                                    {{ $relatedEntity->type_name }}
                                                 </span>
                                             </div>
 
-                                            @if ($relatedOwner->introduction && $relatedOwner->introduction !== 'None')
+                                            @if ($relatedEntity->introduction && $relatedEntity->introduction !== 'None')
                                                 <p class="mt-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                                    {{ $relatedOwner->introduction }}</p>
+                                                    {{ $relatedEntity->introduction }}</p>
                                             @endif
 
                                             <div class="mt-6 flex items-center justify-between">
@@ -170,9 +170,9 @@
                                                             stroke-width="2"
                                                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                                     </svg>
-                                                    {{ number_format($relatedOwner->member_count) }}
+                                                    {{ number_format($relatedEntity->member_count) }}
                                                 </div>
-                                                <a href="{{ route('owner.show', $relatedOwner) }}" wire:navigate
+                                                <a href="{{ route('entity.show', $relatedEntity) }}" wire:navigate
                                                     class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
                                                   dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 
                                                   transition-colors duration-200">

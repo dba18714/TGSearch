@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Owner;
+use App\Models\Entity;
 use App\Services\GoogleCustomSearchService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -87,15 +87,15 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
             $message_id = extract_telegram_message_id_by_url($item['link']);
 
             if ($username) {
-                $owner = Owner::firstOrCreate(
+                $entity = Entity::firstOrCreate(
                     ['username' => $username],
                     [
                         'source_str' => $item['link'],
                     ]
                 );
-                $owner->dispatchUpdateJob();
+                $entity->dispatchUpdateJob();
                 if ($message_id) {
-                    $message = $owner->messages()->firstOrCreate(
+                    $message = $entity->messages()->firstOrCreate(
                         ['original_id' => $message_id],
                         [
                             'source_str' => $item['link'],

@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Message;
 use Livewire\Component;
-use App\Models\Owner;
+use App\Models\Entity;
 use Illuminate\Support\Facades\Cache;
 
 class FooterStats extends Component
@@ -26,23 +26,23 @@ class FooterStats extends Component
         $cacheDuration = config('app.debug') ? now()->addSeconds(0) : now()->addHours(1);
 
         $this->totalRecords = Cache::remember('total_records', $cacheDuration, function () {
-            return Owner::count() + Message::count();
+            return Entity::count() + Message::count();
         });
 
         $this->totalChannels = Cache::remember('total_channels', $cacheDuration, function () {
-            return Owner::where('type', 'channel')->count();
+            return Entity::where('type', 'channel')->count();
         });
 
         $this->totalGroups = Cache::remember('total_groups', $cacheDuration, function () {
-            return Owner::where('type', 'group')->count();
+            return Entity::where('type', 'group')->count();
         });
 
         $this->totalBots = Cache::remember('total_bots', $cacheDuration, function () {
-            return Owner::where('type', 'bot')->count();
+            return Entity::where('type', 'bot')->count();
         });
 
         $this->totalPersons = Cache::remember('total_persons', $cacheDuration, function () {
-            return Owner::where('type', 'person')->count();
+            return Entity::where('type', 'person')->count();
         });
 
         $this->totalMessages = Cache::remember('total_messages', $cacheDuration, function () {

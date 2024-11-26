@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Owner;
+use App\Models\Entity;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class OwnerFactory extends Factory
+class EntityFactory extends Factory
 {
-    protected $model = Owner::class;
+    protected $model = Entity::class;
     
     public function definition(): array
     {

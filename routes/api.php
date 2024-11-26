@@ -2,16 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\OwnerController;
+use App\Http\Controllers\Api\EntityController;
 use SergiX44\Nutgram\Nutgram;
 
 // 公开接口
-Route::get('/owners', [OwnerController::class, 'index']);
-Route::get('/owners/{link}', [OwnerController::class, 'show']);
+Route::get('/entities', [EntityController::class, 'index']);
+Route::get('/entities/{link}', [EntityController::class, 'show']);
 
 // 需要认证的接口
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/owners', [OwnerController::class, 'store']);
+    Route::post('/entities', [EntityController::class, 'store']);
 });
 
 Route::get('/user', function (Request $request) {

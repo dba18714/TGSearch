@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\OwnerResource;
-use App\Models\Owner;
+use App\Http\Resources\EntityResource;
+use App\Models\Entity;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class OwnerController extends Controller
+class EntityController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Owner::query()->valid();
+        $query = Entity::query()->valid();
 
         // 根据类型筛选
         if ($request->has('type')) {
@@ -37,7 +37,7 @@ class OwnerController extends Controller
         $order = $request->input('order', 'desc');
         $query->orderBy($sort, $order);
 
-        return OwnerResource::collection(
+        return EntityResource::collection(
             $query->paginate($request->input('per_page', 15))
         );
     }
@@ -45,9 +45,9 @@ class OwnerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Owner $owner): OwnerResource
+    public function show(Entity $entity): EntityResource
     {
-        return new OwnerResource($owner);
+        return new EntityResource($entity);
     }
 
     /**
@@ -58,7 +58,7 @@ class OwnerController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'introduction' => 'required|string',
-            // 'url' => 'required|url|unique:telegram_owners',
+            // 'url' => 'required|url|unique:telegram_entities',
             'type' => 'required|in:bot,channel,group,person,message',
             'username' => 'required|string|max:255',
         ]);
@@ -67,8 +67,8 @@ class OwnerController extends Controller
         $validated['user_id'] = auth()->id;
         $validated['is_valid'] = false; // 需要管理员审核
 
-        $owner = Owner::create($validated);
+        $entity = Entity::create($validated);
 
-        return new OwnerResource($owner);
+        return new EntityResource($entity);
     }
 }

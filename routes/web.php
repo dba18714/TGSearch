@@ -3,17 +3,17 @@
 use App\ContentAudit\Facades\ContentAudit;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
-use App\Livewire\Owners;
-use App\Livewire\OwnerShow;
-use App\Livewire\OwnerCreate;
+use App\Livewire\Entities;
+use App\Livewire\EntityShow;
+use App\Livewire\EntityCreate;
 use App\Models\Tmp;
 use App\Models\Tmp2;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use App\Jobs\ProcessPodcast;
-use App\Jobs\ProcessUpdateOwnerInfoJob;
+use App\Jobs\ProcessUpdateEntityInfoJob;
 use App\Models\Message;
-use App\Models\Owner;
+use App\Models\Entity;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +35,20 @@ Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function () {
 
+    $data = now()->addDay()->toString();
+    dump($data);
+    $data = now()->addDays(1)->toString();
+    dump($data);
+    $data = now()->addDays(2)->toString();
+    dump($data);
+    $data = now()->addDays(3)->toString();
+    dump($data);
+    $data = now()->toString();
+    dump($data);
+
+
+    return $data;
+
     $result = ContentAudit::driver('openai')
                 ->audit('rgdsfd');
 
@@ -44,12 +58,12 @@ Route::get('/tmp', function () {
     }
 
     return 'not person';
-    $owner = Owner::find('01jcq1y39hh0rbc7nxykrhayyj');
-    dump($owner);
-    dump($owner->photo_count);
-    return $owner->photo_count;
+    $entity = Entity::find('01jcq1y39hh0rbc7nxykrhayyj');
+    dump($entity);
+    dump($entity->photo_count);
+    return $entity->photo_count;
     $message = Message::firstOrCreate(
-        ['owner_id' => '01jcnh2hfyzcqt380f6apz3b3k', 'original_id' => '874791'],
+        ['entity_id' => '01jcnh2hfyzcqt380f6apz3b3k', 'original_id' => '874791'],
         [
             'source' => 'manual',
         ]
@@ -61,11 +75,11 @@ Route::get('/tmp', function () {
         return class_basename($model);
     };
     
-    return tmp(Owner::first());
+    return tmp(Entity::first());
 
 
 
-    return Owner::create([
+    return Entity::create([
         'username' => '@test'.time(),
     ])->url;
     return;
@@ -93,12 +107,12 @@ Route::get('/tmp', function () {
 
 
 
-    $owner = Owner::create([
+    $entity = Entity::create([
         'url' => 'https://www.youtube.com/watch?v=1234567890',
     ]);
-    return $owner;
-    if ($owner) $owner->dispatchUpdateJob();
-    dump($owner);
+    return $entity;
+    if ($entity) $entity->dispatchUpdateJob();
+    dump($entity);
 });
 
 Route::get('/tmp2', function () {
@@ -107,10 +121,10 @@ Route::get('/tmp2', function () {
     return 'tmp2';
 });
 
-Route::get('/', Owners::class)->name('home');
-Route::get('/owners/create', OwnerCreate::class)->name('owners.create');
-Route::get('/owners/{owner}/{message?}', OwnerShow::class)->name('owner.show');
+Route::get('/', Entities::class)->name('home');
+Route::get('/entities/create', EntityCreate::class)->name('entities.create');
+Route::get('/entities/{entity}/{message?}', EntityShow::class)->name('entity.show');
 
-Route::get('/owner/{id}/{message_id?}', function (string $id = null, ?string $message_id = null) {
+Route::get('/entity/{id}/{message_id?}', function (string $id = null, ?string $message_id = null) {
     return $id . '-' . $message_id;
 });

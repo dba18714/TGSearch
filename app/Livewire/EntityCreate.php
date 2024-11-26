@@ -4,9 +4,9 @@ namespace App\Livewire;
 
 use App\Models\Message;
 use Livewire\Component;
-use App\Models\Owner;
+use App\Models\Entity;
 
-class OwnerCreate extends Component
+class EntityCreate extends Component
 {
     public $urls = '';
 
@@ -33,7 +33,7 @@ class OwnerCreate extends Component
 
             // 创建或更新模型
             if ($username) {
-                $owner = Owner::firstOrCreate(
+                $entity = Entity::firstOrCreate(
                     ['username' => $username],
                     [
                         'source' => 'manual',
@@ -42,7 +42,7 @@ class OwnerCreate extends Component
                 );
                 if (isset($message_id)) {
                     Message::firstOrCreate(
-                        ['owner_id' => $owner->id, 'original_id' => $message_id],
+                        ['entity_id' => $entity->id, 'original_id' => $message_id],
                         [
                             'source' => 'manual',
                             'source_str' => $line,
@@ -59,6 +59,6 @@ class OwnerCreate extends Component
 
     public function render()
     {
-        return view('livewire.owner-create');
+        return view('livewire.entity-create');
     }
 }

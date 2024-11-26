@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('owners', function (Blueprint $table) {
+        Schema::create('entities', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name')->nullable();
             $table->string('introduction')->nullable();
@@ -45,6 +45,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('owners');
+        Schema::dropIfExists('entities');
     }
 };

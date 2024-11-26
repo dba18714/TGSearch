@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Enums\CrawlTelegramType;
-use App\Models\Owner;
+use App\Models\Entity;
 use App\Services\TelegramCrawlerService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class ProcessUpdateTelegramModelJob implements ShouldQueue
+class ProcessUpdateEntityModelJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -42,7 +42,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
 
             // 获取模型类名
             $model_class_name = class_basename($this->model);
-            if ($model_class_name == 'Owner') {
+            if ($model_class_name == 'Entity') {
                 $data = $crawler->crawl($this->model->username);
                 if (!$data) return;
                 if ($data['is_valid'] && $data['name'] === null) {
@@ -73,7 +73,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                 $new_data['is_valid'] = $data['is_valid'];
                 $this->model->update($new_data);
             } elseif ($model_class_name == 'Message') {
-                $data = $crawler->crawl($this->model->owner->username, $this->model->original_id);
+                $data = $crawler->crawl($this->model->entity->username, $this->model->original_id);
                 if (!$data) return;
                 if ($data['is_valid'] && $data['message'] === null) {
                     $model_json = $this->model->toJson(JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
@@ -102,7 +102,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error('Owner update job failed', [
+        Log::error('Entity update job failed', [
             'model_class_name' => class_basename($this->model),
             'model_id' => $this->model->id,
             'url' => $this->model->url,
