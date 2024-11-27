@@ -30,7 +30,6 @@ return new class extends Migration
             $table->string('source')->index()->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
             $table->string('source_str')->nullable()->comment('未经过解析的原始 url or username');
             $table->ulid('user_id')->index()->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
-            // TODO is_valid 重命名为 is_active
             $table->boolean('is_valid')->default(false)->comment('是否有效');
             $table->timestamp('verified_at')->index()->nullable();
             $table->timestamp('verified_start_at')->index()->nullable()->comment('验证开始时间，不管是否验证成功');
