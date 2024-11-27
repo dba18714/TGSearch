@@ -72,7 +72,7 @@ class Message extends Model
 
     public function impressions(): MorphMany
     {
-        return $this->morphMany(Impression::class, 'commentable');
+        return $this->morphMany(Impression::class, 'impressionable');
     }
 
     /**

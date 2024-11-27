@@ -70,7 +70,7 @@ class Chat extends Model
 
     public function impressions(): MorphMany
     {
-        return $this->morphMany(Impression::class, 'commentable');
+        return $this->morphMany(Impression::class, 'impressionable');
     }
 
     public function getRouteAttribute()

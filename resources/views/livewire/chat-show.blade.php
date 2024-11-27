@@ -69,6 +69,16 @@
                                 </svg>
                             </a>
                         </div>
+                        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                                <div class="flex items-center space-x-2">
+                                    <span>今日展示: {{ $todayImpressions }}次</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span>最近7日: {{ $weekImpressions }}次</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

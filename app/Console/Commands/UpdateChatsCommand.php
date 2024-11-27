@@ -6,7 +6,7 @@ use App\Models\Chat;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class UpdateChats extends Command
+class UpdateChatsCommand extends Command
 {
     protected $signature = 'chats:verify-chats';
     protected $description = 'Dispatch verification job for the next chat needing verification';

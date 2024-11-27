@@ -6,10 +6,10 @@
                 <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Telegram 资源导航</h1>
             </div>
 
-            <livewire:ad-display position="sidebar" />
+            {{-- <livewire:ad-display position="sidebar" />
             <livewire:ad-display position="header" />
             <livewire:ad-display position="content" />
-            <livewire:ad-display position="footer" />
+            <livewire:ad-display position="footer" /> --}}
 
             <!-- Search and Sort Section -->
             <div class="max-w-3xl mx-auto mb-8" id="paginated-posts">

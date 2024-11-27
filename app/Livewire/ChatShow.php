@@ -47,6 +47,11 @@ class ChatShow extends Component
         }
         SEOMeta::setTitle($title);
 
+        // 获取曝光统计数据
+        $impressionStats = app(ImpressionStatsService::class)->getImpressionStats($this->chat, 'Asia/Shanghai');
+        $todayImpressions = $impressionStats->last();
+        $weekImpressions = $impressionStats->sum();
+
         $messages = $this->chat->messages()
                 ->when($this->message->exists, function ($query) {
                     $query->where('id', $this->message->id);
@@ -59,6 +64,8 @@ class ChatShow extends Component
         return view('livewire.chat-show', [
             'relatedChats' => $this->getRelatedChats(),
             'messages' => $messages,
+            'todayImpressions' => $todayImpressions,
+            'weekImpressions' => $weekImpressions,
         ]);
     }
 }
