@@ -18,8 +18,7 @@ class Chats extends Component
     use WithPagination;
 
     protected GoogleCustomSearchService $googleSearchService;
-    protected $googleSuggestService;
-    protected $impressionStatsService;
+    protected GoogleSuggestService $googleSuggestService;
 
     public $q = '';
     public $searchInput = '';
@@ -38,11 +37,9 @@ class Chats extends Component
     public function boot(
         GoogleCustomSearchService $googleSearchService,
         GoogleSuggestService $googleSuggestService,
-        ImpressionStatsService $impressionStatsService,
     ) {
         $this->googleSearchService = $googleSearchService;
         $this->googleSuggestService = $googleSuggestService;
-        $this->impressionStatsService = $impressionStatsService;
     }
 
     public function mount()
@@ -154,7 +151,7 @@ class Chats extends Component
             }
         }
 
-        $this->impressionStatsService->recordBulkImpressions($chats->items(), 'search_result');
+        app(ImpressionStatsService::class)->recordBulkImpressions($chats->items(), 'search_result');
 
         return view('livewire.chats', [
             'chats' => $chats

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Message;
 use App\Models\Chat;
+use App\Services\ImpressionStatsService;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Livewire\Component;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,9 @@ class ChatShow extends Component
             ->take(7)
             ->get();
         app('debugbar')->debug('chats', $chats);
+
+        app(ImpressionStatsService::class)->recordBulkImpressions($chats->all(), 'related_recommendation');
+
         return $chats;
     }
 
@@ -43,14 +47,18 @@ class ChatShow extends Component
         }
         SEOMeta::setTitle($title);
 
-        app('debugbar')->debug('chat', $this->chat);
-        return view('livewire.chat-show', [
-            'relatedChats' => $this->getRelatedChats(),
-            'messages' => $this->chat->messages()
+        $messages = $this->chat->messages()
                 ->when($this->message->exists, function ($query) {
                     $query->where('id', $this->message->id);
                 })
-                ->paginate(5)
+                ->paginate(5);
+
+        app(ImpressionStatsService::class)->recordBulkImpressions($messages->items(), 'chat_detail_page');
+
+        app('debugbar')->debug('chat', $this->chat);
+        return view('livewire.chat-show', [
+            'relatedChats' => $this->getRelatedChats(),
+            'messages' => $messages,
         ]);
     }
 }

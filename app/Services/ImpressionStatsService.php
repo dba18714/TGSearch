@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Chat;
 use App\Models\Impression;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -92,21 +93,23 @@ class ImpressionStatsService
         );
     }
 
-    public function recordImpression($impressionable): Impression
+    public function recordImpression(Model $impressionable, string $source): Impression
     {
         return $impressionable->impressions()->create([
+            'source' => $source,
             'impressed_at' => now(),
         ]);
     }
 
-    public function recordBulkImpressions(array $impressionables): bool
+    public function recordBulkImpressions(array $impressionables, string $source): bool
     {
         $now = now();
 
-        $records = collect($impressionables)->map(function ($impressionable) use ($now) {
+        $records = collect($impressionables)->map(function ($impressionable) use ($now, $source) {
             return [
                 'impressionable_type' => $impressionable->getMorphClass(),
                 'impressionable_id' => $impressionable->id,
+                'source' => $source,
                 'impressed_at' => $now,
             ];
         })->toArray();

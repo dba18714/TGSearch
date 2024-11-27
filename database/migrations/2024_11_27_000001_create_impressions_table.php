@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             // $table->ulid('chat_id')->index();
             $table->ulidMorphs('impressionable');
+            $table->string('source')->index()->comment('在哪里被展示，比如: search_result');
             $table->timestamp('impressed_at')->index();
         });
     }
