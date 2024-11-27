@@ -24,6 +24,11 @@ sail php artisan scout:flush "App\Models\Chat" && sail php artisan scout:flush "
 
 ## 启动长轮训
 sail artisan nutgram:run
+Or
+sail artisan app:telegram:run --timeout=30 # TODO 超时时间没有生效
 
 ## 测试 Telegram bot 
 sail artisan telegram:test
+
+## 注册 bot 命令
+sail artisan nutgram:register-commands
