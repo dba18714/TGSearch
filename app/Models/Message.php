@@ -6,6 +6,7 @@ use App\Models\Traits\HasVerification;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Laravel\Scout\Searchable;
 
 class Message extends Model
@@ -67,6 +68,11 @@ class Message extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function impressions(): MorphMany
+    {
+        return $this->morphMany(Impression::class, 'commentable');
     }
 
     /**

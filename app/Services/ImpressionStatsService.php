@@ -8,59 +8,61 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
-class EntityStatsService
+class ImpressionStatsService
 {
-    /**
-     * 获取文章的曝光统计数据
-     */
-    public function getImpressionStats(Entity $entity, string $timezone, int $days = 7): Collection
+    public function getImpressionStats($impressionable, string $timezone, int $days = 7): Collection
     {
         $userNow = now()->timezone($timezone);
         $todayStr = $userNow->format('Y-m-d');
 
-        $todayStats = $this->getTodayImpressions($entity, $timezone);
-        $historyStats = $this->getHistoryImpressions($entity, $timezone, $days - 1);
+        $todayStats = $this->getTodayImpressions($impressionable, $timezone);
+        $historyStats = $this->getHistoryImpressions($impressionable, $timezone, $days - 1);
 
         return collect($historyStats)->merge([$todayStr => $todayStats])->sortKeys();
     }
 
-    /**
-     * 获取今天的曝光统计
-     */
-    private function getTodayImpressions(Entity $entity, string $timezone): int
+    private function getTodayImpressions($impressionable, string $timezone): int
     {
-        $cacheKey = "entity:{$entity->id}:impressions:today:{$timezone}";
+        $cacheKey = sprintf(
+            "%s:%s:impressions:today:%s",
+            $impressionable->getMorphClass(),
+            $impressionable->id,
+            $timezone
+        );
 
         return cache()->remember(
             $cacheKey,
             now()->addMinutes(5),
-            function () use ($entity, $timezone): int {
+            function () use ($impressionable, $timezone): int {
                 $userNow = now()->timezone($timezone);
                 $todayStart = Carbon::parse($userNow->format('Y-m-d 00:00:00'), $timezone)->utc();
                 $todayEnd = Carbon::parse($userNow->format('Y-m-d 23:59:59'), $timezone)->utc();
 
-                return Impression::where('entity_id', $entity->id)
+                return $impressionable->impressions()
                     ->whereBetween('impressed_at', [$todayStart, $todayEnd])
                     ->count();
             }
         );
     }
 
-    /**
-     * 获取历史曝光统计
-     */
-    private function getHistoryImpressions(Entity $entity, string $timezone, int $days): array
+    private function getHistoryImpressions($impressionable, string $timezone, int $days): array
     {
         if ($days <= 0) {
             return [];
         }
 
-        $cacheKey = "entity:{$entity->id}:impressions:history:{$timezone}:{$days}";
+        $cacheKey = sprintf(
+            "%s:%s:impressions:history:%s:%d",
+            $impressionable->getMorphClass(),
+            $impressionable->id,
+            $timezone,
+            $days
+        );
 
         return Cache::remember(
             $cacheKey,
             now()->endOfDay(),
-            function () use ($entity, $timezone, $days): array {
+            function () use ($impressionable, $timezone, $days): array {
                 $userNow = now()->timezone($timezone);
                 $result = [];
 
@@ -70,7 +72,7 @@ class EntityStatsService
                 $utcStart = Carbon::parse($earliestDate->format('Y-m-d 00:00:00'), $timezone)->utc();
                 $utcEnd = Carbon::parse($yesterdayEnd->format('Y-m-d 23:59:59'), $timezone)->utc();
 
-                $impressions = Impression::where('entity_id', $entity->id)
+                $impressions = $impressionable->impressions()
                     ->whereBetween('impressed_at', [$utcStart, $utcEnd])
                     ->get(['impressed_at']);
 
@@ -90,26 +92,21 @@ class EntityStatsService
         );
     }
 
-    /**
-     * 记录文章曝光
-     */
-    public function recordImpression(Entity $entity): Impression
+    public function recordImpression($impressionable): Impression
     {
-        return Impression::create([
-            'entity_id' => $entity->id,
+        return $impressionable->impressions()->create([
             'impressed_at' => now(),
         ]);
     }
 
-    /**
-     * 批量记录文章曝光
-     */
-    public function recordBulkImpressions(array $entities): bool {
+    public function recordBulkImpressions(array $impressionables): bool
+    {
         $now = now();
 
-        $records = collect($entities)->map(function ($entity) use ($now) {
+        $records = collect($impressionables)->map(function ($impressionable) use ($now) {
             return [
-                'entity_id' => $entity->id,
+                'impressionable_type' => $impressionable->getMorphClass(),
+                'impressionable_id' => $impressionable->id,
                 'impressed_at' => $now,
             ];
         })->toArray();

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Impression extends Model
 {
@@ -16,8 +16,8 @@ class Impression extends Model
         'impressed_at' => 'datetime',
     ];
 
-    public function entity(): BelongsTo
+    public function impressionable(): MorphTo
     {
-        return $this->belongsTo(Entity::class);
+        return $this->morphTo();
     }
 }
