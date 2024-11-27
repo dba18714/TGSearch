@@ -80,6 +80,7 @@ class Chat extends Model
 
     public function getUrlAttribute(): ?string
     {
+        return "https://t.me/{$this->username}";
         return "https://t.me/s/{$this->username}";
     }
 

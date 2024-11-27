@@ -23,3 +23,5 @@ $bot->onCommand('start', StartHandler::class)
     ->description('The start command!22');
 
 $bot->onText('^[^/].*', SearchHandler::class);
+
+$bot->onCallbackQueryData('search:{param}', [SearchHandler::class, 'handlePagination']);
