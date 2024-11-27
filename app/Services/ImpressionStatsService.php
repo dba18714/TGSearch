@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Entity;
-use App\Models\EntityImpression;
+use App\Models\Impression;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -39,7 +39,7 @@ class EntityStatsService
                 $todayStart = Carbon::parse($userNow->format('Y-m-d 00:00:00'), $timezone)->utc();
                 $todayEnd = Carbon::parse($userNow->format('Y-m-d 23:59:59'), $timezone)->utc();
 
-                return EntityImpression::where('entity_id', $entity->id)
+                return Impression::where('entity_id', $entity->id)
                     ->whereBetween('impressed_at', [$todayStart, $todayEnd])
                     ->count();
             }
@@ -70,7 +70,7 @@ class EntityStatsService
                 $utcStart = Carbon::parse($earliestDate->format('Y-m-d 00:00:00'), $timezone)->utc();
                 $utcEnd = Carbon::parse($yesterdayEnd->format('Y-m-d 23:59:59'), $timezone)->utc();
 
-                $impressions = EntityImpression::where('entity_id', $entity->id)
+                $impressions = Impression::where('entity_id', $entity->id)
                     ->whereBetween('impressed_at', [$utcStart, $utcEnd])
                     ->get(['impressed_at']);
 
@@ -93,9 +93,9 @@ class EntityStatsService
     /**
      * 记录文章曝光
      */
-    public function recordImpression(Entity $entity): EntityImpression
+    public function recordImpression(Entity $entity): Impression
     {
-        return EntityImpression::create([
+        return Impression::create([
             'entity_id' => $entity->id,
             'impressed_at' => now(),
         ]);
@@ -114,6 +114,6 @@ class EntityStatsService
             ];
         })->toArray();
 
-        return EntityImpression::insert($records);
+        return Impression::insert($records);
     }
 }

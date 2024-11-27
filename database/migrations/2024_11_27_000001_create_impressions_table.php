@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('entity_impressions', function (Blueprint $table) {
+        Schema::create('impressions', function (Blueprint $table) {
             $table->id();
             $table->ulid('entity_id')->index();
             $table->timestamp('impressed_at')->index();
@@ -17,6 +17,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('entity_impressions');
+        Schema::dropIfExists('impressions');
     }
 };
