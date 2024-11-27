@@ -4,6 +4,7 @@ namespace App\Telegram\Handlers;
 
 use App\Models\Chat;
 use App\Models\Message;
+use App\Models\Search;
 use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
@@ -11,175 +12,244 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
 class SearchHandler
 {
-    protected $perPage = 5; // 每页显示数量
+    private const PER_PAGE = 5;
+    private const MAX_MESSAGE_LENGTH = 50;
 
+    /**
+     * 处理搜索请求
+     */
     public function __invoke(Nutgram $bot)
     {
-        Log::error('222222222222');
-
-        $query = $bot->message()->text;
-
-        // 从 query string 中获取页码，默认第1页
-        $page = 1;
-        if (str_contains($query, 'page:')) {
-            preg_match('/page:(\d+)/', $query, $matches);
-            $page = (int)$matches[1];
-            // 移除页码信息以获取纯搜索词
-            $query = trim(str_replace("page:{$page}", '', $query));
-        }
-
-        // 搜索消息
-        $messages = Message::search($query)
-            ->query(function ($builder) {
-                return $builder->with('chat');
-            })
-            ->paginate($this->perPage, 'page', $page);
-
-        // 搜索频道/群组
-        $chats = Chat::search($query)
-            ->paginate($this->perPage, 'page', $page);
-
-        if ($messages->isEmpty() && $chats->isEmpty()) {
-            return $bot->sendMessage('没有找到相关结果 😢');
-        }
-
-        // 构建结果消息
-        $text = $this->buildResultMessage($messages, $chats, $page);
-
-        // 构建分页键盘
-        $keyboard = $this->buildPaginationKeyboard($query, $page, $messages, $chats);
-
         try {
-            $bot->sendMessage(
-                text: $text,
-                chat_id: $bot->chatId(),  // 添加 chat_id 参数
-                parse_mode: 'HTML',
-                disable_web_page_preview: true,
-                reply_markup: $keyboard
-            );
+            $query = $this->extractSearchQuery($bot->message()->text);
+
+            if (empty($query['search_text'])) {
+                return $bot->sendMessage('请输入搜索关键词');
+            }
+
+            $searchResults = $this->performSearch($query['search_text'], $query['page']);
+
+            if ($searchResults['total_results']->isEmpty()) {
+                return $bot->sendMessage('没有找到相关结果 😢');
+            }
+
+            $this->sendSearchResults($bot, $searchResults, $query);
         } catch (\Throwable $e) {
-            Log::error('Error sending search results: ' . $e->getMessage());
-            $bot->sendMessage(
-                text: '抱歉，发送结果时出现错误 😅',
-                chat_id: $bot->chatId()
-            );
+            $this->handleError($bot, $e, '搜索过程中出现错误');
         }
     }
 
-    protected function buildResultMessage($messages, $chats, $page)
+    /**
+     * 处理分页回调
+     */
+    public function handlePagination(Nutgram $bot)
     {
-        // 计算总记录数
-        $totalMessages = $messages->total();
+        try {
+            $callbackData = $this->parseCallbackData($bot->callbackQuery()->data);
+            if (!$callbackData) {
+                return;
+            }
+
+            $searchResults = $this->performSearch($callbackData['query'], $callbackData['page']);
+
+            $this->updateSearchResults($bot, $searchResults, $callbackData);
+            $bot->answerCallbackQuery();
+        } catch (\Throwable $e) {
+            $this->handleError($bot, $e, '处理分页时出错，请重试', true);
+        }
+    }
+
+    /**
+     * 从查询字符串中提取搜索关键词和页码
+     */
+    private function extractSearchQuery(string $text): array
+    {
+        $page = 1;
+        $searchText = $text;
+
+        if (str_contains($text, 'page:')) {
+            preg_match('/page:(\d+)/', $text, $matches);
+            $page = (int)$matches[1];
+            $searchText = trim(str_replace("page:{$page}", '', $text));
+        }
+
+        return [
+            'search_text' => $searchText,
+            'page' => $page
+        ];
+    }
+
+    /**
+     * 执行搜索操作
+     */
+    private function performSearch(string $query, int $page): array
+    {
+        Search::recordSearch($query);
+
+        $messageChatIds = $this->searchMessages($query);
+        $chats = $this->searchChats($query);
+
+        $allChatIds = $messageChatIds->keys()->merge($chats->pluck('id'))->unique();
+        $paginatedChats = Chat::whereIn('id', $allChatIds)->paginate(self::PER_PAGE, page: $page);
+
+        $this->attachMatchedMessages($paginatedChats, $messageChatIds);
+
+        return [
+            'message_chat_ids' => $messageChatIds,
+            'chats' => $paginatedChats,
+            'total_results' => $allChatIds
+        ];
+    }
+
+    /**
+     * 搜索消息
+     */
+    private function searchMessages(string $query)
+    {
+        return Message::search($query)
+            ->get(['id', 'chat_id', 'text'])
+            ->groupBy('chat_id')
+            ->map(fn($messages) => $messages->take(1));
+    }
+
+    /**
+     * 搜索聊天
+     */
+    private function searchChats(string $query)
+    {
+        return Chat::search($query)->get();
+    }
+
+    /**
+     * 将匹配的消息附加到聊天结果中
+     */
+    private function attachMatchedMessages($chats, $messageChatIds): void
+    {
+        foreach ($chats as $chat) {
+            $chat->matched_messages = $messageChatIds->get($chat->id);
+        }
+    }
+
+    /**
+     * 发送搜索结果
+     */
+    private function sendSearchResults(Nutgram $bot, array $searchResults, array $query): void
+    {
+        $text = $this->buildResultMessage(
+            $searchResults['message_chat_ids'],
+            $searchResults['chats'],
+            $query['page']
+        );
+
+        $keyboard = $this->buildPaginationKeyboard(
+            $query['search_text'],
+            $query['page'],
+            $searchResults['message_chat_ids'],
+            $searchResults['chats']
+        );
+
+        $bot->sendMessage(
+            text: $text,
+            chat_id: $bot->chatId(),
+            parse_mode: 'HTML',
+            disable_web_page_preview: true,
+            reply_markup: $keyboard
+        );
+    }
+
+    /**
+     * 解析回调数据
+     */
+    private function parseCallbackData(string $data): ?array
+    {
+        $parts = explode(':', $data);
+
+        if (count($parts) !== 4) {
+            Log::error('Invalid callback data format');
+            return null;
+        }
+
+        return [
+            'query' => urldecode($parts[1]),
+            'page' => (int)$parts[3]
+        ];
+    }
+
+    /**
+     * 更新搜索结果消息
+     */
+    private function updateSearchResults(Nutgram $bot, array $searchResults, array $callbackData): void
+    {
+        $text = $this->buildResultMessage(
+            $searchResults['message_chat_ids'],
+            $searchResults['chats'],
+            $callbackData['page']
+        );
+
+        $keyboard = $this->buildPaginationKeyboard(
+            $callbackData['query'],
+            $callbackData['page'],
+            $searchResults['message_chat_ids'],
+            $searchResults['chats']
+        );
+
+        $bot->editMessageText(
+            text: $text,
+            chat_id: $bot->chatId(),
+            message_id: $bot->callbackQuery()->message->message_id,
+            parse_mode: 'HTML',
+            disable_web_page_preview: true,
+            reply_markup: $keyboard
+        );
+    }
+
+    /**
+     * 构建结果消息文本
+     */
+    private function buildResultMessage($messageChatIds, $chats, $page): string
+    {
+        $totalMessages = $messageChatIds->count();
         $totalChats = $chats->total();
         $totalRecords = $totalMessages + $totalChats;
-
-        // 计算总页数（取两个分页的最大值）
-        $totalPages = max(
-            $messages->lastPage(),
-            $chats->lastPage()
-        );
+        $totalPages = $chats->lastPage();
 
         $text = "🔍 搜索结果 (第 {$page}/{$totalPages} 页，共 {$totalRecords} 条记录)\n\n";
 
-        if ($messages->isNotEmpty()) {
-            $text .= "📝 <b>消息 ({$totalMessages} 条):</b>\n";
-            foreach ($messages as $message) {
-                $chatName = $message->chat->name ?? $message->chat->username ?? '未知';
-                $text .= "- <a href='{$message->url}'>{$this->truncate($message->text)}</a>\n";
-                $text .= "  来自: {$chatName}\n\n";
-            }
-        }
-
         if ($chats->isNotEmpty()) {
-            $text .= "\n📢 <b>频道/群组 ({$totalChats} 个):</b>\n";
             foreach ($chats as $chat) {
-                $text .= "- <a href='{$chat->url}'>{$chat->name}</a>\n";
-                $text .= "  {$chat->type} | {$chat->members_count} 成员\n\n";
+                $text .= $this->formatChatResult($chat);
             }
         }
 
         return $text;
     }
 
-    public function handlePagination(Nutgram $bot, $param)
+    /**
+     * 格式化单个聊天结果
+     */
+    private function formatChatResult($chat): string
     {
-        try {
-            $data = $bot->callbackQuery()->data;
-            Log::debug('Callback data:', ['data' => $data]);
+        $text = "- <a href='{$chat->url}'>{$chat->name}</a>\n";
 
-            // 解析 callback_data
-            $parts = explode(':', $data);
-            Log::debug('Parsed parts:', ['parts' => $parts]);
-
-            if (count($parts) !== 4) {
-                Log::error('Invalid callback data format');
-                return;
-            }
-
-            list(, $query,, $pageStr) = $parts;
-            // 确保 page 是整数
-            $page = (int)$pageStr;
-
-            Log::debug('Extracted values:', [
-                'query' => $query,
-                'page' => $page
-            ]);
-
-            // 执行搜索
-            $messages = Message::search($query)
-                ->query(function ($builder) {
-                    return $builder->with('chat');
-                })
-                ->paginate($this->perPage, page: $page); // 使用命名参数确保类型正确
-
-            $chats = Chat::search($query)
-                ->paginate($this->perPage, page: $page); // 使用命名参数确保类型正确
-
-            // 构建新的消息文本和键盘
-            $text = $this->buildResultMessage($messages, $chats, $page);
-            $keyboard = $this->buildPaginationKeyboard($query, $page, $messages, $chats);
-
-            Log::debug('Attempting to edit message', [
-                'chat_id' => $bot->chatId(),
-                'message_id' => $bot->callbackQuery()->message->message_id,
-                'text_length' => strlen($text)
-            ]);
-
-            // 修改原消息而不是发送新消息
-            $bot->editMessageText(
-                text: $text,
-                chat_id: $bot->chatId(),
-                message_id: $bot->callbackQuery()->message->message_id,
-                parse_mode: 'HTML',
-                disable_web_page_preview: true,
-                reply_markup: $keyboard
-            );
-
-            // 删除回调查询通知
-            $bot->answerCallbackQuery();
-        } catch (\Throwable $e) {
-            Log::error('Error in handlePagination:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            // 通知用户出错
-            $bot->answerCallbackQuery(
-                text: '处理分页时出错，请重试',
-                show_alert: true
-            );
+        if ($chat->matched_messages && $chat->matched_messages->isNotEmpty()) {
+            $message = $chat->matched_messages->first();
+            $text .= "  💬 {$this->truncate($message->text)}\n";
         }
+
+        $text .= "  {$chat->type_name}" .
+            ($chat->member_count ? " | {$chat->member_count} 成员" : "") . "\n\n";
+
+        return $text;
     }
 
-    protected function buildPaginationKeyboard($query, $page, $messages, $chats)
+    /**
+     * 构建分页键盘
+     */
+    private function buildPaginationKeyboard($query, $page, $messageChatIds, $chats): InlineKeyboardMarkup
     {
         $keyboard = new InlineKeyboardMarkup();
         $buttons = [];
-
-        // URL 编码查询字符串以处理特殊字符
         $encodedQuery = urlencode($query);
-
-        $hasMore = $messages->hasMorePages() || $chats->hasMorePages();
 
         if ($page > 1) {
             $buttons[] = new InlineKeyboardButton(
@@ -188,7 +258,7 @@ class SearchHandler
             );
         }
 
-        if ($hasMore) {
+        if ($chats->hasMorePages()) {
             $buttons[] = new InlineKeyboardButton(
                 text: '下一页 ➡️',
                 callback_data: "search:{$encodedQuery}:page:" . ($page + 1)
@@ -202,11 +272,37 @@ class SearchHandler
         return $keyboard;
     }
 
-    protected function truncate($text, $length = 50)
+    /**
+     * 截断文本
+     */
+    private function truncate(string $text): string
     {
-        if (mb_strlen($text) <= $length) {
+        if (mb_strlen($text) <= self::MAX_MESSAGE_LENGTH) {
             return $text;
         }
-        return mb_substr($text, 0, $length) . '...';
+        return mb_substr($text, 0, self::MAX_MESSAGE_LENGTH) . '...';
+    }
+
+    /**
+     * 处理错误
+     */
+    private function handleError(Nutgram $bot, \Throwable $e, string $message, bool $isCallback = false): void
+    {
+        Log::error('Search handler error:', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        if ($isCallback) {
+            $bot->answerCallbackQuery(
+                text: $message,
+                show_alert: true
+            );
+        } else {
+            $bot->sendMessage(
+                text: $message,
+                chat_id: $bot->chatId()
+            );
+        }
     }
 }
