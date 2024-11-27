@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Entity;
+use App\Models\Chat;
 
 return [
 
@@ -148,7 +148,7 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
-            Entity::class => [
+            Chat::class => [
                 'filterableAttributes' => ['type'],
                 'sortableAttributes' => ['id', 'member_count'],
             ],
@@ -190,7 +190,7 @@ return [
         ],
         // 'max_total_results' => env('TYPESENSE_MAX_TOTAL_RESULTS', 1000),
         'model-settings' => [
-            Entity::class => [
+            Chat::class => [
                 'collection-schema' => [
                     'fields' => [
                         [

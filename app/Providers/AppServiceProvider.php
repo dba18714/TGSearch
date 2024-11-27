@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Relation::enforceMorphMap([
-            'entity' => 'App\Models\Entity',
+            'chat' => 'App\Models\Chat',
             'message' => 'App\Models\Message',
         ]);
 

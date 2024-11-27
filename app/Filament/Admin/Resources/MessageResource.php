@@ -11,7 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Notifications\Notification;
-use App\Models\Entity;
+use App\Models\Chat;
 use Filament\Support\Enums\IconPosition;
 
 class MessageResource extends Resource
@@ -27,9 +27,9 @@ class MessageResource extends Resource
                 Forms\Components\TextInput::make('id')
                     ->disabled()
                     ->dehydrated(false),
-                Forms\Components\Select::make('entity_id')
+                Forms\Components\Select::make('chat_id')
                     ->label('所有者')
-                    ->relationship('entity', 'name')
+                    ->relationship('chat', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
@@ -80,7 +80,7 @@ class MessageResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('entity.name')
+                Tables\Columns\TextColumn::make('chat.name')
                     ->limit(12)
                     ->label('所有者')
                     ->searchable()
@@ -88,14 +88,14 @@ class MessageResource extends Resource
                     ->icon('heroicon-m-pencil-square')
                     ->iconPosition(IconPosition::After)
                     ->action(
-                        Tables\Actions\Action::make('viewEntity')
-                            ->label(fn(Message $record) => "所有者详情 #{$record->entity_id}")
+                        Tables\Actions\Action::make('viewChat')
+                            ->label(fn(Message $record) => "所有者详情 #{$record->chat_id}")
                             ->slideOver()
                             ->modalWidth('lg')
-                            ->form(fn(Form $form) => EntityResource::form($form)->getComponents())
-                            ->fillForm(fn(Message $record) => $record->entity->toArray())
+                            ->form(fn(Form $form) => ChatResource::form($form)->getComponents())
+                            ->fillForm(fn(Message $record) => $record->chat->toArray())
                             ->action(function (array $data, Message $record) {
-                                $record->entity->update($data);
+                                $record->chat->update($data);
                                 Notification::make()
                                     ->title('所有者信息已更新')
                                     ->success()

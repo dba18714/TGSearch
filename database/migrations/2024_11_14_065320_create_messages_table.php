@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->ulid('entity_id')->index();
+            $table->ulid('chat_id')->index();
             $table->integer('original_id')->index()->comment('Telegram 的原始消息id');
             $table->text('text')->nullable();
             $table->integer('view_count')->nullable();
@@ -25,8 +25,8 @@ return new class extends Migration
             $table->timestamp('verified_start_at')->index()->nullable()->comment('验证开始时间，不管是否验证成功');
             $table->timestamps();
 
-            $table->unique(['entity_id', 'original_id']);
-            $table->index(['entity_id', 'is_valid']);
+            $table->unique(['chat_id', 'original_id']);
+            $table->index(['chat_id', 'is_valid']);
         });
     }
 

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('impressions', function (Blueprint $table) {
             $table->id();
-            // $table->ulid('entity_id')->index();
+            // $table->ulid('chat_id')->index();
             $table->ulidMorphs('impressionable');
             $table->timestamp('impressed_at')->index();
         });

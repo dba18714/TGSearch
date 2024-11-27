@@ -21,7 +21,7 @@ class Message extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'entity_id',
+        'chat_id',
         'original_id',
         'text',
         'view_count',
@@ -47,8 +47,8 @@ class Message extends Model
 
     public function getUrlAttribute(): ?string
     {
-        if ($this->entity) {
-            return "https://t.me/s/{$this->entity->username}/{$this->original_id}";
+        if ($this->chat) {
+            return "https://t.me/s/{$this->chat->username}/{$this->original_id}";
         }
         return "404";
     }
@@ -58,7 +58,7 @@ class Message extends Model
         return [
             'id' => $this->id,
             'text' => $this->text,
-            'entity_id' => $this->entity_id
+            'chat_id' => $this->chat_id
         ];
     }
 
@@ -78,15 +78,15 @@ class Message extends Model
     /**
      * 获取消息所有者
      */
-    public function entity()
+    public function chat()
     {
-        return $this->belongsTo(Entity::class);
+        return $this->belongsTo(Chat::class);
     }
 
     public function getRouteAttribute()
     {
-        if ($this->entity) {
-            return route('entity.show', [$this->entity, $this]);
+        if ($this->chat) {
+            return route('chat.show', [$this->chat, $this]);
         }
         return null;
     }

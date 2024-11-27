@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Entity;
+use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +19,7 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            'entity_id' => Entity::factory(),
+            'chat_id' => Chat::factory(),
             'original_id' => fake()->unique()->numberBetween(1000, 999999),
             'text' => fake()->paragraph(),
             'view_count' => fake()->numberBetween(0, 10000),

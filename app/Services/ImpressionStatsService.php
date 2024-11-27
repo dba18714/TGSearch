@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Entity;
+use App\Models\Chat;
 use App\Models\Impression;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;

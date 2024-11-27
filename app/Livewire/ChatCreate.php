@@ -4,9 +4,9 @@ namespace App\Livewire;
 
 use App\Models\Message;
 use Livewire\Component;
-use App\Models\Entity;
+use App\Models\Chat;
 
-class EntityCreate extends Component
+class ChatCreate extends Component
 {
     public $urls = '';
 
@@ -33,7 +33,7 @@ class EntityCreate extends Component
 
             // 创建或更新模型
             if ($username) {
-                $entity = Entity::firstOrCreate(
+                $chat = Chat::firstOrCreate(
                     ['username' => $username],
                     [
                         'source' => 'manual',
@@ -42,7 +42,7 @@ class EntityCreate extends Component
                 );
                 if (isset($message_id)) {
                     Message::firstOrCreate(
-                        ['entity_id' => $entity->id, 'original_id' => $message_id],
+                        ['chat_id' => $chat->id, 'original_id' => $message_id],
                         [
                             'source' => 'manual',
                             'source_str' => $line,
@@ -59,6 +59,6 @@ class EntityCreate extends Component
 
     public function render()
     {
-        return view('livewire.entity-create');
+        return view('livewire.chat-create');
     }
 }

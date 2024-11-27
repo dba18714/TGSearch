@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Entity;
+use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class EntityFactory extends Factory
+class ChatFactory extends Factory
 {
-    protected $model = Entity::class;
+    protected $model = Chat::class;
     
     public function definition(): array
     {

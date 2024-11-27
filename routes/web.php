@@ -3,17 +3,17 @@
 use App\ContentAudit\Facades\ContentAudit;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Home;
-use App\Livewire\Entities;
-use App\Livewire\EntityShow;
-use App\Livewire\EntityCreate;
+use App\Livewire\Chats;
+use App\Livewire\ChatShow;
+use App\Livewire\ChatCreate;
 use App\Models\Tmp;
 use App\Models\Tmp2;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use App\Jobs\ProcessPodcast;
-use App\Jobs\ProcessUpdateEntityInfoJob;
+use App\Jobs\ProcessUpdateChatInfoJob;
 use App\Models\Message;
-use App\Models\Entity;
+use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -58,12 +58,12 @@ Route::get('/tmp', function () {
     }
 
     return 'not person';
-    $entity = Entity::find('01jcq1y39hh0rbc7nxykrhayyj');
-    dump($entity);
-    dump($entity->photo_count);
-    return $entity->photo_count;
+    $chat = Chat::find('01jcq1y39hh0rbc7nxykrhayyj');
+    dump($chat);
+    dump($chat->photo_count);
+    return $chat->photo_count;
     $message = Message::firstOrCreate(
-        ['entity_id' => '01jcnh2hfyzcqt380f6apz3b3k', 'original_id' => '874791'],
+        ['chat_id' => '01jcnh2hfyzcqt380f6apz3b3k', 'original_id' => '874791'],
         [
             'source' => 'manual',
         ]
@@ -75,11 +75,11 @@ Route::get('/tmp', function () {
         return class_basename($model);
     };
     
-    return tmp(Entity::first());
+    return tmp(Chat::first());
 
 
 
-    return Entity::create([
+    return Chat::create([
         'username' => '@test'.time(),
     ])->url;
     return;
@@ -107,12 +107,12 @@ Route::get('/tmp', function () {
 
 
 
-    $entity = Entity::create([
+    $chat = Chat::create([
         'url' => 'https://www.youtube.com/watch?v=1234567890',
     ]);
-    return $entity;
-    if ($entity) $entity->dispatchUpdateJob();
-    dump($entity);
+    return $chat;
+    if ($chat) $chat->dispatchUpdateJob();
+    dump($chat);
 });
 
 Route::get('/tmp2', function () {
@@ -121,10 +121,10 @@ Route::get('/tmp2', function () {
     return 'tmp2';
 });
 
-Route::get('/', Entities::class)->name('home');
-Route::get('/entities/create', EntityCreate::class)->name('entities.create');
-Route::get('/entities/{entity}/{message?}', EntityShow::class)->name('entity.show');
+Route::get('/', Chats::class)->name('home');
+Route::get('/chats/create', ChatCreate::class)->name('chats.create');
+Route::get('/chats/{chat}/{message?}', ChatShow::class)->name('chat.show');
 
-Route::get('/entity/{id}/{message_id?}', function (string $id = null, ?string $message_id = null) {
+Route::get('/chat/{id}/{message_id?}', function (string $id = null, ?string $message_id = null) {
     return $id . '-' . $message_id;
 });

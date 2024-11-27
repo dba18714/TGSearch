@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\EntityResource;
-use App\Models\Entity;
+use App\Http\Resources\ChatResource;
+use App\Models\Chat;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class EntityController extends Controller
+class ChatController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Entity::query()->valid();
+        $query = Chat::query()->valid();
 
         // 根据类型筛选
         if ($request->has('type')) {
@@ -37,7 +37,7 @@ class EntityController extends Controller
         $order = $request->input('order', 'desc');
         $query->orderBy($sort, $order);
 
-        return EntityResource::collection(
+        return ChatResource::collection(
             $query->paginate($request->input('per_page', 15))
         );
     }
@@ -45,9 +45,9 @@ class EntityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Entity $entity): EntityResource
+    public function show(Chat $chat): ChatResource
     {
-        return new EntityResource($entity);
+        return new ChatResource($chat);
     }
 
     /**
@@ -58,7 +58,7 @@ class EntityController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'introduction' => 'required|string',
-            // 'url' => 'required|url|unique:telegram_entities',
+            // 'url' => 'required|url|unique:telegram_chats',
             'type' => 'required|in:bot,channel,group,person,message',
             'username' => 'required|string|max:255',
         ]);
@@ -67,8 +67,8 @@ class EntityController extends Controller
         $validated['user_id'] = auth()->id;
         $validated['is_valid'] = false; // 需要管理员审核
 
-        $entity = Entity::create($validated);
+        $chat = Chat::create($validated);
 
-        return new EntityResource($entity);
+        return new ChatResource($chat);
     }
 }

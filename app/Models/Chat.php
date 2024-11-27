@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Jobs\ProcessUpdateEntityInfoJob;
-use App\Jobs\ProcessUpdateEntityModelJob;
+use App\Jobs\ProcessUpdateChatInfoJob;
+use App\Jobs\ProcessUpdateTelegramModelJob;
 use App\Models\Traits\HasVerification;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Laravel\Scout\Searchable;
 
-class Entity extends Model
+class Chat extends Model
 {
     use HasUlids, HasFactory;
     use Searchable;
@@ -75,7 +75,7 @@ class Entity extends Model
 
     public function getRouteAttribute()
     {
-        return route('entity.show', $this);
+        return route('chat.show', $this);
     }
 
     public function getUrlAttribute(): ?string
@@ -92,7 +92,7 @@ class Entity extends Model
     }
 
     /**
-     * Scope a query to only include valid entities.
+     * Scope a query to only include valid chats.
      */
     public function scopeValid($query)
     {
@@ -100,7 +100,7 @@ class Entity extends Model
     }
 
     /**
-     * Scope a query to only include user submitted entities.
+     * Scope a query to only include user submitted chats.
      */
     public function scopeByUser($query)
     {
@@ -108,7 +108,7 @@ class Entity extends Model
     }
 
     /**
-     * Scope a query to only include crawler submitted entities.
+     * Scope a query to only include crawler submitted chats.
      */
     public function scopeByCrawler($query)
     {
@@ -172,7 +172,7 @@ class Entity extends Model
     //     $this->verified_start_at = now();
     //     $this->save();
 
-    //     ProcessUpdateEntityModelJob::dispatch($this);
+    //     ProcessUpdateTelegramModelJob::dispatch($this);
 
     //     return $this;
     // }
@@ -204,29 +204,29 @@ class Entity extends Model
     }
 
     /**
-     * Get a single link for verification, prioritizing unverified and in-progress entities
+     * Get a single link for verification, prioritizing unverified and in-progress chats
      *
      * @return void
      */
     // public static function dispatchNextVerificationJob(): bool
     // {
-    //     $entity = self::selectForVerification()->first();
+    //     $chat = self::selectForVerification()->first();
 
-    //     if (!$entity->exists) return false;
+    //     if (!$chat->exists) return false;
 
     //     // 如果1小时之内已经验证过了，就跳过
     //     if (
-    //         $entity->verified_start_at &&
-    //         $entity->verified_start_at->gt(now()->subHour())
+    //         $chat->verified_start_at &&
+    //         $chat->verified_start_at->gt(now()->subHour())
     //     ) return false;
 
-    //     $entity->dispatchUpdateJob();
+    //     $chat->dispatchUpdateJob();
 
     //     return true;
     // }
 
     // /**
-    //  * Query scope for selecting entities for verification
+    //  * Query scope for selecting chats for verification
     //  *
     //  * @param \Illuminate\Database\Eloquent\Builder $query
     //  * @return \Illuminate\Database\Eloquent\Builder
@@ -240,8 +240,8 @@ class Entity extends Model
 
     // protected static function booted(): void
     // {
-    //     static::created(function (Entity $entity) {
-    //         $entity->dispatchUpdateJob();
+    //     static::created(function (Chat $chat) {
+    //         $chat->dispatchUpdateJob();
     //     });
     // }
 

@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Jobs\ProcessGoogleCustomSearchJob;
-use App\Models\Entity;
+use App\Models\Chat;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
@@ -13,7 +13,7 @@ use App\Models\Search;
 use App\Services\ImpressionStatsService;
 use Artesaos\SEOTools\Facades\SEOMeta;
 
-class Entities extends Component
+class Chats extends Component
 {
     use WithPagination;
 
@@ -116,29 +116,29 @@ class Entities extends Component
         $title = $this->q ? "搜索 - {$this->q}" : '首页';
         SEOMeta::setTitle($title);
 
-        $query = Entity::query();
+        $query = Chat::query();
 
         if (!empty($this->q)) {
             Search::recordSearch($this->q);
 
             // 搜索消息
-            $messageEntityIds = Message::search($this->q)
-                ->get(['id', 'entity_id', 'text'])
-                ->groupBy('entity_id')
+            $messageChatIds = Message::search($this->q)
+                ->get(['id', 'chat_id', 'text'])
+                ->groupBy('chat_id')
                 ->map(function ($messages) {
                     return $messages->take(1);
                 });
 
             // 搜索所有者
-            $entities = Entity::search($this->q)->get();
+            $chats = Chat::search($this->q)->get();
 
-            // 合并两种搜索结果的 entity_id
-            $allEntityIds = $messageEntityIds->keys()->merge($entities->pluck('id'))->unique();
+            // 合并两种搜索结果的 chat_id
+            $allChatIds = $messageChatIds->keys()->merge($chats->pluck('id'))->unique();
 
-            $query->whereIn('id', $allEntityIds);
+            $query->whereIn('id', $allChatIds);
         }
 
-        $entities = $query
+        $chats = $query
             ->when($this->type, function ($query) {
                 $query->where('type', $this->type);
             })
@@ -148,16 +148,16 @@ class Entities extends Component
             ->paginate(12);
 
         // 如果有搜索词，添加匹配的消息到结果中
-        if (!empty($this->q) && isset($messageEntityIds)) {
-            foreach ($entities as $entity) {
-                $entity->matched_messages = $messageEntityIds->get($entity->id);
+        if (!empty($this->q) && isset($messageChatIds)) {
+            foreach ($chats as $chat) {
+                $chat->matched_messages = $messageChatIds->get($chat->id);
             }
         }
 
-        $this->impressionStatsService->recordBulkImpressions($entities->items(), 'search_result');
+        $this->impressionStatsService->recordBulkImpressions($chats->items(), 'search_result');
 
-        return view('livewire.entities', [
-            'entities' => $entities
+        return view('livewire.chats', [
+            'chats' => $chats
         ]);
     }
 }

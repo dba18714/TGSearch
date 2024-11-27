@@ -20,7 +20,7 @@ php artisan horizon:terminate
 sail artisan horizon:clear
 
 
-sail php artisan scout:flush "App\Models\Entity" && sail php artisan scout:flush "App\Models\Message" && sail artisan migrate:fresh --seed
+sail php artisan scout:flush "App\Models\Chat" && sail php artisan scout:flush "App\Models\Message" && sail artisan migrate:fresh --seed
 
 ## 启动长轮训
 sail artisan nutgram:run
