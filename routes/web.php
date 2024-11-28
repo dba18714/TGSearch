@@ -38,6 +38,7 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
+    return (int)null;
     // $x = UnifiedSearch::query()->where('unified_searchable_id', '01jdsv7t09phn0cgpz6y856ey8')->first();
     // $x = UnifiedSearch::query()->first();
     // dump($x);

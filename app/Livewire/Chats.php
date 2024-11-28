@@ -106,7 +106,7 @@ class Chats extends Component
         $this->q = $this->searchInput;
         ProcessGoogleCustomSearchJob::dispatch($this->q);
         $this->showSuggestions = false;
-        // $this->resetPage();
+        $this->resetPage();
     }
 
     public function render()
@@ -121,7 +121,6 @@ class Chats extends Component
                 'sort' => $this->sortField,
                 'direction' => $this->sortDirection,
                 'per_page' => 12,
-                'page' => request()->query('page'),
             ],
         );
 

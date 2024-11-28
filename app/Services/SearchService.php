@@ -20,9 +20,9 @@ class SearchService
         }
 
         $perPage = $options['per_page'] ?? 10;
-        $page = $options['page'] ?? 1;
+        $page = isset($options['page']) ? (int)$options['page'] : null;
 
-        $result =  $builder->paginate($perPage, 'page', $page);
+        $result =  $builder->paginate((int)$perPage, 'page', $page);
 
         $unified_searchables = [];
         foreach ($result->items() as $item) {
