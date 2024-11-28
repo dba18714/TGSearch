@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Impression extends Model
 {
     protected $fillable = [
-        'chat_id',
         'impressed_at',
     ];
 
