@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->ulid('chat_id')->index();
+            // TODO original_id rename to source_id
             $table->integer('original_id')->index()->comment('Telegram 的原始消息id');
             $table->text('text')->nullable();
             $table->integer('view_count')->nullable();

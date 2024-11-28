@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Jobs\ProcessUpdateChatInfoJob;
 use App\Jobs\ProcessUpdateTelegramModelJob;
+use App\Models\Traits\HasUnifiedSearch;
 use App\Models\Traits\HasVerification;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,7 @@ class Chat extends Model
     use HasUlids, HasFactory;
     use Searchable;
     use HasVerification;
+    use HasUnifiedSearch;
 
     /**
      * The attributes that are mass assignable.
@@ -56,6 +58,17 @@ class Chat extends Model
         'member_count' => 'integer',
         // 'view_count' => 'integer',
     ];
+
+    public function toUnifiedSearchArray(): array
+    {
+        return [
+            'content' => implode("\n", array_filter([
+                $this->name,
+                $this->introduction,
+                $this->username
+            ])),
+        ];
+    }
 
     // 存库时将 username 前面的@去掉
     public function setUsernameAttribute($value)

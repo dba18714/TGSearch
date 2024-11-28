@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUnifiedSearch;
 use App\Models\Traits\HasVerification;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ class Message extends Model
     use HasUlids, HasFactory;
     use HasVerification;
     use Searchable;
+    use HasUnifiedSearch;
 
     /**
      * The attributes that are mass assignable.
@@ -44,6 +46,13 @@ class Message extends Model
         'verified_start_at' => 'datetime',
         'view_count' => 'integer',
     ];
+
+    public function toUnifiedSearchArray(): array
+    {
+        return [
+            'content' => $this->text,
+        ];
+    }
 
     public function getUrlAttribute(): ?string
     {

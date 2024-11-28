@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Chat;
+use App\Models\UnifiedSearch;
 
 return [
 
@@ -148,9 +149,13 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
-            Chat::class => [
+            Chat::class => [ // TODO 注释掉
                 'filterableAttributes' => ['type'],
                 'sortableAttributes' => ['id', 'member_count'],
+            ],
+            UnifiedSearch::class => [
+                'filterableAttributes' => [],
+                'sortableAttributes' => [],
             ],
         ],
     ],
