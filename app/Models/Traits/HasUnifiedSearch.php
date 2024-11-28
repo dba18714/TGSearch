@@ -22,7 +22,7 @@ trait HasUnifiedSearch
 
     public function unifiedSearch()
     {
-        return $this->morphOne(UnifiedSearch::class, 'searchable');
+        return $this->morphOne(UnifiedSearch::class, 'unified_searchable');
     }
 
     abstract public function toUnifiedSearchArray(): array;

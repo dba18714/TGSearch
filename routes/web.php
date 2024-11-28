@@ -14,6 +14,7 @@ use App\Jobs\ProcessPodcast;
 use App\Jobs\ProcessUpdateChatInfoJob;
 use App\Models\Message;
 use App\Models\Chat;
+use App\Models\Impression;
 use App\Models\UnifiedSearch;
 use App\Models\User;
 use App\Services\SearchService;
@@ -37,20 +38,32 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
-    Chat::query()->create([
-        'username' => time(),
-        'is_valid' => true,
-    ]);
-    Message::query()->create([
-        'original_id' => time(),
-        'chat_id' => time(),
-        'is_valid' => true,
-    ]);
-    UnifiedSearch::query()->create([
-        'content' => 333,
-        'searchable_type' => 'App\Models\User',
-        'searchable_id' => 1,
-    ]);
+    // $x = UnifiedSearch::query()->where('unified_searchable_id', '01jdsv7t09phn0cgpz6y856ey8')->first();
+    // $x = UnifiedSearch::query()->first();
+    // dump($x);
+    // dump($x->unified_searchable);
+
+    // $i = Impression::query()->where('impressionable_id', '01jdsv7t09phn0cgpz6y856ey8')->first();
+    // $i = Impression::query()->first();
+    // dump($i);
+    // dump($i->impressionable);
+
+    // return;
+
+    // Chat::query()->create([
+    //     'username' => time(),
+    //     'is_valid' => true,
+    // ]);
+    // Message::query()->create([
+    //     'original_id' => time(),
+    //     'chat_id' => time(),
+    //     'is_valid' => true,
+    // ]);
+    // UnifiedSearch::query()->create([
+    //     'content' => 333,
+    //     'searchable_type' => 'App\Models\User',
+    //     'searchable_id' => 1,
+    // ]);
     $result = app(SearchService::class)->search($request->query('q') ?? 'ex');
     dump($result);
     return $result;

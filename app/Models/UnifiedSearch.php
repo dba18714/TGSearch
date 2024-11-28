@@ -4,6 +4,7 @@ namespace App\Models;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class UnifiedSearch extends Model
 {
@@ -18,7 +19,7 @@ class UnifiedSearch extends Model
         'searchable_id',
     ];
 
-    public function unifiedSearchable()
+    public function unified_searchable(): MorphTo
     {
         return $this->morphTo();
     }
@@ -30,22 +31,4 @@ class UnifiedSearch extends Model
             'content' => $this->content,
         ];
     }
-
-    // protected static function booted()
-    // {
-    //     static::created(function ($model) {
-    //         \Log::info('UnifiedSearch created', ['id' => $model->id]);
-    //     });
-
-    //     static::saved(function ($model) {
-    //         \Log::info('UnifiedSearch saved', ['id' => $model->id]);
-    //         // 强制触发同步
-    //         $model->searchable();
-    //     });
-    // }
-
-    // public function searchableAs(): string
-    // {
-    //     return 'unified_searches';
-    // }
 }

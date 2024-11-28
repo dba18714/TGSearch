@@ -21,6 +21,7 @@ class SearchService
         $perPage = $options['per_page'] ?? 15;
         $page = $options['page'] ?? 1;
 
-        return $builder->paginate($perPage, 'page', $page);
+        $result =  $builder->paginate($perPage, 'page', $page);
+        return $result;
     }
 }

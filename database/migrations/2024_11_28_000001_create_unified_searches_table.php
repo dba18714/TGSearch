@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('unified_searches', function (Blueprint $table) {
             $table->id();
             $table->text('content')->nullable();
-            $table->ulidMorphs('searchable');
+            $table->ulidMorphs('unified_searchable');
             $table->timestamps();
         });
     }
