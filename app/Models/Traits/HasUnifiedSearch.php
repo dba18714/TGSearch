@@ -9,10 +9,12 @@ trait HasUnifiedSearch
     public static function bootHasUnifiedSearch()
     {
         static::saved(function ($model) {
-            $model->unifiedSearch()->updateOrCreate(
-                [],
-                $model->toUnifiedSearchArray()
-            );
+            if ($model->is_valid) {
+                $model->unifiedSearch()->updateOrCreate(
+                    [],
+                    $model->toUnifiedSearchArray()
+                );
+            }
         });
 
         static::deleted(function ($model) {

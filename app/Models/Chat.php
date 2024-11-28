@@ -67,6 +67,8 @@ class Chat extends Model
                 $this->introduction,
                 $this->username
             ])),
+            'type' => $this->type,
+            'member_or_view_count' => $this->member_count,
         ];
     }
 
@@ -176,7 +178,6 @@ class Chat extends Model
             'channel' => '频道',
             'group' => '群组',
             'person' => '个人',
-            'message' => '消息',
             default => '未知',
         };
     }

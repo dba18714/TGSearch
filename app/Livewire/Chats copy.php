@@ -11,7 +11,6 @@ use App\Services\GoogleSuggestService;
 use App\Models\Message;
 use App\Models\Search;
 use App\Services\ImpressionStatsService;
-use App\Services\SearchService;
 use Artesaos\SEOTools\Facades\SEOMeta;
 
 class Chats extends Component
@@ -114,19 +113,48 @@ class Chats extends Component
         $title = $this->q ? "搜索 - {$this->q}" : '首页';
         SEOMeta::setTitle($title);
 
-        $result = app(SearchService::class)->search(
-            $this->q,
-            $this->type ? ['type' => $this->type] : [],
-            [
-                'sort' => $this->sortField,
-                'direction' => $this->sortDirection,
-                'per_page' => 12,
-                'page' => request()->query('page'),
-            ],
-        );
+        $query = Chat::query();
+
+        if (!empty($this->q)) {
+            Search::recordSearch($this->q);
+
+            // 搜索消息
+            $messageChatIds = Message::search($this->q)
+                ->get(['id', 'chat_id', 'text'])
+                ->groupBy('chat_id')
+                ->map(function ($messages) {
+                    return $messages->take(1);
+                });
+
+            // 搜索所有者
+            $chats = Chat::search($this->q)->get();
+
+            // 合并两种搜索结果的 chat_id
+            $allChatIds = $messageChatIds->keys()->merge($chats->pluck('id'))->unique();
+
+            $query->whereIn('id', $allChatIds);
+        }
+
+        $chats = $query
+            ->when($this->type, function ($query) {
+                $query->where('type', $this->type);
+            })
+            ->when($this->sortField, function ($query) {
+                $query->orderBy($this->sortField, $this->sortDirection);
+            })
+            ->paginate(12);
+
+        // 如果有搜索词，添加匹配的消息到结果中
+        if (!empty($this->q) && isset($messageChatIds)) {
+            foreach ($chats as $chat) {
+                $chat->matched_messages = $messageChatIds->get($chat->id);
+            }
+        }
+
+        app(ImpressionStatsService::class)->recordBulkImpressions($chats->items(), 'search_result');
 
         return view('livewire.chats', [
-            'unified_searches' => $result
+            'chats' => $chats
         ]);
     }
 }

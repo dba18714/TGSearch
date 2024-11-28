@@ -85,11 +85,11 @@
                                     class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'person' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     个人
                                 </button>
-                                {{-- <button
+                                <button
                                     wire:click="$set('type', 'message')"
                                     class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $type === 'message' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     消息
-                                </button> --}}
+                                </button>
                             </div>
                         </div>
 
@@ -102,14 +102,10 @@
                                     class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === '' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
                                     默认
                                 </button>
-                                <button wire:click="sortBy('id')"
-                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'id' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
-                                    收录时间 {{ $sortField === 'id' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
-                                </button>
-                                <button wire:click="sortBy('member_count')"
-                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'member_count' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
-                                    成员数
-                                    {{ $sortField === 'member_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
+                                <button wire:click="sortBy('member_or_view_count')"
+                                    class="m-1 px-3 py-1 text-sm rounded-md transition-colors duration-200 focus:outline-none {{ $sortField === 'member_or_view_count' ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-white shadow' : 'text-gray-600 dark:text-gray-300' }}">
+                                    成员数/查看数
+                                    {{ $sortField === 'member_or_view_count' ? ($sortDirection === 'asc' ? '↑' : '↓') : '' }}
                                 </button>
                             </div>
                         </div>
@@ -119,7 +115,7 @@
             </div>
 
             <!-- Chats Grid -->
-            @if ($chats->isEmpty())
+            @if ($unified_searches->isEmpty())
                 <div class="text-center py-12">
                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" aria-hidden="true">
@@ -154,50 +150,45 @@
                 </div>
             @else
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($chats as $chat)
+                    @foreach ($unified_searches as $unified_search)
                         <div
                             class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-200">
                             <div class="p-6">
                                 <div class="flex items-start justify-between">
                                     <div class="flex-1">
                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            @if (isset($chat->_formatted['name']))
-                                                {!! $chat->_formatted['name'] !!}
-                                            @else
-                                                {{ $chat->name }}
-                                            @endif
+                                            {{ $unified_search->unified_searchable->name ?? $unified_search->unified_searchable->chat->name }}
                                         </h3>
-                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $chat->username }}
+                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                            {{ $unified_search->unified_searchable->username ?? $unified_search->unified_searchable->chat->username }}
                                         </p>
                                     </div>
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 whitespace-nowrap
-{{ $chat->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-{{ $chat->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-{{ $chat->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-{{ $chat->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
-{{ $chat->isUnknown() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}
+{{ $unified_search->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+{{ $unified_search->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+{{ $unified_search->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+{{ $unified_search->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+{{ $unified_search->isMessage() ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' : '' }}
 ">
-                                        {{ $chat->type_name }}
+                                        {{ $unified_search->type_name }}
                                     </span>
                                 </div>
 
                                 <p class="mt-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                    {{ $chat->introduction }}</p>
+                                    {{ $unified_search->unified_searchable->introduction }}</p>
 
                                 <!-- 添加匹配的消息显示 -->
-                                @if (!empty($q) && isset($chat->matched_messages))
-                                    <div class="mt-4 space-y-2">
+                                @if ($unified_search->unified_searchable->getMorphClass() === 'message')
+                                    <div class="space-y-2">
                                         <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">匹配的消息:</h4>
-                                        @foreach ($chat->matched_messages as $message)
-                                            <div
-                                                class="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                                                <a href="{{ $message->route }}"
-                                                    class="hover:text-indigo-600 dark:hover:text-indigo-400">
-                                                    {{ Str::limit($message->text, 100) }}
-                                                </a>
-                                            </div>
-                                        @endforeach
+                                        <div
+                                            class="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                                            <a href="{{ $unified_search->unified_searchable->route }}"
+                                                class="hover:text-indigo-600 dark:hover:text-indigo-400">
+                                                {{ Str::limit($unified_search->unified_searchable->text, 100) }}
+                                            </a>
+                                        </div>
                                     </div>
                                 @endif
 
@@ -208,20 +199,20 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
-                                        {{ number_format($chat->member_count) }}
+                                        {{ number_format($unified_search->unified_searchable->member_count ?? $unified_search->unified_searchable->view_count) }}
                                     </div>
-                                    <a href="{{ $chat->url }}" target="_blank"
+                                    <a href="{{ $unified_search->unified_searchable->url }}" target="_blank"
                                         class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
                                         访问链接
-                                        <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20" fill="currentColor">
+                                        <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                            fill="currentColor">
                                             <path
                                                 d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
                                             <path
                                                 d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
                                         </svg>
                                     </a>
-                                    <a href="{{ $chat->route }}" wire:navigate
+                                    <a href="{{ $unified_search->unified_searchable->route }}" wire:navigate
                                         class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 transition-colors duration-200">
                                         详情 >>
                                     </a>
@@ -234,7 +225,7 @@
 
             <!-- Pagination -->
             <div class="mt-12">
-                {{ $chats->links(data: ['scrollTo' => '#paginated-posts']) }}
+                {{ $unified_searches->links(data: ['scrollTo' => '#paginated-posts']) }}
             </div>
         </div>
     </div>

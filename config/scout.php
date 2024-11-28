@@ -154,8 +154,19 @@ return [
                 'sortableAttributes' => ['id', 'member_count'],
             ],
             UnifiedSearch::class => [
-                'filterableAttributes' => [],
-                'sortableAttributes' => [],
+                'filterableAttributes' => ['type'],
+                'sortableAttributes' => ['member_or_view_count'],
+                'searchableAttributes' => [
+                    "content",
+                ],
+                'rankingRules' => [
+                    "sort",
+                    "words",
+                    "typo",
+                    "proximity",
+                    "attribute",
+                    "exactness",
+                ],
             ],
         ],
     ],

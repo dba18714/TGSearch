@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Laravel\Scout\Searchable;
@@ -15,6 +16,8 @@ class UnifiedSearch extends Model
 
     protected $fillable = [
         'content',
+        'type',
+        'member_or_view_count',
         'searchable_type',
         'searchable_id',
     ];
@@ -29,6 +32,58 @@ class UnifiedSearch extends Model
         return [
             'id' => $this->id,
             'content' => $this->content,
+            'type' => $this->type,
+            'member_or_view_count' => $this->member_or_view_count,
         ];
     }
+
+    /**
+     * Check if the link is a bot.
+     */
+    public function isBot(): bool
+    {
+        return $this->type === 'bot';
+    }
+
+    /**
+     * Check if the link is a channel.
+     */
+    public function isChannel(): bool
+    {
+        return $this->type === 'channel';
+    }
+
+    /**
+     * Check if the link is a group.
+     */
+    public function isGroup(): bool
+    {
+        return $this->type === 'group';
+    }
+
+    /**
+     * Check if the link is a person.
+     */
+    public function isPerson(): bool
+    {
+        return $this->type === 'person';
+    }
+
+    public function isMessage(): bool
+    {
+        return $this->type === 'message';
+    }
+
+    public function getTypeNameAttribute(): string
+    {
+        return match ($this->type) {
+            'bot' => '机器人',
+            'channel' => '频道',
+            'group' => '群组',
+            'person' => '个人',
+            'message' => '消息',
+            default => '未知',
+        };
+    }
+
 }

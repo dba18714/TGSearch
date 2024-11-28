@@ -51,6 +51,8 @@ class Message extends Model
     {
         return [
             'content' => $this->text,
+            'type' => 'message',
+            'member_or_view_count' => $this->view_count,
         ];
     }
 

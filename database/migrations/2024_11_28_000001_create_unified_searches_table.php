@@ -11,6 +11,8 @@ return new class extends Migration
         Schema::create('unified_searches', function (Blueprint $table) {
             $table->id();
             $table->text('content')->nullable();
+            $table->string('type')->comment('bot/channel/group/person/message');
+            $table->integer('member_or_view_count');
             $table->ulidMorphs('unified_searchable');
             $table->timestamps();
         });
