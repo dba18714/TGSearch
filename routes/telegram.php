@@ -2,6 +2,7 @@
 
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
+use App\Telegram\Conversations\RecruitConversation;
 use App\Telegram\Handlers\SearchHandler;
 use App\Telegram\Handlers\StartHandler;
 use SergiX44\Nutgram\Nutgram;
@@ -25,3 +26,6 @@ $bot->onCommand('start', StartHandler::class)
 $bot->onText('^[^/].*', SearchHandler::class);
 
 $bot->onCallbackQueryData('search:{param}', [SearchHandler::class, 'handlePagination']);
+
+$bot->onCommand('add', RecruitConversation::class)
+    ->description('提交收录');

@@ -14,6 +14,15 @@ class SearchHandler
     private const PER_PAGE = 5;
     private const MAX_MESSAGE_LENGTH = 50;
     
+    private const SUPPORTED_TYPES = [
+        'all' => '🔍 全部',
+        'channel' => '📢 频道',
+        'group' => '👥 群组',
+        'message' => '💬 消息',
+        'bot' => '🤖 机器人',
+        'person' => '👤 个人',
+    ];
+    
     protected UnifiedSearchService $searchService;
     
     public function __construct(UnifiedSearchService $searchService) 
@@ -33,7 +42,11 @@ class SearchHandler
                 return $bot->sendMessage('请输入搜索关键词');
             }
 
-            $searchResults = $this->performSearch($query['search_text'], $query['page']);
+            $searchResults = $this->performSearch(
+                $query['search_text'], 
+                $query['page'],
+                $query['type'] ?? 'all'
+            );
 
             if ($searchResults->isEmpty()) {
                 return $bot->sendMessage('没有找到相关结果 😢');
@@ -46,7 +59,7 @@ class SearchHandler
     }
 
     /**
-     * 处理分页回调
+     * 处理分页和类型筛选回调
      */
     public function handlePagination(Nutgram $bot)
     {
@@ -56,7 +69,11 @@ class SearchHandler
                 return;
             }
 
-            $searchResults = $this->performSearch($callbackData['query'], $callbackData['page']);
+            $searchResults = $this->performSearch(
+                $callbackData['query'], 
+                $callbackData['page'],
+                $callbackData['type']
+            );
 
             $this->updateSearchResults($bot, $searchResults, $callbackData);
             $bot->answerCallbackQuery();
@@ -81,18 +98,24 @@ class SearchHandler
 
         return [
             'search_text' => $searchText,
-            'page' => $page
+            'page' => $page,
+            'type' => 'all'
         ];
     }
 
     /**
      * 执行搜索操作
      */
-    private function performSearch(string $query, int $page)
+    private function performSearch(string $query, int $page, string $type = 'all')
     {
         Search::recordSearch($query);
 
-        return $this->searchService->search($query, [], [
+        $filters = [];
+        if ($type !== 'all') {
+            $filters['type'] = $type;
+        }
+
+        return $this->searchService->search($query, $filters, [
             'per_page' => self::PER_PAGE,
             'page' => $page
         ]);
@@ -103,17 +126,22 @@ class SearchHandler
      */
     private function sendSearchResults(Nutgram $bot, $searchResults, array $query): void
     {
-        $text = $this->buildResultMessage($searchResults, $query['page'], $query['search_text']);
+        $text = $this->buildResultMessage(
+            $searchResults, 
+            $query['page'], 
+            $query['search_text'],
+            $query['type']
+        );
 
         $keyboard = $this->buildPaginationKeyboard(
             $query['search_text'],
             $query['page'],
-            $searchResults
+            $searchResults,
+            $query['type']
         );
 
         $bot->sendMessage(
             text: $text,
-            chat_id: $bot->chatId(),
             parse_mode: 'HTML',
             disable_web_page_preview: true,
             reply_markup: $keyboard
@@ -127,14 +155,15 @@ class SearchHandler
     {
         $parts = explode(':', $data);
 
-        if (count($parts) !== 4) {
-            Log::error('Invalid callback data format');
+        if (count($parts) !== 6) {
+            Log::error('Invalid callback data format', ['data' => $data]);
             return null;
         }
 
         return [
             'query' => urldecode($parts[1]),
-            'page' => (int)$parts[3]
+            'type' => $parts[3],
+            'page' => (int)$parts[5]
         ];
     }
 
@@ -143,18 +172,22 @@ class SearchHandler
      */
     private function updateSearchResults(Nutgram $bot, $searchResults, array $callbackData): void
     {
-        $text = $this->buildResultMessage($searchResults, $callbackData['page'], $callbackData['query']);
+        $text = $this->buildResultMessage(
+            $searchResults, 
+            $callbackData['page'], 
+            $callbackData['query'],
+            $callbackData['type']
+        );
 
         $keyboard = $this->buildPaginationKeyboard(
             $callbackData['query'],
             $callbackData['page'],
-            $searchResults
+            $searchResults,
+            $callbackData['type']
         );
 
         $bot->editMessageText(
             text: $text,
-            chat_id: $bot->chatId(),
-            message_id: $bot->callbackQuery()->message->message_id,
             parse_mode: 'HTML',
             disable_web_page_preview: true,
             reply_markup: $keyboard
@@ -164,12 +197,13 @@ class SearchHandler
     /**
      * 构建结果消息文本
      */
-    private function buildResultMessage($searchResults, $page, string $query): string
+    private function buildResultMessage($searchResults, $page, string $query, string $type = 'all'): string
     {
         $totalRecords = $searchResults->total();
         $totalPages = $searchResults->lastPage();
+        $currentType = self::SUPPORTED_TYPES[$type] ?? '全部';
 
-        $text = "🔍 搜索 \"{$query}\" 的结果：\n\n";
+        $text = "🔍 搜索 \"{$query}\" 的结果:\n\n";
 
         foreach ($searchResults as $result) {
             $searchable = $result->unified_searchable;
@@ -189,35 +223,60 @@ class SearchHandler
 
         $text .= "第 {$page}/{$totalPages} 页，共 {$totalRecords} 条记录";
 
-
         return $text;
     }
 
     /**
-     * 构建分页键盘
+     * 构建分页和类型筛选键盘
      */
-    private function buildPaginationKeyboard($query, $page, $searchResults): InlineKeyboardMarkup
+    private function buildPaginationKeyboard($query, $page, $searchResults, $currentType = 'all'): InlineKeyboardMarkup
     {
         $keyboard = new InlineKeyboardMarkup();
-        $buttons = [];
         $encodedQuery = urlencode($query);
 
+        // 添加类型筛选按钮行
+        $typeButtons = [];
+        $typesPerRow = 3; // 每行显示的按钮数
+        $currentTypeButtons = [];
+        
+        foreach (self::SUPPORTED_TYPES as $type => $label) {
+            $button = new InlineKeyboardButton(
+                text: ($currentType === $type ? '✓ ' : '') . $label,
+                callback_data: "search:{$encodedQuery}:type:{$type}:page:1"
+            );
+            
+            $currentTypeButtons[] = $button;
+            
+            if (count($currentTypeButtons) === $typesPerRow) {
+                $keyboard->addRow(...$currentTypeButtons);
+                $currentTypeButtons = [];
+            }
+        }
+        
+        // 添加剩余的类型按钮
+        if (!empty($currentTypeButtons)) {
+            $keyboard->addRow(...$currentTypeButtons);
+        }
+
+        // 添加分页按钮行
+        $paginationButtons = [];
+
         if ($page > 1) {
-            $buttons[] = new InlineKeyboardButton(
+            $paginationButtons[] = new InlineKeyboardButton(
                 text: '⬅️ 上一页',
-                callback_data: "search:{$encodedQuery}:page:" . ($page - 1)
+                callback_data: "search:{$encodedQuery}:type:{$currentType}:page:" . ($page - 1)
             );
         }
 
         if ($searchResults->hasMorePages()) {
-            $buttons[] = new InlineKeyboardButton(
+            $paginationButtons[] = new InlineKeyboardButton(
                 text: '下一页 ➡️',
-                callback_data: "search:{$encodedQuery}:page:" . ($page + 1)
+                callback_data: "search:{$encodedQuery}:type:{$currentType}:page:" . ($page + 1)
             );
         }
 
-        if (!empty($buttons)) {
-            $keyboard->addRow(...$buttons);
+        if (!empty($paginationButtons)) {
+            $keyboard->addRow(...$paginationButtons);
         }
 
         return $keyboard;
