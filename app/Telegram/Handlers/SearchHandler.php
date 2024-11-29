@@ -309,7 +309,7 @@ class SearchHandler
 
         // 添加默认排序按钮 - 总是显示,并在未使用其他排序时显示勾选标记
         $sortButtons[] = new InlineKeyboardButton(
-            text: ($currentSort === null ? '✓ ' : '') . '默认排序',
+            text: ($currentSort === null ? '✓' : '') . '默认排序',
             callback_data: "q:{$q}|t:{$t}|p:1"
         );
 
@@ -319,7 +319,7 @@ class SearchHandler
             $isCurrentSort = $currentSort === $sort && $currentDirection === $direction;
 
             $sortButtons[] = new InlineKeyboardButton(
-                text: ($isCurrentSort ? '✓ ' : '') . $label,
+                text: ($isCurrentSort ? '✓' : '') . $label,
                 callback_data: "q:{$q}|t:{$t}|p:1|s:{$sort}|d:{$direction}"
             );
         }
