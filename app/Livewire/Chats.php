@@ -11,7 +11,7 @@ use App\Services\GoogleSuggestService;
 use App\Models\Message;
 use App\Models\Search;
 use App\Services\ImpressionStatsService;
-use App\Services\SearchService;
+use App\Services\UnifiedSearchService;
 use Artesaos\SEOTools\Facades\SEOMeta;
 
 class Chats extends Component
@@ -114,7 +114,7 @@ class Chats extends Component
         $title = $this->q ? "搜索 - {$this->q}" : '首页';
         SEOMeta::setTitle($title);
 
-        $result = app(SearchService::class)->search(
+        $result = app(UnifiedSearchService::class)->search(
             $this->q,
             $this->type ? ['type' => $this->type] : [],
             [

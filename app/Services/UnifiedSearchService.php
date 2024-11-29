@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\UnifiedSearch;
 
-class SearchService
+class UnifiedSearchService
 {
     public function search(string $query, array $filters = [], array $options = [])
     {

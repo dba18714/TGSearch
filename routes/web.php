@@ -17,7 +17,7 @@ use App\Models\Chat;
 use App\Models\Impression;
 use App\Models\UnifiedSearch;
 use App\Models\User;
-use App\Services\SearchService;
+use App\Services\UnifiedSearchService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +65,7 @@ Route::get('/tmp', function (Request $request) {
     //     'searchable_type' => 'App\Models\User',
     //     'searchable_id' => 1,
     // ]);
-    $result = app(SearchService::class)->search($request->query('q') ?? 'ex');
+    $result = app(UnifiedSearchService::class)->search($request->query('q') ?? 'ex');
     dump($result);
     return $result;
 });
