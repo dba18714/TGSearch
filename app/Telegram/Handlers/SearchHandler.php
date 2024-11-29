@@ -4,6 +4,7 @@ namespace App\Telegram\Handlers;
 
 use App\Models\Search;
 use App\Services\UnifiedSearchService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
@@ -27,14 +28,6 @@ class SearchHandler
         'bot' => '🤖',
         'person' => '👤',
     ];
-    // private const SUPPORTED_TYPES = [
-    //     'all' => '🔍 全部',
-    //     'channel' => '📢 频道',
-    //     'group' => '👥 群组',
-    //     'message' => '💬 消息',
-    //     'bot' => '🤖 机器人',
-    //     'person' => '👤 个人',
-    // ];
 
     protected UnifiedSearchService $searchService;
 
@@ -48,7 +41,6 @@ class SearchHandler
      */
     public function __invoke(Nutgram $bot)
     {
-        // TODO 用缓存方式储存当前筛选状态和搜索关键词等，解决 BUTTON_DATA_INVALID 长度限制问题
         try {
             $query = $this->extractSearchQuery($bot->message()->text);
 
@@ -69,32 +61,6 @@ class SearchHandler
             $this->sendSearchResults($bot, $searchResults, $query);
         } catch (\Throwable $e) {
             $this->handleError($bot, $e, '搜索过程中出现错误');
-        }
-    }
-
-    /**
-     * 处理分页和类型筛选回调
-     */
-    public function handlePagination(Nutgram $bot)
-    {
-        try {
-            $callbackData = $this->parseCallbackData($bot->callbackQuery()->data);
-            if (!$callbackData) {
-                return;
-            }
-
-            $searchResults = $this->performSearch(
-                $callbackData['query'],
-                $callbackData['page'],
-                $callbackData['type'],
-                $callbackData['sort'],
-                $callbackData['direction']
-            );
-
-            $this->updateSearchResults($bot, $searchResults, $callbackData);
-            $bot->answerCallbackQuery();
-        } catch (\Throwable $e) {
-            $this->handleError($bot, $e, '处理分页时出错，请重试', true);
         }
     }
 
@@ -152,80 +118,32 @@ class SearchHandler
         $text = $this->buildResultMessage(
             $searchResults,
             $query['page'],
-            $query['search_text'],
+            $query['search_text'], 
             $query['type']
         );
 
+        // 构建键盘 - 使用默认状态
         $keyboard = $this->buildPaginationKeyboard(
-            $query['search_text'],
-            $query['page'],
             $searchResults,
             $query['type']
         );
 
-        $bot->sendMessage(
+        // 发送消息时直接包含键盘
+        $message = $bot->sendMessage(
             text: $text,
             parse_mode: 'HTML',
             disable_web_page_preview: true,
             reply_markup: $keyboard
         );
-    }
 
-    /**
-     * 解析回调数据
-     */
-    private function parseCallbackData(string $data): ?array
-    {
-        $parts = explode('|', $data);
-
-        if (count($parts) < 3) {
-            Log::error('Invalid callback data format', ['data' => $data]);
-            return null;
-        }
-
-        // 使用更紧凑的格式解析
-        $params = [];
-        foreach ($parts as $part) {
-            [$key, $value] = explode(':', $part);
-            $params[$key] = $value;
-        }
-
-        return [
-            'query' => urldecode($params['q'] ?? ''),
-            'type' => $params['t'] ?? 'all',
-            'page' => (int)($params['p'] ?? 1),
-            'sort' => $params['s'] ?? null,
-            'direction' => $params['d'] ?? null
-        ];
-    }
-
-    /**
-     * 更新搜索结果消息
-     */
-    private function updateSearchResults(Nutgram $bot, $searchResults, array $callbackData): void
-    {
-        $text = $this->buildResultMessage(
-            $searchResults,
-            $callbackData['page'],
-            $callbackData['query'],
-            $callbackData['type']
-        );
-
-        $keyboard = $this->buildPaginationKeyboard(
-            $callbackData['query'],
-            $callbackData['page'],
-            $searchResults,
-            $callbackData['type'],
-            $callbackData['sort'],
-            $callbackData['direction']
-        );
-
-        $bot->editMessageText(
-            text: $text,
-            parse_mode: 'HTML',
-            disable_web_page_preview: true,
-            reply_markup: $keyboard
-        );
+        // 缓存搜索状态供后续分页使用
+        $this->cacheSearchState($message->message_id, [
+            'query' => $query['search_text'],
+            'page' => $query['page'],
+            'type' => $query['type'],
+            'sort' => null,
+            'direction' => null
+        ]);
     }
 
     /**
@@ -261,24 +179,45 @@ class SearchHandler
     }
 
     /**
+     * 缓存搜索状态
+     */
+    private function cacheSearchState(int $messageId, array $state): void
+    {
+        Cache::put("search:{$messageId}", $state, now()->addDay());
+    }
+
+    /**
+     * 获取搜索状态
+     */
+    private function getSearchState(?int $messageId = null): array
+    {
+        if ($messageId) {
+            return Cache::get("search:{$messageId}") ?? $this->getDefaultSearchState();
+        }
+        
+        return $this->getDefaultSearchState();
+    }
+
+    /**
+     * 获取默认搜索状态
+     */
+    private function getDefaultSearchState(): array
+    {
+        return [
+            'query' => '',
+            'page' => 1,
+            'type' => 'all',
+            'sort' => null,
+            'direction' => null
+        ];
+    }
+
+    /**
      * 构建分页和类型筛选键盘
      */
-    private function buildPaginationKeyboard($query, $page, $searchResults, $currentType = 'all', $currentSort = null, $currentDirection = null): InlineKeyboardMarkup
+    private function buildPaginationKeyboard($searchResults, string $currentType = 'all', ?int $messageId = null): InlineKeyboardMarkup
     {
         $keyboard = new InlineKeyboardMarkup();
-
-        // 限制查询长度并编码
-        $q = substr(urlencode($query), 0, 15);
-        $t = $currentType;
-
-        // 基础回调数据
-        $baseCallback = "q:{$q}|t:{$t}|p:";
-
-        // 添加排序参数（如果存在）
-        $sortPart = '';
-        if ($currentSort && $currentDirection) {
-            $sortPart = "|s:{$currentSort}|d:{$currentDirection}";
-        }
 
         // 添加类型筛选按钮
         $typeButtons = [];
@@ -286,11 +225,9 @@ class SearchHandler
         $currentTypeButtons = [];
 
         foreach (self::SUPPORTED_TYPES as $type => $label) {
-            $callbackData = "q:{$q}|t:{$type}|p:1" . $sortPart;
-
             $button = new InlineKeyboardButton(
                 text: ($currentType === $type ? '✓' : '') . $label,
-                callback_data: $callbackData
+                callback_data: "search:type:{$type}"
             );
 
             $currentTypeButtons[] = $button;
@@ -305,13 +242,19 @@ class SearchHandler
             $keyboard->addRow(...$currentTypeButtons);
         }
 
+        // 获取当前状态
+        $state = $this->getSearchState($messageId);
+        $currentSort = $state['sort'] ?? null;
+        $currentDirection = $state['direction'] ?? null;
+        $page = $state['page'] ?? 1;
+
         // 添加排序按钮 - 在同一行显示
         $sortButtons = [];
 
-        // 添加默认排序按钮 - 总是显示,并在未使用其他排序时显示勾选标记
+        // 添加默认排序按钮
         $sortButtons[] = new InlineKeyboardButton(
             text: ($currentSort === null ? '✓' : '') . '默认排序',
-            callback_data: "q:{$q}|t:{$t}|p:1"
+            callback_data: "search:sort:default"
         );
 
         // 添加其他排序选项
@@ -321,7 +264,7 @@ class SearchHandler
 
             $sortButtons[] = new InlineKeyboardButton(
                 text: ($isCurrentSort ? '✓' : '') . $label,
-                callback_data: "q:{$q}|t:{$t}|p:1|s:{$sort}|d:{$direction}"
+                callback_data: "search:sort:{$sort}:{$direction}"
             );
         }
 
@@ -334,18 +277,16 @@ class SearchHandler
         $paginationButtons = [];
 
         if ($page > 1) {
-            $prevCallback = $baseCallback . ($page - 1) . $sortPart;
             $paginationButtons[] = new InlineKeyboardButton(
                 text: '⬅️ 上一页',
-                callback_data: $prevCallback
+                callback_data: "search:page:" . ($page - 1)
             );
         }
 
         if ($searchResults->hasMorePages()) {
-            $nextCallback = $baseCallback . ($page + 1) . $sortPart;
             $paginationButtons[] = new InlineKeyboardButton(
                 text: '下一页 ➡️',
-                callback_data: $nextCallback
+                callback_data: "search:page:" . ($page + 1)
             );
         }
 
@@ -354,6 +295,91 @@ class SearchHandler
         }
 
         return $keyboard;
+    }
+
+    /**
+     * 处理分页和类型筛选回调
+     */
+    public function handleSearchCallback(Nutgram $bot)
+    {
+        try {
+            $callbackData = $bot->callbackQuery()->data;
+            $messageId = $bot->callbackQuery()->message->message_id;
+            $parts = explode(':', $callbackData);
+            
+            if (count($parts) < 3) {
+                return;
+            }
+
+            [, $action, $value] = $parts;
+
+            // 获取缓存的搜索状态
+            $state = $this->getSearchState($messageId);
+            if (empty($state['query'])) {
+                throw new \Exception('搜索已过期，请重新搜索');
+            }
+
+            // 根据动作更新状态
+            switch ($action) {
+                case 'type':
+                    $state['type'] = $value;
+                    $state['page'] = 1;
+                    break;
+                    
+                case 'sort':
+                    if ($value === 'default') {
+                        $state['sort'] = null;
+                        $state['direction'] = null;
+                    } else {
+                        $state['sort'] = $parts[2];
+                        $state['direction'] = $parts[3];
+                    }
+                    $state['page'] = 1;
+                    break;
+                    
+                case 'page':
+                    $state['page'] = (int)$value;
+                    break;
+            }
+
+            // 执行搜索
+            $searchResults = $this->performSearch(
+                $state['query'],
+                $state['page'],
+                $state['type'],
+                $state['sort'],
+                $state['direction']
+            );
+
+            // 更新缓存状态
+            $this->cacheSearchState($messageId, $state);
+
+            // 更新消息
+            $text = $this->buildResultMessage(
+                $searchResults,
+                $state['page'],
+                $state['query'],
+                $state['type']
+            );
+
+            $keyboard = $this->buildPaginationKeyboard(
+                $searchResults,
+                $state['type'],
+                $messageId
+            );
+
+            $bot->editMessageText(
+                text: $text,
+                message_id: $messageId,
+                parse_mode: 'HTML',
+                disable_web_page_preview: true,
+                reply_markup: $keyboard
+            );
+
+            $bot->answerCallbackQuery();
+        } catch (\Throwable $e) {
+            $this->handleError($bot, $e, '处理分页时出错，请重试', true);
+        }
     }
 
     /**
