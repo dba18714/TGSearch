@@ -2,9 +2,8 @@
 
 namespace App\Telegram\Handlers;
 
-use App\Models\Chat;
-use App\Models\Message;
 use App\Models\Search;
+use App\Services\UnifiedSearchService;
 use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
@@ -14,6 +13,13 @@ class SearchHandler
 {
     private const PER_PAGE = 5;
     private const MAX_MESSAGE_LENGTH = 50;
+    
+    protected UnifiedSearchService $searchService;
+    
+    public function __construct(UnifiedSearchService $searchService) 
+    {
+        $this->searchService = $searchService;
+    }
 
     /**
      * 处理搜索请求
@@ -29,7 +35,7 @@ class SearchHandler
 
             $searchResults = $this->performSearch($query['search_text'], $query['page']);
 
-            if ($searchResults['total_results']->isEmpty()) {
+            if ($searchResults->isEmpty()) {
                 return $bot->sendMessage('没有找到相关结果 😢');
             }
 
@@ -82,70 +88,27 @@ class SearchHandler
     /**
      * 执行搜索操作
      */
-    private function performSearch(string $query, int $page): array
+    private function performSearch(string $query, int $page)
     {
         Search::recordSearch($query);
 
-        $messageChatIds = $this->searchMessages($query);
-        $chats = $this->searchChats($query);
-
-        $allChatIds = $messageChatIds->keys()->merge($chats->pluck('id'))->unique();
-        $paginatedChats = Chat::whereIn('id', $allChatIds)->paginate(self::PER_PAGE, page: $page);
-
-        $this->attachMatchedMessages($paginatedChats, $messageChatIds);
-
-        return [
-            'message_chat_ids' => $messageChatIds,
-            'chats' => $paginatedChats,
-            'total_results' => $allChatIds
-        ];
-    }
-
-    /**
-     * 搜索消息
-     */
-    private function searchMessages(string $query)
-    {
-        return Message::search($query)
-            ->get(['id', 'chat_id', 'text'])
-            ->groupBy('chat_id')
-            ->map(fn($messages) => $messages->take(1));
-    }
-
-    /**
-     * 搜索聊天
-     */
-    private function searchChats(string $query)
-    {
-        return Chat::search($query)->get();
-    }
-
-    /**
-     * 将匹配的消息附加到聊天结果中
-     */
-    private function attachMatchedMessages($chats, $messageChatIds): void
-    {
-        foreach ($chats as $chat) {
-            $chat->matched_messages = $messageChatIds->get($chat->id);
-        }
+        return $this->searchService->search($query, [], [
+            'per_page' => self::PER_PAGE,
+            'page' => $page
+        ]);
     }
 
     /**
      * 发送搜索结果
      */
-    private function sendSearchResults(Nutgram $bot, array $searchResults, array $query): void
+    private function sendSearchResults(Nutgram $bot, $searchResults, array $query): void
     {
-        $text = $this->buildResultMessage(
-            $searchResults['message_chat_ids'],
-            $searchResults['chats'],
-            $query['page']
-        );
+        $text = $this->buildResultMessage($searchResults, $query['page'], $query['search_text']);
 
         $keyboard = $this->buildPaginationKeyboard(
             $query['search_text'],
             $query['page'],
-            $searchResults['message_chat_ids'],
-            $searchResults['chats']
+            $searchResults
         );
 
         $bot->sendMessage(
@@ -178,19 +141,14 @@ class SearchHandler
     /**
      * 更新搜索结果消息
      */
-    private function updateSearchResults(Nutgram $bot, array $searchResults, array $callbackData): void
+    private function updateSearchResults(Nutgram $bot, $searchResults, array $callbackData): void
     {
-        $text = $this->buildResultMessage(
-            $searchResults['message_chat_ids'],
-            $searchResults['chats'],
-            $callbackData['page']
-        );
+        $text = $this->buildResultMessage($searchResults, $callbackData['page'], $callbackData['query']);
 
         $keyboard = $this->buildPaginationKeyboard(
             $callbackData['query'],
             $callbackData['page'],
-            $searchResults['message_chat_ids'],
-            $searchResults['chats']
+            $searchResults
         );
 
         $bot->editMessageText(
@@ -206,38 +164,34 @@ class SearchHandler
     /**
      * 构建结果消息文本
      */
-    private function buildResultMessage($messageChatIds, $chats, $page): string
+    private function buildResultMessage($searchResults, $page, string $query): string
     {
-        $totalMessages = $messageChatIds->count();
-        $totalChats = $chats->total();
-        $totalRecords = $totalMessages + $totalChats;
-        $totalPages = $chats->lastPage();
+        $totalRecords = $searchResults->total();
+        $totalPages = $searchResults->lastPage();
 
-        $text = "🔍 搜索结果 (第 {$page}/{$totalPages} 页，共 {$totalRecords} 条记录)\n\n";
+        $text = "🔍 搜索 \"{$query}\" 的结果：\n\n";
 
-        if ($chats->isNotEmpty()) {
-            foreach ($chats as $chat) {
-                $text .= $this->formatChatResult($chat);
+        foreach ($searchResults as $result) {
+            $searchable = $result->unified_searchable;
+            
+            if (!$searchable) continue;
+
+            $text .= "- <a href='{$searchable->url}'>{$searchable->name}</a>\n";
+            
+            if ($result->type === 'message') {
+                $text .= "  💬 {$this->truncate($result->content)}\n";
             }
+            
+            $text .= "  {$result->type_name}";
+            if ($result->member_or_view_count > 0) {
+                $text .= " | {$result->member_or_view_count} " . 
+                    ($result->type === 'message' ? '查看' : '成员');
+            }
+            $text .= "\n\n";
         }
 
-        return $text;
-    }
+        $text .= "第 {$page}/{$totalPages} 页，共 {$totalRecords} 条记录";
 
-    /**
-     * 格式化单个聊天结果
-     */
-    private function formatChatResult($chat): string
-    {
-        $text = "- <a href='{$chat->url}'>{$chat->name}</a>\n";
-
-        if ($chat->matched_messages && $chat->matched_messages->isNotEmpty()) {
-            $message = $chat->matched_messages->first();
-            $text .= "  💬 {$this->truncate($message->text)}\n";
-        }
-
-        $text .= "  {$chat->type_name}" .
-            ($chat->member_count ? " | {$chat->member_count} 成员" : "") . "\n\n";
 
         return $text;
     }
@@ -245,7 +199,7 @@ class SearchHandler
     /**
      * 构建分页键盘
      */
-    private function buildPaginationKeyboard($query, $page, $messageChatIds, $chats): InlineKeyboardMarkup
+    private function buildPaginationKeyboard($query, $page, $searchResults): InlineKeyboardMarkup
     {
         $keyboard = new InlineKeyboardMarkup();
         $buttons = [];
@@ -258,7 +212,7 @@ class SearchHandler
             );
         }
 
-        if ($chats->hasMorePages()) {
+        if ($searchResults->hasMorePages()) {
             $buttons[] = new InlineKeyboardButton(
                 text: '下一页 ➡️',
                 callback_data: "search:{$encodedQuery}:page:" . ($page + 1)
