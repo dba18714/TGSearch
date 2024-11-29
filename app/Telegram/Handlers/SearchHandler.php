@@ -21,7 +21,6 @@ class SearchHandler
     ];
 
     private const SUPPORTED_TYPES = [
-        'all' => 'All',
         'channel' => '📢',
         'group' => '👥',
         'message' => '💬',
@@ -42,58 +41,56 @@ class SearchHandler
     public function __invoke(Nutgram $bot)
     {
         try {
-            $query = $this->extractSearchQuery($bot->message()->text);
+            $query = $bot->message()->text;
 
-            if (empty($query['search_text'])) {
-                return $bot->sendMessage('请输入搜索关键词');
-            }
-
-            $searchResults = $this->performSearch(
-                $query['search_text'],
-                $query['page'],
-                $query['type'] ?? 'all'
-            );
+            $searchResults = $this->performSearch($query);
 
             if ($searchResults->isEmpty()) {
                 return $bot->sendMessage('没有找到相关结果 😢');
             }
 
-            $this->sendSearchResults($bot, $searchResults, $query);
+            $text = $this->buildResultMessage(
+                searchResults: $searchResults,
+                page: 1,
+                query: $query,
+            );
+
+            // 构建键盘 - 使用默认状态
+            $keyboard = $this->buildPaginationKeyboard(
+                $searchResults
+            );
+
+            // 发送消息时直接包含键盘
+            $message = $bot->sendMessage(
+                text: $text,
+                parse_mode: 'HTML',
+                disable_web_page_preview: true,
+                reply_markup: $keyboard
+            );
+
+            // 缓存搜索状态供后续分页使用
+            $this->cacheSearchState($message->message_id, [
+                'query' => $query,
+                'page' => null,
+                'type' => null,
+                'sort' => null,
+                'direction' => null
+            ]);
+
         } catch (\Throwable $e) {
             $this->handleError($bot, $e, '搜索过程中出现错误');
         }
     }
 
     /**
-     * 从查询字符串中提取搜索关键词和页码
-     */
-    private function extractSearchQuery(string $text): array
-    {
-        $page = 1;
-        $searchText = $text;
-
-        if (str_contains($text, 'page:')) {
-            preg_match('/page:(\d+)/', $text, $matches);
-            $page = (int)$matches[1];
-            $searchText = trim(str_replace("page:{$page}", '', $text));
-        }
-
-        return [
-            'search_text' => $searchText,
-            'page' => $page,
-            'type' => 'all'
-        ];
-    }
-
-    /**
      * 执行搜索操作
      */
-    private function performSearch(string $query, int $page, string $type = 'all', ?string $sort = null, ?string $direction = null)
+    private function performSearch(string $query, ?int $page = null, ?string $type = null, ?string $sort = null, ?string $direction = null)
     {
         Search::recordSearch($query);
 
         $filters = [];
-        if ($type !== 'all') {
+        if ($type !== null) {
             $filters['type'] = $type;
         }
 
@@ -111,49 +108,12 @@ class SearchHandler
     }
 
     /**
-     * 发送搜索结果
-     */
-    private function sendSearchResults(Nutgram $bot, $searchResults, array $query): void
-    {
-        $text = $this->buildResultMessage(
-            $searchResults,
-            $query['page'],
-            $query['search_text'], 
-            $query['type']
-        );
-
-        // 构建键盘 - 使用默认状态
-        $keyboard = $this->buildPaginationKeyboard(
-            $searchResults,
-            $query['type']
-        );
-
-        // 发送消息时直接包含键盘
-        $message = $bot->sendMessage(
-            text: $text,
-            parse_mode: 'HTML',
-            disable_web_page_preview: true,
-            reply_markup: $keyboard
-        );
-
-        // 缓存搜索状态供后续分页使用
-        $this->cacheSearchState($message->message_id, [
-            'query' => $query['search_text'],
-            'page' => $query['page'],
-            'type' => $query['type'],
-            'sort' => null,
-            'direction' => null
-        ]);
-    }
-
-    /**
      * 构建结果消息文本
      */
-    private function buildResultMessage($searchResults, $page, string $query, string $type = 'all'): string
+    private function buildResultMessage($searchResults, $page, string $query): string
     {
         $totalRecords = $searchResults->total();
         $totalPages = $searchResults->lastPage();
-        $currentType = self::SUPPORTED_TYPES[$type] ?? '全部';
 
         $text = "🔍 搜索 \"{$query}\" 的结果:\n\n";
 
@@ -183,7 +143,7 @@ class SearchHandler
      */
     private function cacheSearchState(int $messageId, array $state): void
     {
-        Cache::put("search:{$messageId}", $state, now()->addDay());
+        Cache::put("search:{$messageId}", $state, now()->addMonth());
     }
 
     /**
@@ -194,7 +154,7 @@ class SearchHandler
         if ($messageId) {
             return Cache::get("search:{$messageId}") ?? $this->getDefaultSearchState();
         }
-        
+
         return $this->getDefaultSearchState();
     }
 
@@ -204,9 +164,9 @@ class SearchHandler
     private function getDefaultSearchState(): array
     {
         return [
-            'query' => '',
+            'query' => null,
             'page' => 1,
-            'type' => 'all',
+            'type' => null,
             'sort' => null,
             'direction' => null
         ];
@@ -215,7 +175,7 @@ class SearchHandler
     /**
      * 构建分页和类型筛选键盘
      */
-    private function buildPaginationKeyboard($searchResults, string $currentType = 'all', ?int $messageId = null): InlineKeyboardMarkup
+    private function buildPaginationKeyboard($searchResults, string $currentType = null, ?int $messageId = null): InlineKeyboardMarkup
     {
         $keyboard = new InlineKeyboardMarkup();
 
@@ -223,6 +183,11 @@ class SearchHandler
         $typeButtons = [];
         $typesPerRow = 6;
         $currentTypeButtons = [];
+
+        $currentTypeButtons[] = new InlineKeyboardButton(
+            text: ($currentType === null ? '✓' : '') . 'All',
+            callback_data: "search:type:"
+        );
 
         foreach (self::SUPPORTED_TYPES as $type => $label) {
             $button = new InlineKeyboardButton(
@@ -306,7 +271,7 @@ class SearchHandler
             $callbackData = $bot->callbackQuery()->data;
             $messageId = $bot->callbackQuery()->message->message_id;
             $parts = explode(':', $callbackData);
-            
+
             if (count($parts) < 3) {
                 return;
             }
@@ -316,16 +281,19 @@ class SearchHandler
             // 获取缓存的搜索状态
             $state = $this->getSearchState($messageId);
             if (empty($state['query'])) {
-                throw new \Exception('搜索已过期，请重新搜索');
+                $bot->answerCallbackQuery(
+                    text: '搜索已过期，请重新搜索',
+                    show_alert: true
+                );    
             }
 
             // 根据动作更新状态
             switch ($action) {
                 case 'type':
-                    $state['type'] = $value;
+                    $state['type'] = $value ? $value : null;
                     $state['page'] = 1;
                     break;
-                    
+
                 case 'sort':
                     if ($value === 'default') {
                         $state['sort'] = null;
@@ -336,7 +304,7 @@ class SearchHandler
                     }
                     $state['page'] = 1;
                     break;
-                    
+
                 case 'page':
                     $state['page'] = (int)$value;
                     break;
@@ -380,17 +348,6 @@ class SearchHandler
         } catch (\Throwable $e) {
             $this->handleError($bot, $e, '处理分页时出错，请重试', true);
         }
-    }
-
-    /**
-     * 截断文本
-     */
-    private function truncate(string $text): string
-    {
-        if (mb_strlen($text) <= self::MAX_MESSAGE_LENGTH) {
-            return $text;
-        }
-        return mb_substr($text, 0, self::MAX_MESSAGE_LENGTH) . '...';
     }
 
     /**
