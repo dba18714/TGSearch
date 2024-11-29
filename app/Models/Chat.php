@@ -16,7 +16,7 @@ use Laravel\Scout\Searchable;
 class Chat extends Model
 {
     use HasUlids, HasFactory;
-    use Searchable;
+    use Searchable; // TODO 注释掉
     use HasVerification;
     use HasUnifiedSearch;
 
@@ -197,7 +197,7 @@ class Chat extends Model
      *
      * @return bool
      */
-    public function shouldBeSearchable(): bool
+    public function shouldBeSearchable(): bool // TODO 注释掉
     {
         return $this->is_valid === true;
     }
@@ -207,7 +207,7 @@ class Chat extends Model
      *
      * @return array<string, mixed>
      */
-    public function toSearchableArray(): array
+    public function toSearchableArray(): array // TODO 注释掉
     {
         return [
             'id' => $this->id,

@@ -176,16 +176,13 @@ class SearchHandler
             
             if (!$searchable) continue;
 
-            $text .= "- <a href='{$searchable->url}'>{$searchable->name}</a>\n";
+            $title = $searchable->name ?? $searchable->text;
+            $text .= "$result->type_emoji <a href='{$result->url}'>{$title}</a>\n";
             
-            if ($result->type === 'message') {
-                $text .= "  💬 {$this->truncate($result->content)}\n";
-            }
-            
-            $text .= "  {$result->type_name}";
             if ($result->member_or_view_count > 0) {
-                $text .= " | {$result->member_or_view_count} " . 
-                    ($result->type === 'message' ? '查看' : '成员');
+                $member_or_view_count = number_format($result->member_or_view_count);
+                $text .= "{$member_or_view_count} " . 
+                    ($result->type === 'message' ? '阅读' : '成员');
             }
             $text .= "\n\n";
         }

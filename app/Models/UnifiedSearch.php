@@ -74,6 +74,11 @@ class UnifiedSearch extends Model
         return $this->type === 'message';
     }
 
+    public function getUrlAttribute(): ?string
+    {
+        return $this->unified_searchable->url;
+    }
+
     public function getTypeNameAttribute(): string
     {
         return match ($this->type) {
@@ -82,6 +87,18 @@ class UnifiedSearch extends Model
             'group' => '群组',
             'person' => '个人',
             'message' => '消息',
+            default => '未知',
+        };
+    }
+
+    public function getTypeEmojiAttribute(): string
+    {
+        return match ($this->type) {
+            'bot' => '🤖',
+            'channel' => '📢',
+            'group' => '👥',
+            'person' => '👤',
+            'message' => '💬',
             default => '未知',
         };
     }

@@ -14,7 +14,7 @@ class Message extends Model
 {
     use HasUlids, HasFactory;
     use HasVerification;
-    use Searchable;
+    use Searchable; // TODO 注释掉
     use HasUnifiedSearch;
 
     /**
@@ -59,12 +59,13 @@ class Message extends Model
     public function getUrlAttribute(): ?string
     {
         if ($this->chat) {
+            return "https://t.me/{$this->chat->username}/{$this->original_id}";
             return "https://t.me/s/{$this->chat->username}/{$this->original_id}";
         }
         return "404";
     }
 
-    public function toSearchableArray(): array
+    public function toSearchableArray(): array // TODO 注释掉
     {
         return [
             'id' => $this->id,

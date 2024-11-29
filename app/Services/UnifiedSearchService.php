@@ -22,14 +22,14 @@ class UnifiedSearchService
         $perPage = $options['per_page'] ?? 10;
         $page = isset($options['page']) ? (int)$options['page'] : null;
 
-        $result =  $builder->paginate((int)$perPage, 'page', $page);
+        $results =  $builder->paginate((int)$perPage, 'page', $page);
 
         $unified_searchables = [];
-        foreach ($result->items() as $item) {
+        foreach ($results->items() as $item) {
             $unified_searchables[] = $item->unified_searchable;
         }
         app(ImpressionStatsService::class)->recordBulkImpressions($unified_searchables, 'search_result');
 
-        return $result;
+        return $results;
     }
 }
