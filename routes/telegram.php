@@ -25,7 +25,10 @@ $bot->onCommand('start', StartHandler::class)
 
 $bot->onText('^[^/].*', SearchHandler::class);
 
-$bot->onCallbackQueryData('search:{param}', [SearchHandler::class, 'handlePagination']);
+// $bot->onCallbackQueryData('q:{query}|t:{type}|p:{page}', [SearchHandler::class, 'handlePagination']);
+// $bot->onCallbackQueryData('q:{query}|t:{type}|p:{page}|s:{sort}|d:{direction}', [SearchHandler::class, 'handlePagination']);
+// 使用正则表达式匹配可选的排序参数
+$bot->onCallbackQueryData('q:{query}|t:{type}|p:{page}(\|s:{sort}\|d:{direction})?', [SearchHandler::class, 'handlePagination']);
 
 $bot->onCommand('add', RecruitConversation::class)
     ->description('提交收录');

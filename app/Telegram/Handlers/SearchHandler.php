@@ -13,19 +13,32 @@ class SearchHandler
 {
     private const PER_PAGE = 5;
     private const MAX_MESSAGE_LENGTH = 50;
-    
-    private const SUPPORTED_TYPES = [
-        'all' => '🔍 全部',
-        'channel' => '📢 频道',
-        'group' => '👥 群组',
-        'message' => '💬 消息',
-        'bot' => '🤖 机器人',
-        'person' => '👤 个人',
+
+    private const SORT_OPTIONS = [
+        'member_or_view_count:desc' => '按人数降序',
+        'member_or_view_count:asc' => '升序'
     ];
-    
+
+    private const SUPPORTED_TYPES = [
+        'all' => 'All',
+        'channel' => '📢',
+        'group' => '👥',
+        'message' => '💬',
+        'bot' => '🤖',
+        'person' => '👤',
+    ];
+    // private const SUPPORTED_TYPES = [
+    //     'all' => '🔍 全部',
+    //     'channel' => '📢 频道',
+    //     'group' => '👥 群组',
+    //     'message' => '💬 消息',
+    //     'bot' => '🤖 机器人',
+    //     'person' => '👤 个人',
+    // ];
+
     protected UnifiedSearchService $searchService;
-    
-    public function __construct(UnifiedSearchService $searchService) 
+
+    public function __construct(UnifiedSearchService $searchService)
     {
         $this->searchService = $searchService;
     }
@@ -43,7 +56,7 @@ class SearchHandler
             }
 
             $searchResults = $this->performSearch(
-                $query['search_text'], 
+                $query['search_text'],
                 $query['page'],
                 $query['type'] ?? 'all'
             );
@@ -70,9 +83,11 @@ class SearchHandler
             }
 
             $searchResults = $this->performSearch(
-                $callbackData['query'], 
+                $callbackData['query'],
                 $callbackData['page'],
-                $callbackData['type']
+                $callbackData['type'],
+                $callbackData['sort'],
+                $callbackData['direction']
             );
 
             $this->updateSearchResults($bot, $searchResults, $callbackData);
@@ -106,7 +121,7 @@ class SearchHandler
     /**
      * 执行搜索操作
      */
-    private function performSearch(string $query, int $page, string $type = 'all')
+    private function performSearch(string $query, int $page, string $type = 'all', ?string $sort = null, ?string $direction = null)
     {
         Search::recordSearch($query);
 
@@ -115,10 +130,17 @@ class SearchHandler
             $filters['type'] = $type;
         }
 
-        return $this->searchService->search($query, $filters, [
+        $options = [
             'per_page' => self::PER_PAGE,
             'page' => $page
-        ]);
+        ];
+
+        if ($sort && $direction) {
+            $options['sort'] = $sort;
+            $options['direction'] = $direction;
+        }
+
+        return $this->searchService->search($query, $filters, $options);
     }
 
     /**
@@ -127,8 +149,8 @@ class SearchHandler
     private function sendSearchResults(Nutgram $bot, $searchResults, array $query): void
     {
         $text = $this->buildResultMessage(
-            $searchResults, 
-            $query['page'], 
+            $searchResults,
+            $query['page'],
             $query['search_text'],
             $query['type']
         );
@@ -153,17 +175,26 @@ class SearchHandler
      */
     private function parseCallbackData(string $data): ?array
     {
-        $parts = explode(':', $data);
+        $parts = explode('|', $data);
 
-        if (count($parts) !== 6) {
+        if (count($parts) < 3) {
             Log::error('Invalid callback data format', ['data' => $data]);
             return null;
         }
 
+        // 使用更紧凑的格式解析
+        $params = [];
+        foreach ($parts as $part) {
+            [$key, $value] = explode(':', $part);
+            $params[$key] = $value;
+        }
+
         return [
-            'query' => urldecode($parts[1]),
-            'type' => $parts[3],
-            'page' => (int)$parts[5]
+            'query' => urldecode($params['q'] ?? ''),
+            'type' => $params['t'] ?? 'all',
+            'page' => (int)($params['p'] ?? 1),
+            'sort' => $params['s'] ?? null,
+            'direction' => $params['d'] ?? null
         ];
     }
 
@@ -173,8 +204,8 @@ class SearchHandler
     private function updateSearchResults(Nutgram $bot, $searchResults, array $callbackData): void
     {
         $text = $this->buildResultMessage(
-            $searchResults, 
-            $callbackData['page'], 
+            $searchResults,
+            $callbackData['page'],
             $callbackData['query'],
             $callbackData['type']
         );
@@ -183,7 +214,9 @@ class SearchHandler
             $callbackData['query'],
             $callbackData['page'],
             $searchResults,
-            $callbackData['type']
+            $callbackData['type'],
+            $callbackData['sort'],
+            $callbackData['direction']
         );
 
         $bot->editMessageText(
@@ -207,15 +240,15 @@ class SearchHandler
 
         foreach ($searchResults as $result) {
             $searchable = $result->unified_searchable;
-            
+
             if (!$searchable) continue;
 
             $title = $searchable->name ?? $searchable->text;
             $text .= "$result->type_emoji <a href='{$result->url}'>{$title}</a>\n";
-            
+
             if ($result->member_or_view_count > 0) {
                 $member_or_view_count = number_format($result->member_or_view_count);
-                $text .= "{$member_or_view_count} " . 
+                $text .= "{$member_or_view_count} " .
                     ($result->type === 'message' ? '阅读' : '成员');
             }
             $text .= "\n\n";
@@ -229,49 +262,89 @@ class SearchHandler
     /**
      * 构建分页和类型筛选键盘
      */
-    private function buildPaginationKeyboard($query, $page, $searchResults, $currentType = 'all'): InlineKeyboardMarkup
+    private function buildPaginationKeyboard($query, $page, $searchResults, $currentType = 'all', $currentSort = null, $currentDirection = null): InlineKeyboardMarkup
     {
         $keyboard = new InlineKeyboardMarkup();
-        $encodedQuery = urlencode($query);
 
-        // 添加类型筛选按钮行
+        // 限制查询长度并编码
+        $q = substr(urlencode($query), 0, 15);
+        $t = $currentType;
+
+        // 基础回调数据
+        $baseCallback = "q:{$q}|t:{$t}|p:";
+
+        // 添加排序参数（如果存在）
+        $sortPart = '';
+        if ($currentSort && $currentDirection) {
+            $sortPart = "|s:{$currentSort}|d:{$currentDirection}";
+        }
+
+        // 添加类型筛选按钮
         $typeButtons = [];
-        $typesPerRow = 3; // 每行显示的按钮数
+        $typesPerRow = 6;
         $currentTypeButtons = [];
-        
+
         foreach (self::SUPPORTED_TYPES as $type => $label) {
+            $callbackData = "q:{$q}|t:{$type}|p:1" . $sortPart;
+
             $button = new InlineKeyboardButton(
-                text: ($currentType === $type ? '✓ ' : '') . $label,
-                callback_data: "search:{$encodedQuery}:type:{$type}:page:1"
+                text: ($currentType === $type ? '✓' : '') . $label,
+                callback_data: $callbackData
             );
-            
+
             $currentTypeButtons[] = $button;
-            
+
             if (count($currentTypeButtons) === $typesPerRow) {
                 $keyboard->addRow(...$currentTypeButtons);
                 $currentTypeButtons = [];
             }
         }
-        
-        // 添加剩余的类型按钮
+
         if (!empty($currentTypeButtons)) {
             $keyboard->addRow(...$currentTypeButtons);
         }
 
-        // 添加分页按钮行
+        // 添加排序按钮 - 在同一行显示
+        $sortButtons = [];
+
+        // 添加默认排序按钮 - 总是显示,并在未使用其他排序时显示勾选标记
+        $sortButtons[] = new InlineKeyboardButton(
+            text: ($currentSort === null ? '✓ ' : '') . '默认排序',
+            callback_data: "q:{$q}|t:{$t}|p:1"
+        );
+
+        // 添加其他排序选项
+        foreach (self::SORT_OPTIONS as $sortOption => $label) {
+            [$sort, $direction] = explode(':', $sortOption);
+            $isCurrentSort = $currentSort === $sort && $currentDirection === $direction;
+
+            $sortButtons[] = new InlineKeyboardButton(
+                text: ($isCurrentSort ? '✓ ' : '') . $label,
+                callback_data: "q:{$q}|t:{$t}|p:1|s:{$sort}|d:{$direction}"
+            );
+        }
+
+        // 将所有排序按钮添加到同一行
+        if (!empty($sortButtons)) {
+            $keyboard->addRow(...$sortButtons);
+        }
+
+        // 添加分页按钮
         $paginationButtons = [];
 
         if ($page > 1) {
+            $prevCallback = $baseCallback . ($page - 1) . $sortPart;
             $paginationButtons[] = new InlineKeyboardButton(
                 text: '⬅️ 上一页',
-                callback_data: "search:{$encodedQuery}:type:{$currentType}:page:" . ($page - 1)
+                callback_data: $prevCallback
             );
         }
 
         if ($searchResults->hasMorePages()) {
+            $nextCallback = $baseCallback . ($page + 1) . $sortPart;
             $paginationButtons[] = new InlineKeyboardButton(
                 text: '下一页 ➡️',
-                callback_data: "search:{$encodedQuery}:type:{$currentType}:page:" . ($page + 1)
+                callback_data: $nextCallback
             );
         }
 
