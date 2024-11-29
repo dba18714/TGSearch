@@ -5,6 +5,7 @@
 use App\Telegram\Conversations\RecruitConversation;
 use App\Telegram\Handlers\SearchHandler;
 use App\Telegram\Handlers\StartHandler;
+use App\Telegram\InlineMenu\ChooseColorMenu;
 use SergiX44\Nutgram\Nutgram;
 
 /*
@@ -32,3 +33,6 @@ $bot->onCallbackQueryData('q:{query}|t:{type}|p:{page}(\|s:{sort}\|d:{direction}
 
 $bot->onCommand('add', RecruitConversation::class)
     ->description('提交收录');
+
+$bot->onCommand('tmp2', ChooseColorMenu::class)
+    ->description('tmp');

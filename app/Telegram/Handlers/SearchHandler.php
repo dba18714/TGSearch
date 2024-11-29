@@ -48,6 +48,7 @@ class SearchHandler
      */
     public function __invoke(Nutgram $bot)
     {
+        // TODO 用缓存方式储存当前筛选状态和搜索关键词等，解决 BUTTON_DATA_INVALID 长度限制问题
         try {
             $query = $this->extractSearchQuery($bot->message()->text);
 
