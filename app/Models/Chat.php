@@ -16,7 +16,7 @@ use Laravel\Scout\Searchable;
 class Chat extends Model
 {
     use HasUlids, HasFactory;
-    use Searchable; // TODO 注释掉
+    // use Searchable; 
     use HasVerification;
     use HasUnifiedSearch;
 
@@ -197,26 +197,26 @@ class Chat extends Model
      *
      * @return bool
      */
-    public function shouldBeSearchable(): bool // TODO 注释掉
-    {
-        return $this->is_valid === true;
-    }
+    // public function shouldBeSearchable(): bool 
+    // {
+    //     return $this->is_valid === true;
+    // }
 
     /**
      * 获取模型的可索引数据数组。
      *
      * @return array<string, mixed>
      */
-    public function toSearchableArray(): array // TODO 注释掉
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'introduction' => $this->introduction,
-            'message' => $this->message,
-            'username' => $this->username,
-        ];
-    }
+    // public function toSearchableArray(): array 
+    // {
+    //     return [
+    //         'id' => $this->id,
+    //         'name' => $this->name,
+    //         'introduction' => $this->introduction,
+    //         'message' => $this->message,
+    //         'username' => $this->username,
+    //     ];
+    // }
 
     /**
      * Get a single link for verification, prioritizing unverified and in-progress chats

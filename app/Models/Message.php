@@ -14,7 +14,7 @@ class Message extends Model
 {
     use HasUlids, HasFactory;
     use HasVerification;
-    use Searchable; // TODO 注释掉
+    // use Searchable; 
     use HasUnifiedSearch;
 
     /**
@@ -65,14 +65,14 @@ class Message extends Model
         return "404";
     }
 
-    public function toSearchableArray(): array // TODO 注释掉
-    {
-        return [
-            'id' => $this->id,
-            'text' => $this->text,
-            'chat_id' => $this->chat_id
-        ];
-    }
+    // public function toSearchableArray(): array 
+    // {
+    //     return [
+    //         'id' => $this->id,
+    //         'text' => $this->text,
+    //         'chat_id' => $this->chat_id
+    //     ];
+    // }
 
     /**
      * 获取添加此消息的用户

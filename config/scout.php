@@ -149,10 +149,10 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
-            Chat::class => [ // TODO 注释掉
-                'filterableAttributes' => ['type'],
-                'sortableAttributes' => ['id', 'member_count'],
-            ],
+            // Chat::class => [ 
+            //     'filterableAttributes' => ['type'],
+            //     'sortableAttributes' => ['id', 'member_count'],
+            // ],
             UnifiedSearch::class => [
                 'filterableAttributes' => ['type'],
                 'sortableAttributes' => ['member_or_view_count'],
