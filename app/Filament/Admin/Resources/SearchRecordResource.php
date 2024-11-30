@@ -59,7 +59,7 @@ class SearchRecordResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->label('搜索关键词')
-                    ->url(fn(SearchRecord $record): string => "/?search=" . urlencode($record->keyword))
+                    ->url(fn(SearchRecord $record): string => "/?q=" . urlencode($record->keyword))
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->iconPosition('after'),

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Message;
 use App\Models\Chat;
 use App\Services\ImpressionStatsService;
+use App\Services\UnifiedSearchService;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Livewire\Component;
 use Illuminate\Support\Facades\Route;
@@ -21,22 +22,28 @@ class ChatShow extends Component
         $this->chat = $chat;
         $this->message = $message;
         app('debugbar')->debug('message', $this->message->exists);
-
     }
 
-    public function getRelatedChats()
+    public function getRelatedSearches()
     {
-        $chats = Chat::search($this->chat->name)
-            ->query(function ($query) {
-                return $query->whereNot('id', $this->chat->id);
-            })
-            ->take(7)
-            ->get();
-        app('debugbar')->debug('chats', $chats);
+        $results = app(UnifiedSearchService::class)->search(
+            query: $this->chat->name,
+            options: [
+                'per_page' => 5,
+            ],
+        );
 
-        app(ImpressionStatsService::class)->recordBulkImpressions($chats->all(), 'related_recommendation');
+        // $chats = Chat::search($this->chat->name)
+        //     ->query(function ($query) {
+        //         return $query->whereNot('id', $this->chat->id);
+        //     })
+        //     ->take(7)
+        //     ->get();
+        // app('debugbar')->debug('chats', $chats);
 
-        return $chats;
+        // app(ImpressionStatsService::class)->recordBulkImpressions($results->items(), 'related_recommendation');
+
+        return $results;
     }
 
     public function render()
@@ -53,16 +60,16 @@ class ChatShow extends Component
         $weekImpressions = $impressionStats->sum();
 
         $messages = $this->chat->messages()
-                ->when($this->message->exists, function ($query) {
-                    $query->where('id', $this->message->id);
-                })
-                ->paginate(5);
+            ->when($this->message->exists, function ($query) {
+                $query->where('id', $this->message->id);
+            })
+            ->paginate(5);
 
         app(ImpressionStatsService::class)->recordBulkImpressions($messages->items(), 'chat_detail_page');
 
         app('debugbar')->debug('chat', $this->chat);
         return view('livewire.chat-show', [
-            'relatedChats' => $this->getRelatedChats(),
+            'relatedSearches' => $this->getRelatedSearches(),
             'messages' => $messages,
             'todayImpressions' => $todayImpressions,
             'weekImpressions' => $weekImpressions,

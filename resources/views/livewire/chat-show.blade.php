@@ -133,11 +133,11 @@
                     @endif
 
                     <!-- 相关推荐 -->
-                    @if ($relatedChats->isNotEmpty())
+                    @if ($relatedSearches->isNotEmpty())
                         <div class="mt-6 p-6">
                             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">相关推荐</h2>
                             <div class="grid grid-cols-1 gap-6">
-                                @foreach ($relatedChats as $relatedChat)
+                                @foreach ($relatedSearches as $relatedSearch)
                                     <div
                                         class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-200">
                                         <div class="p-6">
@@ -146,30 +146,32 @@
                                                     <div class="flex-shrink-0">
                                                         <div
                                                             class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-bold">
-                                                            {{ strtoupper(substr($relatedChat->name, 0, 1)) }}
+                                                            {{ strtoupper(substr($relatedSearch->unified_searchable->name ?? $relatedSearch->unified_searchable->chat->name, 0, 1)) }}
                                                         </div>
                                                     </div>
                                                     <div class="ml-4">
                                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                                            {{ $relatedChat->name }}</h3>
+                                                            {{ $relatedSearch->unified_searchable->name ?? $relatedSearch->unified_searchable->chat->name }}
+                                                        </h3>
                                                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                                                            {{ $relatedChat->username }}</p>
+                                                            {{ $relatedSearch->username }}
+                                                        </p>
                                                     </div>
                                                 </div>
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-    {{ $relatedChat->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
-    {{ $relatedChat->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
-    {{ $relatedChat->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
-    {{ $relatedChat->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
+    {{ $relatedSearch->isBot() ? 'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' : '' }}
+    {{ $relatedSearch->isChannel() ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' : '' }}
+    {{ $relatedSearch->isGroup() ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : '' }}
+    {{ $relatedSearch->isPerson() ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' : '' }}
     ">
-                                                    {{ $relatedChat->type_name }}
+                                                    {{ $relatedSearch->type_name }}
                                                 </span>
                                             </div>
 
-                                            @if ($relatedChat->introduction && $relatedChat->introduction !== 'None')
+                                            @if ($relatedSearch->introduction && $relatedSearch->introduction !== 'None')
                                                 <p class="mt-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                                    {{ $relatedChat->introduction }}</p>
+                                                    {{ $relatedSearch->introduction }}</p>
                                             @endif
 
                                             <div class="mt-6 flex items-center justify-between">
@@ -180,9 +182,9 @@
                                                             stroke-width="2"
                                                             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                                     </svg>
-                                                    {{ number_format($relatedChat->member_count) }}
+                                                    {{ number_format($relatedSearch->member_count) }}
                                                 </div>
-                                                <a href="{{ route('chat.show', $relatedChat) }}" wire:navigate
+                                                <a href="{{ route('chat.show', $relatedSearch) }}" wire:navigate
                                                     class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
                                                   dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 
                                                   transition-colors duration-200">
