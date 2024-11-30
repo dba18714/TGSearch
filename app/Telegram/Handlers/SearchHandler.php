@@ -2,7 +2,7 @@
 
 namespace App\Telegram\Handlers;
 
-use App\Models\Search;
+use App\Models\SearchRecord;
 use App\Services\UnifiedSearchService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -87,7 +87,7 @@ class SearchHandler
      */
     private function performSearch(string $query, ?int $page = null, ?string $type = null, ?string $sort = null, ?string $direction = null)
     {
-        Search::recordSearch($query);
+        SearchRecord::recordSearch($query);
 
         $filters = [];
         if ($type !== null) {
