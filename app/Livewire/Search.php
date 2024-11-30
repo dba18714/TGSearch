@@ -94,6 +94,12 @@ class Search extends Component
             $this->sortField = $field;
             $this->sortDirection = 'asc';
         }
+        $this->resetPage();
+    }
+
+    public function updatedType()
+    {
+        $this->resetPage();
     }
 
     public function doSearch()
