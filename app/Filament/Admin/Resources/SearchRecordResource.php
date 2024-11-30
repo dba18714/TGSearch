@@ -3,16 +3,16 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\SearchResource\Pages;
-use App\Models\Search;
+use App\Models\SearchRecord;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class SearchResource extends Resource
+class SearchRecordResource extends Resource
 {
-    protected static ?string $model = Search::class;
+    protected static ?string $model = SearchRecord::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-magnifying-glass';
 
@@ -47,7 +47,7 @@ class SearchResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $ipShow = function (Search $record) {
+        $ipShow = function (SearchRecord $record) {
             return empty($record->ip_history)
                 ? '无记录'
                 : implode(' / ', array_reverse($record->ip_history));
@@ -59,7 +59,7 @@ class SearchResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->label('搜索关键词')
-                    ->url(fn(Search $record): string => "/?search=" . urlencode($record->keyword))
+                    ->url(fn(SearchRecord $record): string => "/?search=" . urlencode($record->keyword))
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->iconPosition('after'),
@@ -111,9 +111,9 @@ class SearchResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSearches::route('/'),
-            'create' => Pages\CreateSearch::route('/create'),
-            'edit' => Pages\EditSearch::route('/{record}/edit'),
+            'index' => Pages\ListSearchRecords::route('/'),
+            'create' => Pages\CreateSearchRecord::route('/create'),
+            'edit' => Pages\EditSearchRecord::route('/{record}/edit'),
         ];
     }
 }
