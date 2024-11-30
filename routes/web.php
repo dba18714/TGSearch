@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use App\Jobs\ProcessPodcast;
 use App\Jobs\ProcessUpdateChatInfoJob;
+use App\Livewire\Search;
 use App\Models\Message;
 use App\Models\Chat;
 use App\Models\Impression;
@@ -38,45 +39,12 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
-    return (int)null;
-    // $x = UnifiedSearch::query()->where('unified_searchable_id', '01jdsv7t09phn0cgpz6y856ey8')->first();
-    // $x = UnifiedSearch::query()->first();
-    // dump($x);
-    // dump($x->unified_searchable);
-
-    // $i = Impression::query()->where('impressionable_id', '01jdsv7t09phn0cgpz6y856ey8')->first();
-    // $i = Impression::query()->first();
-    // dump($i);
-    // dump($i->impressionable);
-
-    // return;
-
-    // Chat::query()->create([
-    //     'username' => time(),
-    //     'is_valid' => true,
-    // ]);
-    // Message::query()->create([
-    //     'original_id' => time(),
-    //     'chat_id' => time(),
-    //     'is_valid' => true,
-    // ]);
-    // UnifiedSearch::query()->create([
-    //     'content' => 333,
-    //     'searchable_type' => 'App\Models\User',
-    //     'searchable_id' => 1,
-    // ]);
-    $result = app(UnifiedSearchService::class)->search($request->query('q') ?? 'ex');
-    dump($result);
-    return $result;
 });
 
 Route::get('/tmp2', function () {
-    dump('tmp2 start: ' . now());
-    dump('tmp2 end: ' . now());
-    return 'tmp2';
 });
 
-Route::get('/', Chats::class)->name('home');
+Route::get('/', Search::class)->name('home');
 Route::get('/chats/create', ChatCreate::class)->name('chats.create');
 Route::get('/chats/{chat}/{message?}', ChatShow::class)->name('chat.show');
 

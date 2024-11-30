@@ -9,12 +9,11 @@ use Livewire\WithPagination;
 use App\Services\GoogleCustomSearchService;
 use App\Services\GoogleSuggestService;
 use App\Models\Message;
-use App\Models\Search;
 use App\Services\ImpressionStatsService;
 use App\Services\UnifiedSearchService;
 use Artesaos\SEOTools\Facades\SEOMeta;
 
-class Chats extends Component
+class Search extends Component
 {
     use WithPagination;
 
@@ -124,7 +123,7 @@ class Chats extends Component
             ],
         );
 
-        return view('livewire.chats', [
+        return view('livewire.search', [
             'unified_searches' => $result
         ]);
     }
