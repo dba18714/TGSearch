@@ -6,10 +6,18 @@ use App\Models\UnifiedSearch;
 
 class UnifiedSearchService
 {
-    public function search(string $query, array $filters = [], array $options = [])
+    public function search(string $query, array $filters = [], array $options = [], $excludeIds = [])
     {
         $query = trim($query);
-        $builder = UnifiedSearch::search($query);
+        $builder = UnifiedSearch::search($query, function($meilisearch, $query, $options) use ($excludeIds) {
+            $validIds = array_filter($excludeIds, function($id) {
+                return $id !== null && $id !== '';
+            });
+            if (!empty($validIds)) {
+                $options['filter'] = ['id NOT IN [' . implode(',', $validIds) . ']'];
+            }
+            return $meilisearch->search($query, $options);
+        });
 
         foreach ($filters as $key => $value) {
             $builder->where($key, $value);

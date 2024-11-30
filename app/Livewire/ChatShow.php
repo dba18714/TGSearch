@@ -31,6 +31,7 @@ class ChatShow extends Component
             options: [
                 'per_page' => 5,
             ],
+            excludeIds: [$this->chat->unifiedSearch->id, $this->message->unifiedSearch?->id],
         );
 
         // $chats = Chat::search($this->chat->name)

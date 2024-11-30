@@ -19,6 +19,7 @@ php artisan horizon:terminate
 
 sail artisan horizon:clear
 
+sail artisan scout:sync-index-settings
 
 sail php artisan scout:flush "App\Models\UnifiedSearch" && sail artisan migrate:fresh --seed
 

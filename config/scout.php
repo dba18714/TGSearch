@@ -154,7 +154,7 @@ return [
             //     'sortableAttributes' => ['id', 'member_count'],
             // ],
             UnifiedSearch::class => [
-                'filterableAttributes' => ['type'],
+                'filterableAttributes' => ['type', 'id'],
                 'sortableAttributes' => ['member_or_view_count'],
                 'searchableAttributes' => [
                     "content",
