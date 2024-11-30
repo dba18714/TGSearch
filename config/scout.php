@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'queue' => env('SCOUT_QUEUE', false),
+    'queue' => env('APP_ENV', 'local') === 'production',
 
     /*
     |--------------------------------------------------------------------------
