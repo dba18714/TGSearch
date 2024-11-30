@@ -184,7 +184,7 @@
                                                     </svg>
                                                     {{ number_format($relatedSearch->member_count) }}
                                                 </div>
-                                                <a href="{{ route('chat.show', $relatedSearch) }}" wire:navigate
+                                                <a href="{{ $relatedSearch->unified_searchable->route }}" wire:navigate
                                                     class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 
                                                   dark:text-indigo-400 dark:bg-indigo-900 dark:hover:bg-indigo-800 
                                                   transition-colors duration-200">

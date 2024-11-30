@@ -211,7 +211,7 @@
 
                                     <!-- 保持原来的 Telegram 按钮文字 -->
                                     <a href="{{ $unified_search->unified_searchable->url }}" target="_blank"
-                                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900/50 dark:hover:bg-indigo-800/50 transition-colors duration-200">
+                                        class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900/90 dark:hover:bg-indigo-800/90 transition-colors duration-200">
                                         <svg class="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 24 24" fill="currentColor">
                                             <path
