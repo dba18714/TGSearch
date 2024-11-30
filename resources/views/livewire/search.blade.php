@@ -12,7 +12,7 @@
             <livewire:ad-display position="footer" /> --}}
 
             <!-- Search and Sort Section -->
-            <div class="max-w-3xl mx-auto mb-8" id="paginated-posts">
+            <div class="max-w-4xl mx-auto mb-8" id="paginated-posts">
                 <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-md">
                     <div class="relative flex items-center space-x-2">
                         <div x-data="{ focused: false }" class="relative flex-1">
@@ -157,11 +157,8 @@
                                 <div class="flex items-start justify-between">
                                     <div class="flex-1">
                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                            {{ $unified_search->unified_searchable->name ?? $unified_search->unified_searchable->chat->name }}
+                                            {{ $unified_search->title }}
                                         </h3>
-                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $unified_search->unified_searchable->username ?? $unified_search->unified_searchable->chat->username }}
-                                        </p>
                                     </div>
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium flex-shrink-0 whitespace-nowrap
@@ -174,23 +171,6 @@
                                         {{ $unified_search->type_name }}
                                     </span>
                                 </div>
-
-                                <p class="mt-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                                    {{ $unified_search->unified_searchable->introduction }}</p>
-
-                                <!-- 添加匹配的消息显示 -->
-                                @if ($unified_search->unified_searchable->getMorphClass() === 'message')
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">匹配的消息:</h4>
-                                        <div
-                                            class="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-2 rounded">
-                                            <a href="{{ $unified_search->unified_searchable->route }}"
-                                                class="hover:text-indigo-600 dark:hover:text-indigo-400">
-                                                {{ Str::limit($unified_search->unified_searchable->text, 100) }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endif
 
                                 <div class="mt-6 flex items-center justify-between">
                                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">

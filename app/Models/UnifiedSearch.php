@@ -79,6 +79,11 @@ class UnifiedSearch extends Model
         return $this->unified_searchable->url;
     }
 
+    public function getTitleAttribute(): ?string
+    {
+        return $this->unified_searchable->name ?? $this->unified_searchable->text;
+    }
+
     public function getTypeNameAttribute(): string
     {
         return match ($this->type) {

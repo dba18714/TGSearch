@@ -146,12 +146,12 @@
                                                     <div class="flex-shrink-0">
                                                         <div
                                                             class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-bold">
-                                                            {{ strtoupper(substr($relatedSearch->unified_searchable->name ?? $relatedSearch->unified_searchable->chat->name, 0, 1)) }}
+                                                            {{ strtoupper(substr($relatedSearch->title, 0, 1)) }}
                                                         </div>
                                                     </div>
                                                     <div class="ml-4">
                                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                                            {{ $relatedSearch->unified_searchable->name ?? $relatedSearch->unified_searchable->chat->name }}
+                                                            {{ $relatedSearch->title }}
                                                         </h3>
                                                         <p class="text-sm text-gray-500 dark:text-gray-400">
                                                             {{ $relatedSearch->username }}
