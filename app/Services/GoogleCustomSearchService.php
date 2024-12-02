@@ -12,7 +12,7 @@ class GoogleCustomSearchService
     protected $cx;
     protected $http;
 
-    public function __construct(HttpFactory $http, string $apiKey, string $cx)
+    public function __construct(HttpFactory $http, ?string $apiKey, ?string $cx)
     {
         $this->http = $http;
         $this->apiKey = $apiKey;
