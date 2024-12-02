@@ -34,7 +34,7 @@ class TelegramWebhook extends Page
             ->schema([
                 TextInput::make('webhook_url')
                     ->label('Webhook URL')
-                    ->placeholder('https://your-domain.com/api/telegram/webhook')
+                    ->placeholder(url('/api/telegram/webhook'))
                     ->url()
                     ->required(),
             ])

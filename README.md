@@ -73,6 +73,8 @@ $ git --version
 git version 1.7.1
 ```
 
+启用http2: https://www.aapanel.com/forum/d/21948-how-to-enable-http2-in-php82/4
+
 
 运行 Horizon
 php artisan horizon
