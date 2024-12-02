@@ -1,3 +1,77 @@
+# 生产环境部署 （以`aaPanel`为例）
+
+### 服务器环境要求
+PHP >= 8.1
+
+### 建议的服务器版本
+Ubuntu22.04, minimum 1 core 2G RAM
+
+*如果是 1G RAM 会导致 PHP 扩展: fileinfo 安装时卡死*
+*请尽量使用以上版本，其他版本可能会有未知问题。*
+
+### 首次部署
+
+- 安装`aaPanel`面板
+- `aaPanel`官网：https://www.aapanel.com
+- 在`aaPanel`安装`LNMP`环境：Nginx1.24+ MySQL8.0 PHP8.3+。选择 Fast 快速编译安装即可
+- 新建站点
+- 安装扩展：App Store > 找到PHP点击Setting > Install extentions > `fileinfo`, `exif`, `mbstring`, `redis` 进行安装。
+- 解除被禁止的函数：App Store > 找到PHP点击Setting > Disabled functions 将 `putenv`, `proc_open`, `symlink`, `shell_exec` 从列表中删除。
+- Site > 设置 SSL 并开启 Force HTTPS
+- Site > 根目录 > 删除根目录下的所有文件  
+- 修改本地项目目录的 ./_deploy/deploy.env 配置项，SERVER_PATH 为上面步骤所创建的站点的根目录，其他配置项根据实际情况填写。  
+- 在本地项目根目录执行 ./_deploy/deploy.sh
+- 配置伪静态（URL rewrite）选择“zblog”并保存。（注意：如果选的是“laravel5”会导致filament后台CSS样式文件404）
+- 配置运行目录：Site directory -> Running directory 选择“/public”并保存
+- 配置定时任务  
+> aaPanel 面板 > Cron。  
+>
+> 在 Type of Task 选择 Shell Script  
+> 在 Name of Task 填写 Telegram-nav  
+> 在 Period 选择 N Minutes 1 Minute  
+> 在 Run User 选择 www  
+> 在 Script content 填写 php /www/wwwroot/路径/artisan schedule:run  
+>
+> 根据上述信息添加每1分钟执行一次的定时任务。
+- 启动队列服务
+> Telegram-nav 的系统强依赖队列服务，正常使用 Telegram-nav 必须启动队列服务。    
+> 下面以 aaPanel 中的 supervisor 服务来守护队列服务作为演示。  
+>
+> aaPanel 面板 > App Store > Tools  
+>
+> 找到 Supervisor 进行安装，安装完成后点击设置 > Add Daemon 按照如下填  
+>  
+>
+> 在 Name 填写 Telegram-nav  
+> 在 Run User 选择 www  
+> 在 Run Dir 选择 站点目录  
+> 在 Start Command 填写 php artisan horizon  
+> 在 Processes 填写 1  
+>
+> 填写后点击 Confirm 添加即可运行。  
+- 部署完成。
+
+### 系统更新
+
+- 网站根目录下执行：`sh trade/sh/update.sh`根据提示完成更新。
+- 更新完成。
+
+### 其他信息
+
+如果手动修改了生产环境下的源代码，需要执行`php artisan optimize:clear`后才会生效
+
+[宝塔面板/aaPanel如何切换默认的命令行php版本](https://www.bt.cn/bbs/forum.php?mod=redirect&goto=findpost&ptid=22467&pid=483577)
+
+### Git 安装：
+```shell
+$ yum install curl-devel expat-devel gettext-devel \
+  openssl-devel zlib-devel
+
+$ yum -y install git-core
+
+$ git --version
+git version 1.7.1
+```
 
 
 运行 Horizon
@@ -35,3 +109,8 @@ sail artisan telegram:test
 
 ## 注册 bot 命令
 sail artisan nutgram:register-commands
+
+## 部署到服务器
+修改 deploy.sh 配置中的域名和路径
+给脚本添加执行权限：chmod +x deploy.sh
+运行部署脚本: ./deploy.sh

@@ -13,7 +13,13 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->string('type')->comment('bot/channel/group/person/message');
             $table->integer('member_or_view_count');
-            $table->ulidMorphs('unified_searchable');
+            // $table->ulidMorphs('unified_searchable');
+            $table->ulid('unified_searchable_id');
+            $table->string('unified_searchable_type');
+            $table->index(
+                ['unified_searchable_type', 'unified_searchable_id'],
+                'unified_search_morph_idx' // 使用更短的索引名
+            );
             $table->timestamps();
         });
     }
