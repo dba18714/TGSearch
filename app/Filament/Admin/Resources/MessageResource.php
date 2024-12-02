@@ -102,7 +102,7 @@ class MessageResource extends Resource
                                     ->send();
                             })
                     )
-                    ->tooltip(function (Tables\Columns\TextColumn $column): string {
+                    ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();
                     }),
                 Tables\Columns\TextColumn::make('original_id')

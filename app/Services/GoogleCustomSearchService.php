@@ -17,6 +17,7 @@ class GoogleCustomSearchService
         $this->http = $http;
         $this->apiKey = $apiKey;
         $this->cx = $cx;
+        \Log::debug("config('services')", config('services'));
     }
 
     public function search($query)
@@ -32,7 +33,7 @@ class GoogleCustomSearchService
                 'status' => $response->status(),
                 'body' => $response->body(),
             ]);
-            return [];
+            $response->throw();
         }
 
         $data = $response->json();

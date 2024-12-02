@@ -40,21 +40,21 @@ class DeployInstall extends Command
      */
     public function handle()
     {
-        if (!copy(base_path() . '/.env.example', base_path() . '/.env')) {
-            abort(500, '复制环境文件失败，请检查目录权限');
-        }
-        if (env('APP_KEY')) {
-            abort(500, 'APP_KEY已存在，如需重新安装请删除目录下.env文件，删除前请先备份');
+        if (!file_exists(base_path() . '/.env')) {
+            if (!copy(base_path() . '/.env.example', base_path() . '/.env')) {
+                abort(500, '复制环境文件失败，请检查目录权限');
+            }
         }
 
         $this->call('deploy:down');
-
-        $this->line('生成APP_KEY...');
-        $exitCode = $this->call('key:generate');
-        if ($exitCode) {
-            abort(500, 'key:generate 执行失败');
+        if (!env('APP_KEY')) {
+            $this->line('生成APP_KEY...');
+            $exitCode = $this->call('key:generate');
+            if ($exitCode) {
+                abort(500, 'key:generate 执行失败');
+            }
+            $this->info('APP_KEY生成成功');
         }
-        $this->info('APP_KEY生成成功');
 
         $DB_DATABASE = $this->option('DB_DATABASE') ?: $this->ask('请输入数据库名');
         $DB_USERNAME = $this->option('DB_USERNAME') ?: $this->ask('请输入数据库用户名');
@@ -103,15 +103,17 @@ class DeployInstall extends Command
                 $password = '';
             }
         }
-        if (!$this->registerAdmin($email, $password)) {
-            abort(500, '管理员账号注册失败，请重试');
+        if ($this->registerAdmin($email, $password)) {
+            $this->info('管理员账号注册成功');
+        } else {
+            $this->info("管理员 {$email} 已存在，已跳过注册");
         }
-        $this->info('管理员账号注册成功');
 
         $this->call('deploy:cache');
         $this->call('deploy:file-permission');
         $this->call('scout:flush', ['model' => 'App\Models\UnifiedSearch']);
         $this->call('scout:sync-index-settings');
+        $this->call('horizon:terminate');
 
         Process::run('php artisan up')->throw();
 
@@ -127,11 +129,17 @@ class DeployInstall extends Command
 
     private function registerAdmin($email, $password)
     {
-        $user = new User;
-        $user->name = Str::random(6);
-        $user->email = $email;
-        $user->password = Hash::make($password);
-        $user->is_admin = 1;
-        return $user->save();
+        $user = User::query()->firstOrCreate(
+            ['email' => $email],
+            [
+                'name' =>  Str::random(6),
+                'password' => Hash::make($password),
+                'is_admin' => 1,
+            ]
+        );
+        if ($user->wasRecentlyCreated) {
+            return true;
+        } 
+        return false;
     }
 }

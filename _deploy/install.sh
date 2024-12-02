@@ -70,7 +70,7 @@ php artisan deploy:install \
         --DB_PASSWORD=$DB_PASSWORD \
         --MEILISEARCH_KEY=$MEILISEARCH_KEY \
         --ADMIN_EMAIL=$ADMIN_EMAIL \
-        --ADMIN_PASSWORD=$ADMIN_PASSWORD \
+        --ADMIN_PASSWORD=$ADMIN_PASSWORD 
 check_status "应用安装"
 
 # 执行npm依赖安装

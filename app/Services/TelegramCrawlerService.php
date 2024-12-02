@@ -99,7 +99,7 @@ class TelegramCrawlerService
         $str = "{$this->username}/{$this->message_id}";
         $node = $xpath->query('//div[@data-post="' . $str . '"]//div[contains(@class, "tgme_widget_message_text js-message_text")][@dir="auto"]')->item(0);
         if ($node) {
-            $html = $node->chatDocument->saveHTML($node);
+            $html = $node->ownerDocument->saveHTML($node);
             $text = br2nl($html);
             $text = strip_tags($text); // 去除HTML标签
             return trim($text);
@@ -123,7 +123,7 @@ class TelegramCrawlerService
     {
         $node = $xpath->query('//div[contains(@class, "tgme_page_description")]')->item(0);
         if ($node) {
-            $html = $node->chatDocument->saveHTML($node);
+            $html = $node->ownerDocument->saveHTML($node);
             $text = br2nl($html);
             $text = strip_tags($text); // 去除HTML标签
             return trim($text);
@@ -131,7 +131,7 @@ class TelegramCrawlerService
 
         $node = $xpath->query('//div[contains(@class, "tgme_channel_info_description")]')->item(0);
         if ($node) {
-            $html = $node->chatDocument->saveHTML($node);
+            $html = $node->ownerDocument->saveHTML($node);
             $text = br2nl($html);
             $text = strip_tags($text); // 去除HTML标签
             return trim($text);

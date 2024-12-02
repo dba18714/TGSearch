@@ -17,7 +17,7 @@ class SettingsServiceProvider extends ServiceProvider
                 'services.tencent.secret_id' => $settings->tencent_cloud_secret_id,
                 'services.tencent.secret_key' => $settings->tencent_cloud_secret_key,
                 'services.openai.api_key' => $settings->openai_api_key,
-                'nutgram.token' => $settings->telegram_token,
+                'nutgram.token' => $settings->telegram_token?:'123:xxx',
             ]);
         } catch (\Exception $e) {
             \Log::warning('Settings table not found or migration not run yet: ' . $e->getMessage());

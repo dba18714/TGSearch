@@ -65,11 +65,11 @@ ssh -t $SERVER_USER@$SERVER_HOST "bash -c '
     set -e
     cd $SERVER_PATH
 
-    # 检查是否已存在 .env 文件
-    if [ -f .env ]; then
-        echo "❌ 服务器的 $SERVER_PATH/.env 文件已存在，如需重新安装请删除目录下.env文件，删除前请先备份！"
-        exit 1
-    fi
+    # # 检查是否已存在 .env 文件
+    # if [ -f .env ]; then
+    #     echo "❌ 服务器的 $SERVER_PATH/.env 文件已存在，如需重新安装请删除目录下.env文件，删除前请先备份！"
+    #     exit 1
+    # fi
 
     source _deploy/install.sh
 '"

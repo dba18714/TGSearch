@@ -138,11 +138,12 @@ class ChatResource extends Resource
                 Tables\Columns\TextColumn::make('link_count')
                     ->numeric()
                     ->sortable(),
-
-                // Tables\Columns\TextColumn::make('view_count')
-                //     ->numeric()
-                //     ->sortable(),
                 Tables\Columns\TextColumn::make('verified_start_at')
+                    ->timezone('PRC')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('verified_at')
                     ->timezone('PRC')
                     ->dateTime()
                     ->sortable()
