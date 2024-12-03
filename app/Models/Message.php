@@ -24,7 +24,7 @@ class Message extends Model
      */
     protected $fillable = [
         'chat_id',
-        'original_id',
+        'source_id',
         'text',
         'view_count',
         'source',
@@ -59,8 +59,8 @@ class Message extends Model
     public function getUrlAttribute(): ?string
     {
         if ($this->chat) {
-            return "https://t.me/{$this->chat->username}/{$this->original_id}";
-            return "https://t.me/s/{$this->chat->username}/{$this->original_id}";
+            return "https://t.me/{$this->chat->username}/{$this->source_id}";
+            return "https://t.me/s/{$this->chat->username}/{$this->source_id}";
         }
         return "404";
     }

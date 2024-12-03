@@ -73,7 +73,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
                 $new_data['is_valid'] = $data['is_valid'];
                 $this->model->update($new_data);
             } elseif ($model_class_name == 'Message') {
-                $data = $crawler->crawl($this->model->chat->username, $this->model->original_id);
+                $data = $crawler->crawl($this->model->chat->username, $this->model->source_id);
                 if (!$data) return;
                 if ($data['is_valid'] && $data['message'] === null) {
                     $model_json = $this->model->toJson(JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

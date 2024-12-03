@@ -33,7 +33,7 @@ class MessageResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required(),
-                Forms\Components\TextInput::make('original_id')
+                Forms\Components\TextInput::make('source_id')
                     ->dehydrated(fn($state) => filled($state)),
                 Forms\Components\Textarea::make('text')
                     ->required()
@@ -105,7 +105,7 @@ class MessageResource extends Resource
                     ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();
                     }),
-                Tables\Columns\TextColumn::make('original_id')
+                Tables\Columns\TextColumn::make('source_id')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('text')

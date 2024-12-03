@@ -96,7 +96,7 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
                 $chat->dispatchUpdateJob();
                 if ($message_id) {
                     $message = $chat->messages()->firstOrCreate(
-                        ['original_id' => $message_id],
+                        ['source_id' => $message_id],
                         [
                             'source_str' => $item['link'],
                         ]

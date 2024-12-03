@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->ulid('chat_id')->index();
-            // TODO original_id rename to source_id
-            $table->integer('original_id')->index()->comment('Telegram 的原始消息id');
+            $table->integer('source_id')->index()->comment('Telegram 的原始消息id');
             $table->text('text')->nullable();
             $table->integer('view_count')->nullable();
             $table->string('source')->index()->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
@@ -26,7 +25,7 @@ return new class extends Migration
             $table->timestamp('verified_start_at')->index()->nullable()->comment('验证开始时间，不管是否验证成功');
             $table->timestamps();
 
-            $table->unique(['chat_id', 'original_id']);
+            $table->unique(['chat_id', 'source_id']);
             $table->index(['chat_id', 'is_valid']);
         });
     }

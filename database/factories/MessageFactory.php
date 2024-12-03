@@ -20,7 +20,7 @@ class MessageFactory extends Factory
     {
         return [
             'chat_id' => Chat::factory(),
-            'original_id' => fake()->unique()->numberBetween(1000, 999999),
+            'source_id' => fake()->unique()->numberBetween(1000, 999999),
             'text' => fake()->paragraph(),
             'view_count' => fake()->numberBetween(0, 10000),
             'source' => fake()->randomElement(['crawler', 'manual']),
