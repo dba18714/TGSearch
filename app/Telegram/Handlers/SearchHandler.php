@@ -77,7 +77,6 @@ class SearchHandler
                 'sort' => null,
                 'direction' => null
             ]);
-
         } catch (\Throwable $e) {
             $this->handleError($bot, $e, '搜索过程中出现错误');
         }
@@ -168,7 +167,7 @@ class SearchHandler
     {
         return [
             'query' => null,
-            'page' => 1,
+            'page' => null,
             'type' => null,
             'sort' => null,
             'direction' => null
@@ -287,8 +286,12 @@ class SearchHandler
                 $bot->answerCallbackQuery(
                     text: '搜索已过期，请重新搜索',
                     show_alert: true
-                );    
+                );
+                return;
             }
+
+            // 保存旧状态用于比较
+            $oldState = $state;
 
             // 根据动作更新状态
             switch ($action) {
@@ -311,6 +314,13 @@ class SearchHandler
                 case 'page':
                     $state['page'] = (int)$value;
                     break;
+            }
+
+
+            // 如果状态没有变化，直接返回
+            if ($this->statesAreEqual($oldState, $state)) {
+                $bot->answerCallbackQuery();
+                return;
             }
 
             // 执行搜索
@@ -351,6 +361,18 @@ class SearchHandler
         } catch (\Throwable $e) {
             $this->handleError($bot, $e, '处理分页时出错，请重试', true);
         }
+    }
+
+    /**
+     * 比较两个状态是否相等
+     */
+    private function statesAreEqual(array $state1, array $state2): bool
+    {
+        return $state1['query'] == $state2['query'] &&
+            $state1['page'] == $state2['page'] &&
+            $state1['type'] == $state2['type'] &&
+            $state1['sort'] == $state2['sort'] &&
+            $state1['direction'] == $state2['direction'];
     }
 
     /**
