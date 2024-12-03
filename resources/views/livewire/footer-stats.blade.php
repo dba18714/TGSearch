@@ -1,5 +1,5 @@
 <div>
-    <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+    <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg p-4">
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-3">数据统计</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div class="text-center">
