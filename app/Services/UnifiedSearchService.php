@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\ProcessGoogleCustomSearchJob;
 use App\Models\UnifiedSearch;
 
 class UnifiedSearchService
@@ -9,8 +10,19 @@ class UnifiedSearchService
     public function search(string $query, array $filters = [], array $options = [], $excludeIds = [])
     {
         $query = trim($query);
-        $builder = UnifiedSearch::search($query, function($meilisearch, $query, $options) use ($excludeIds) {
-            $validIds = array_filter($excludeIds, function($id) {
+
+        $cacheDuration = now()->addWeek();
+        $cacheKey = 'google_custom_search_' . md5($query);
+        cache()->remember(
+            $cacheKey,
+            $cacheDuration,
+            function () use ($query) {
+                ProcessGoogleCustomSearchJob::dispatch($query);
+            }
+        );
+
+        $builder = UnifiedSearch::search($query, function ($meilisearch, $query, $options) use ($excludeIds) {
+            $validIds = array_filter($excludeIds, function ($id) {
                 return $id !== null && $id !== '';
             });
             if (!empty($validIds)) {

@@ -109,7 +109,6 @@ class Search extends Component
         // }
 
         $this->q = $this->searchInput;
-        ProcessGoogleCustomSearchJob::dispatch($this->q);
         $this->showSuggestions = false;
         $this->resetPage();
     }
