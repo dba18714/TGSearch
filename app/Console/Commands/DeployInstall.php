@@ -111,6 +111,7 @@ class DeployInstall extends Command
 
         $this->call('deploy:cache');
         $this->call('deploy:file-permission');
+        $this->call('nutgram:register-commands');
         $this->call('scout:sync-index-settings');
         $this->call('scout:import', ['model' => 'App\Models\UnifiedSearch']);
         $this->call('horizon:terminate');
