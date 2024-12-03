@@ -2,19 +2,19 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Settings\GeneralSettings;
+use App\Settings\ServiceSettings;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
 
-class ManageGeneralSettings extends SettingsPage
+class ManageServiceSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog';
     protected static ?string $navigationGroup = '系统管理';
     protected static ?string $navigationLabel = '系统设置';
     protected static ?string $title = '系统设置';
 
-    protected static string $settings = GeneralSettings::class;
+    protected static string $settings = ServiceSettings::class;
 
     protected function getFormSchema(): array
     {

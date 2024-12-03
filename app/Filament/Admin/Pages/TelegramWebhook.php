@@ -35,8 +35,7 @@ class TelegramWebhook extends Page
                 TextInput::make('webhook_url')
                     ->label('Webhook URL')
                     ->placeholder(url('/api/telegram/webhook'))
-                    ->url()
-                    ->required(),
+                    ->url(),
             ])
             ->statePath('data');
     }
@@ -46,7 +45,7 @@ class TelegramWebhook extends Page
         $data = $this->form->getState();
 
         try {
-            $result = $bot->setWebhook($data['webhook_url']);
+            $result = $bot->setWebhook($data['webhook_url']?:url('/api/telegram/webhook'));
 
             if ($result) {
                 Notification::make()
@@ -101,12 +100,12 @@ class TelegramWebhook extends Page
         try {
             $info = $bot->getWebhookInfo();
             
-            $message = "URL: {$info->url}\n";
-            $message .= "Has Custom Certificate: " . ($info->has_custom_certificate ? 'Yes' : 'No') . "\n";
-            $message .= "Pending Update Count: {$info->pending_update_count}\n";
+            $message = "URL: {$info->url}<br>";
+            $message .= "Has Custom Certificate: " . ($info->has_custom_certificate ? 'Yes' : 'No') . "<br>";
+            $message .= "Pending Update Count: {$info->pending_update_count}<br>";
             
             if ($info->last_error_message) {
-                $message .= "Last Error: {$info->last_error_message}\n";
+                $message .= "Last Error: {$info->last_error_message}<br>";
             }
 
             if ($info->url) {
