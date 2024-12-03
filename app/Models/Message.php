@@ -56,6 +56,11 @@ class Message extends Model
         ];
     }
 
+    public function setTextAttribute($value)
+    {
+        $this->attributes['text'] = preg_replace('/\n{3,}/', "\n\n", $value);
+    }
+
     public function getUrlAttribute(): ?string
     {
         if ($this->chat) {

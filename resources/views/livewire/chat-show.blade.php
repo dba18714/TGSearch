@@ -104,8 +104,9 @@
                                         </div>
 
                                         <div class="prose dark:prose-invert max-w-none">
-                                            <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                                                {!! nl2br(e($item->text)) !!}</p>
+                                            <p class="text-gray-700 dark:text-gray-300">
+                                                {!! nl2br(e($item->text)) !!}
+                                            </p>
                                         </div>
 
                                         <div class="mt-4 flex items-center text-sm text-gray-500 dark:text-gray-400">
