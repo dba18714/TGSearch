@@ -18,6 +18,7 @@ class UnifiedSearchService
             $cacheDuration,
             function () use ($query) {
                 ProcessGoogleCustomSearchJob::dispatch($query);
+                return true;
             }
         );
 
