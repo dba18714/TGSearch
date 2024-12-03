@@ -18,6 +18,8 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Admin\Pages\Dashboard;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,6 +33,14 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->spa()
             ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('14rem')
+            ->navigationItems([
+                NavigationItem::make('队列监控(Horizon)')
+                    ->url('/horizon', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-presentation-chart-line')
+                    ->group('其它')
+                    ->sort(3),
+            ])
             ->pages([
                 // Dashboard::class, // 使用自定义的仪表板作为默认页面
             ])
