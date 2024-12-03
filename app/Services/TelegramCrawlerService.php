@@ -43,7 +43,7 @@ class TelegramCrawlerService
 
             $member_count = $this->extractMemberCount($xpath);
             $counters = $this->extractCounters($xpath);
-            if($member_count === null) $member_count = $counters['subscribers'];
+            if ($member_count === null) $member_count = $counters['subscribers'];
 
             $isValid = $this->checkValidity($xpath);
 
@@ -201,11 +201,20 @@ class TelegramCrawlerService
     private function determineType($xpath)
     {
         Log::debug('determineType start');
+
         $node = $xpath->query('//div[contains(@class, "tgme_page_widget_action")]//a[contains(@class, "tgme_action_button_new shine")]')->item(0);
         if ($node) {
             $text = $node->textContent;
             if (strpos($text, 'Group') !== false) {
                 return 'group';
+            }
+        }
+
+        $node = $xpath->query('//div[contains(@class, "tgme_page_action")]//a[contains(@class, "tgme_action_button_new shine")]')->item(0);
+        if ($node) {
+            $text = $node->textContent;
+            if (strpos($text, 'Bot') !== false) {
+                return 'bot';
             }
         }
 
