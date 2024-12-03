@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('chats', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name')->nullable();
-            $table->string('introduction')->nullable();
-            // $table->text('message')->nullable();
-            // $table->string('url')->unique();
+            $table->text('introduction')->nullable();
             $table->string('type')->index()->nullable()->comment('bot or channel or group or person');
             $table->string('username')->unique();
             $table->integer('member_count')->nullable();
@@ -24,9 +22,6 @@ return new class extends Migration
             $table->integer('video_count')->nullable();
             $table->integer('file_count')->nullable();
             $table->integer('link_count')->nullable();
-
-            // $table->integer('view_count')->default(0);
-            // $table->boolean('is_by_user')->default(false)->comment('true: 由用户添加 or false: 由爬虫添加');
             $table->string('source')->index()->default('crawler')->comment('manual: 由用户手动添加 or crawler: 由爬虫添加');
             $table->string('source_str')->nullable()->comment('未经过解析的原始 url or username');
             $table->ulid('user_id')->index()->nullable()->comment('由哪个用户添加的链接, 如果是爬虫或游客添加则为空');
