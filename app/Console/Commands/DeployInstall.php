@@ -111,8 +111,8 @@ class DeployInstall extends Command
 
         $this->call('deploy:cache');
         $this->call('deploy:file-permission');
-        $this->call('scout:flush', ['model' => 'App\Models\UnifiedSearch']);
         $this->call('scout:sync-index-settings');
+        $this->call('scout:import', ['model' => 'App\Models\UnifiedSearch']);
         $this->call('horizon:terminate');
 
         Process::run('php artisan up')->throw();

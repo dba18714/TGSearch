@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ChatController;
+use App\Telegram\Handlers\StartHandler;
 use SergiX44\Nutgram\Nutgram;
 
 
@@ -15,5 +16,10 @@ Route::get('/tmp', function () {
 });
 
 Route::post('telegram/webhook', function (Nutgram $bot) {
+    \Log::debug('Webhook request received', [
+        'raw_content' => file_get_contents('php://input'),
+        'content_type' => request()->header('Content-Type')
+    ]);
+
     $bot->run();
 });
