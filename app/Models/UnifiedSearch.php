@@ -79,9 +79,12 @@ class UnifiedSearch extends Model
         return $this->unified_searchable->url;
     }
 
-    public function getTitleAttribute(): ?string
+    public function getTitle($limit = 200): ?string
     {
-        return $this->unified_searchable->name ?? $this->unified_searchable->text;
+        $searchable = $this->unified_searchable;
+        $title = $searchable->name ?? str_replace(["\n", "#"], "", $searchable->text);
+        $title = \Str::limit($title, $limit);
+        return $title;
     }
 
     public function getTypeNameAttribute(): string

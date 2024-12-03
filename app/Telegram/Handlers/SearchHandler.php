@@ -6,14 +6,15 @@ use App\Models\SearchRecord;
 use App\Services\UnifiedSearchService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 
 class SearchHandler
 {
-    private const PER_PAGE = 5;
-    private const MAX_MESSAGE_LENGTH = 50;
+    private const PER_PAGE = 10;
+    private const MAX_MESSAGE_LENGTH = 60;
 
     private const SORT_OPTIONS = [
         'member_or_view_count:desc' => '按人数降序',
@@ -122,7 +123,7 @@ class SearchHandler
 
             if (!$searchable) continue;
 
-            $title = $searchable->name ?? $searchable->text;
+            $title = $result->getTitle(self::MAX_MESSAGE_LENGTH);
             $text .= "$result->type_emoji <a href='{$result->url}'>{$title}</a>\n";
 
             if ($result->member_or_view_count > 0) {
@@ -133,6 +134,8 @@ class SearchHandler
             $text .= "\n\n";
         }
 
+        $totalPages = $totalPages > 9 ? '9+' : $totalPages;
+        $totalRecords = $totalRecords > 99 ? '99+' : $totalRecords;
         $text .= "第 {$page}/{$totalPages} 页，共 {$totalRecords} 条记录";
 
         return $text;

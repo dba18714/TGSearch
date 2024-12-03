@@ -193,7 +193,7 @@
                                     class="block group/title space-y-3">
                                     <h3
                                         class="text-gray-900 dark:text-white group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition-colors duration-200">
-                                        {{ $unified_search->title }}
+                                        {{ $unified_search->getTitle(200) }}
                                     </h3>
                                 </a>
 
