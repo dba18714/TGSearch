@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->text('content')->nullable();
             $table->string('type')->comment('bot/channel/group/person/message');
-            $table->integer('member_or_view_count');
-            // $table->ulidMorphs('unified_searchable');
+            $table->integer('member_or_view_count')->nullable();
+            // $table->ulidMorphs('unified_searchable'); // 默认的索引名称太长了会导致mysql报错
             $table->ulid('unified_searchable_id');
             $table->string('unified_searchable_type');
             $table->index(
