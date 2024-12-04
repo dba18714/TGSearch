@@ -75,6 +75,11 @@ git version 1.7.1
 
 启用http2: https://www.aapanel.com/forum/d/21948-how-to-enable-http2-in-php82/4
 
+TODO 尝试安装 opcache 扩展看看对速度的实际影响
+
+
+---
+* 未整理：
 
 运行 Horizon
 php artisan horizon
