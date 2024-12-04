@@ -11,16 +11,18 @@ class UnifiedSearchService
     {
         $query = trim($query);
 
-        $cacheDuration = now()->addWeek();
-        $cacheKey = 'google_custom_search_' . md5($query);
-        cache()->remember(
-            $cacheKey,
-            $cacheDuration,
-            function () use ($query) {
-                ProcessGoogleCustomSearchJob::dispatch($query);
-                return true;
-            }
-        );
+        if ($query) {
+            $cacheDuration = now()->addWeek();
+            $cacheKey = 'google_custom_search_' . md5($query);
+            cache()->remember(
+                $cacheKey,
+                $cacheDuration,
+                function () use ($query) {
+                    ProcessGoogleCustomSearchJob::dispatch($query);
+                    return true;
+                }
+            );
+        }
 
         $builder = UnifiedSearch::search($query, function ($meilisearch, $query, $options) use ($excludeIds) {
             $validIds = array_filter($excludeIds, function ($id) {

@@ -39,6 +39,25 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
+    $executed = RateLimiter::attempt(
+        'google-custom-search',  // 限流器的key
+        5,                     // 24小时允许100次
+        function () {
+            echo "entered";
+        },
+        60 * 60 * 24           // 24小时后重置
+    );
+
+    if (!$executed) {
+        $seconds = RateLimiter::availableIn('google-custom-search');
+        echo "not entered";
+        $seconds = RateLimiter::availableIn('google-custom-search');
+        dd ([
+            'available_in_seconds' => $seconds,
+            'available_in_hours' => round($seconds / 3600, 2)
+        ]);
+
+    }
 });
 
 Route::get('/tmp2', function () {

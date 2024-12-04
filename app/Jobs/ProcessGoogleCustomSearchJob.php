@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Middleware\RateLimited;
 use App\Models\Chat;
 use App\Services\GoogleCustomSearchService;
 use Illuminate\Bus\Queueable;
@@ -19,7 +20,7 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
     /**
      * 任务最大尝试次数
      */
-    public $tries = 1;
+    public $tries = 2;
 
     /**
      * 任务可以执行的最大秒数
@@ -39,6 +40,11 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
         $this->search = $search;
     }
 
+    public function middleware(): array
+    {
+        return [new RateLimited];
+    }
+
     /**
      * Execute the job.
      */
@@ -48,28 +54,8 @@ class ProcessGoogleCustomSearchJob implements ShouldQueue
             'search' => $this->search
         ]);
 
-        $executed = RateLimiter::attempt(
-            'google-custom-search',  // 限流器的key
-            100,                     // 每天允许100次
-            function () use ($googleSearchService) {
-                Log::info('Starting Google custom search job', [
-                    'search' => $this->search
-                ]);
-
-                $results = $googleSearchService->search($this->search);
-                $this->processSearchResults($results);
-            },
-            60 * 60 * 24           // 24小时后重置
-        );
-
-        if (!$executed) {
-            $seconds = RateLimiter::availableIn('google-custom-search');
-            Log::warning('Daily Google custom search limit reached', [
-                'search' => $this->search,
-                'available_in_seconds' => $seconds,
-                'available_in_hours' => round($seconds / 3600, 2)
-            ]);
-        }
+        $results = $googleSearchService->search($this->search);
+        $this->processSearchResults($results);
     }
 
     /**

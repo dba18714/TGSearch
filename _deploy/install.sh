@@ -59,7 +59,7 @@ check_status "文件权限设置"
 
 # 执行composer依赖安装
 echo "正在安装 composer 依赖..."
-COMPOSER_ALLOW_SUPERUSER=1 php composer.phar install
+COMPOSER_ALLOW_SUPERUSER=1 php composer.phar install --prefer-dist --no-dev -o
 check_status "Composer依赖安装"
 
 # 执行应用安装
