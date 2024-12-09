@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\ChatController;
 use App\Telegram\Handlers\StartHandler;
 use SergiX44\Nutgram\Nutgram;
 
-
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -16,6 +15,7 @@ Route::get('/tmp', function () {
 });
 
 Route::post('telegram/webhook', function (Nutgram $bot) {
+    // $bot->async();
     // \Log::debug('Webhook request received', [
     //     'raw_content' => file_get_contents('php://input'),
     //     'content_type' => request()->header('Content-Type')
@@ -31,5 +31,5 @@ Route::any('telegram/webhook2', function (Nutgram $bot) {
     //     'content_type' => request()->header('Content-Type')
     // ]);
 
-    
+
 });

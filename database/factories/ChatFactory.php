@@ -15,7 +15,7 @@ class ChatFactory extends Factory
         $type = $this->faker->randomElement(['bot', 'channel', 'group', 'person']);
         $source = $this->faker->randomElement(['manual', 'crawler']);
         $name = $this->getNameByType($type);
-        $username = strtolower(str_replace(' ', '_', $name));
+        $username = \Str::ulid().strtolower(str_replace(' ', '_', $name));
 
         return [
             'name' => $name,
@@ -25,7 +25,7 @@ class ChatFactory extends Factory
             'member_count' => $this->faker->numberBetween(100, 100000),
             // 'view_count' => $this->faker->numberBetween(1000, 1000000),
             'source' => $source,
-            'user_id' => User::factory(),
+            // 'user_id' => User::factory(),
             'is_valid' => $this->faker->boolean(90), // 90% 概率是有效的
             'verified_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'verified_start_at' => $this->faker->dateTimeBetween('-2 years', '-1 year'),

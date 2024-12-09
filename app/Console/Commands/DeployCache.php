@@ -34,7 +34,8 @@ class DeployCache extends Command
 
         $this->call('config:cache');
         $this->call('route:cache');
-//        $this->call('view:cache'); // view:cache 会导致命令行退出并报错：“Latest compiled component path not found.”
+        $this->call('view:cache'); // view:cache 会导致命令行退出并报错：“Latest compiled component path not found.”
+        $this->call('filament:optimize');
         $this->call('optimize');
     }
 }

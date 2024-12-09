@@ -40,6 +40,11 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-presentation-chart-line')
                     ->group('其它')
                     ->sort(3),
+                NavigationItem::make('调试工具(Telescope)')
+                    ->url('/telescope', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-presentation-chart-line')
+                    ->group('其它')
+                    ->sort(3),
             ])
             ->pages([
                 // Dashboard::class, // 使用自定义的仪表板作为默认页面

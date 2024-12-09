@@ -9,7 +9,9 @@ return [
     'safe_mode' => false,
 
     // Extra or specific configurations
-    'config' => [],
+    'config' => [
+        'enable_http2' => false, // 开启此项需要php环境支持http2
+    ],
 
     // Set if the service provider should automatically load
     // handlers from /routes/telegram.php

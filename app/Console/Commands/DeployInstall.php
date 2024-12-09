@@ -111,7 +111,9 @@ class DeployInstall extends Command
 
         $this->call('deploy:cache');
         $this->call('deploy:file-permission');
-        $this->call('nutgram:register-commands');
+        if (env('TELEGRAM_TOKEN')) {
+            $this->call('nutgram:register-commands');
+        }
         $this->call('scout:sync-index-settings');
         $this->call('scout:import', ['model' => 'App\Models\UnifiedSearch']);
         $this->call('horizon:terminate');
@@ -140,7 +142,7 @@ class DeployInstall extends Command
         );
         if ($user->wasRecentlyCreated) {
             return true;
-        } 
+        }
         return false;
     }
 }

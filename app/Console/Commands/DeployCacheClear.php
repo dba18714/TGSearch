@@ -28,9 +28,9 @@ class DeployCacheClear extends Command
     public function handle()
     {
         // 来自：https://github.com/blade-ui-kit/blade-icons#caching
-        Process::run('php artisan icons:clear', function (string $type, string $output) {
-            echo $output;
-        })->throw();
+        // Process::run('php artisan icons:clear', function (string $type, string $output) {
+        //     echo $output;
+        // })->throw();
 
         Process::run('php artisan route:clear', function (string $type, string $output) {
             echo $output;

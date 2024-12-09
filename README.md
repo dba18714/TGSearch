@@ -15,14 +15,17 @@ Ubuntu22.04, minimum 1 core 2G RAM
 - `aaPanel`官网：https://www.aapanel.com
 - 在`aaPanel`安装`LNMP`环境：Nginx1.24+ MySQL8.0 PHP8.3+。选择 Fast 快速编译安装即可
 - 新建站点
-- 安装扩展：App Store > 找到PHP点击Setting > Install extentions > `fileinfo`, `exif`, `mbstring`, `redis` 进行安装。
+- 安装扩展：App Store > 找到PHP点击Setting > Install extentions > `fileinfo`, `exif`, `mbstring`, `redis`, `opcache`(安装opcache后对网站加载速度有显著的提升) 进行安装。
 - 解除被禁止的函数：App Store > 找到PHP点击Setting > Disabled functions 将 `putenv`, `proc_open`, `symlink`, `shell_exec` 从列表中删除。
-- Site > 设置 SSL 并开启 Force HTTPS
+- Site > 设置 SSL 并开启 Force HTTPS  
+- Site directory -> 关闭（否则无法删除根目录的所有文件）：防止 XSS 攻擊  
 - Site > 根目录 > 删除根目录下的所有文件  
-- 修改本地项目目录的 ./_deploy/deploy.env 配置项，SERVER_PATH 为上面步骤所创建的站点的根目录，其他配置项根据实际情况填写。  
-- 在本地项目根目录执行 ./_deploy/deploy.sh
-- 配置伪静态（URL rewrite）选择“zblog”并保存。（注意：如果选的是“laravel5”会导致filament后台CSS样式文件404）
+- 修改本地项目目录的 ./deploy.env 配置项，SERVER_PATH 为上面步骤所创建的站点的根目录，其他配置项根据实际情况填写。  
+- 在本地项目根目录执行 ./deploy.sh
+- 配置伪静态（URL rewrite）选择“zblog”并保存。（注意：如果选的是“laravel5”会导致filament后台CSS样式文件404） // TODO 尝试使用v2board的伪静态规则
 - 配置运行目录：Site directory -> Running directory 选择“/public”并保存
+- 现在可以访问站点了。
+- 导入数据库备份（如果需要）：资料库 > 导入 > 上传备份文件 > 点击导入
 - 配置定时任务  
 > aaPanel 面板 > Cron。  
 >
@@ -53,7 +56,7 @@ Ubuntu22.04, minimum 1 core 2G RAM
 
 ### 系统更新
 
-- 网站根目录下执行：`sh trade/sh/update.sh`根据提示完成更新。
+- 在本地项目根目录执行 ./deploy.sh
 - 更新完成。
 
 ### 其他信息
@@ -73,9 +76,9 @@ $ git --version
 git version 1.7.1
 ```
 
-启用http2: https://www.aapanel.com/forum/d/21948-how-to-enable-http2-in-php82/4
+启用 http2（ nutgram 的默认配置需要开启 http2 ）: https://www.aapanel.com/forum/d/21948-how-to-enable-http2-in-php82/4
 
-TODO 尝试安装 opcache 扩展看看对速度的实际影响
+TODO 安装 https://learnku.com/docs/laravel/11.x/pulsemd/16729
 
 
 ---
@@ -119,3 +122,23 @@ sail artisan nutgram:register-commands
 修改 deploy.sh 配置中的域名和路径
 给脚本添加执行权限：chmod +x deploy.sh
 运行部署脚本: ./deploy.sh
+
+
+
+本地 macOS 数据库测试：
+
+mysql 8.0
+select count(*) as aggregate from `chats` 两百万行	901.82ms	
+
+mysql 5.7
+select count(*) as aggregate from `chats` 两百万行	365.69ms
+
+pgsql 15
+select count(*) as aggregate from "chats" 两百万行	45.52ms
+
+pgsql 16
+select count(*) as aggregate from "chats" 两百万行	43.74ms	
+
+pgsql 17.2
+select count(*) as aggregate from "chats" 两百万行	45.30ms	
+
