@@ -45,6 +45,11 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-presentation-chart-line')
                     ->group('其它')
                     ->sort(3),
+                NavigationItem::make('性能监控(Pulse)')
+                    ->url('/pulse', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-presentation-chart-line')
+                    ->group('其它')
+                    ->sort(3),
             ])
             ->pages([
                 // Dashboard::class, // 使用自定义的仪表板作为默认页面
