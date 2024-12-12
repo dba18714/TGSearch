@@ -2,7 +2,7 @@
 set -e
 
 # 等待数据库准备就绪
-until php artisan db:monitor; do
+until nc -z -v -w30 db 5432; do
     echo "Waiting for database connection..."
     sleep 2
 done
