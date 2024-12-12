@@ -1,0 +1,59 @@
+# 使用官方 PHP-FPM 镜像作为基础镜像
+FROM php:8.3-fpm-alpine
+
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+# 安装所有需要的扩展
+RUN install-php-extensions \
+    pdo_pgsql \
+    redis \
+    intl \ 
+    pcntl \ 
+    zip \   
+    bcmath \ 
+    gd \   
+    opcache  
+
+# 配置 OPcache 和 JIT
+RUN { \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.interned_strings_buffer=32'; \
+    echo 'opcache.max_accelerated_files=80000'; \
+    echo 'opcache.revalidate_freq=60'; \
+    echo 'opcache.fast_shutdown=1'; \
+    echo 'opcache.enable_cli=1'; \
+    echo 'opcache.enable=1'; \
+    echo 'opcache.jit_buffer_size=128m'; \
+    echo 'opcache.jit=1255'; \
+    } > /usr/local/etc/php/conf.d/opcache-recommended.ini
+
+# 安装 Composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# 设置工作目录
+WORKDIR /var/www/html
+
+# 创建必要的目录并设置权限
+RUN mkdir -p /var/www/html/storage/framework/{sessions,views,cache} \
+    && mkdir -p /var/www/html/storage/logs \
+    && mkdir -p /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
+
+# 复制项目文件
+COPY --chown=www-data:www-data . .
+
+# 安装项目依赖
+RUN composer install --no-dev --prefer-dist --optimize-autoloader \
+    && rm -rf /root/.composer/cache
+
+# 优化配置
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
+# 暴露端口
+EXPOSE 9000
+
+# 启动 PHP-FPM
+CMD ["php-fpm"]
