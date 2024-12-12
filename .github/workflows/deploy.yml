@@ -34,6 +34,11 @@ jobs:
               sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io
             fi
             
+            # 确保 Docker 服务正在运行
+            echo "启动 Docker 服务"
+            sudo systemctl start docker
+            sudo systemctl enable docker
+                        
             echo "检查并安装 Docker Compose"
             if ! command -v docker-compose &> /dev/null; then
               echo "Installing Docker and Docker Compose..."
