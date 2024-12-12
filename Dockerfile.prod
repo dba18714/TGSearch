@@ -47,13 +47,19 @@ COPY --chown=www-data:www-data . .
 RUN composer install --no-dev --prefer-dist --optimize-autoloader \
     && rm -rf /root/.composer/cache
 
-# 优化配置
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# 优化配置（并行执行）
+RUN set -ex; \
+    php artisan config:cache & \
+    php artisan route:cache & \
+    php artisan view:cache & \
+    wait
+
+# 创建启动脚本
+COPY docker/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 # 暴露端口
 EXPOSE 9000
 
-# 启动 PHP-FPM
-CMD ["php-fpm"]
+# 使用启动脚本
+CMD ["/usr/local/bin/start.sh"]

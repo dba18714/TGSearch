@@ -1,4 +1,4 @@
-localhost {
+{$DOMAIN} {
     root * /var/www/html/public
     encode gzip
     php_fastcgi app:9000

@@ -30,14 +30,14 @@ Ubuntu22.04, minimum 1 core 2G RAM
 > aaPanel 面板 > Cron。  
 >
 > 在 Type of Task 选择 Shell Script  
-> 在 Name of Task 填写 Telegram-nav  
+> 在 Name of Task 填写 TGSearch  
 > 在 Period 选择 N Minutes 1 Minute  
 > 在 Run User 选择 www  
 > 在 Script content 填写 php /www/wwwroot/路径/artisan schedule:run  
 >
 > 根据上述信息添加每1分钟执行一次的定时任务。
 - 启动队列服务
-> Telegram-nav 的系统强依赖队列服务，正常使用 Telegram-nav 必须启动队列服务。    
+> TGSearch 的系统强依赖队列服务，正常使用 TGSearch 必须启动队列服务。    
 > 下面以 aaPanel 中的 supervisor 服务来守护队列服务作为演示。  
 >
 > aaPanel 面板 > App Store > Tools  
@@ -45,7 +45,7 @@ Ubuntu22.04, minimum 1 core 2G RAM
 > 找到 Supervisor 进行安装，安装完成后点击设置 > Add Daemon 按照如下填  
 >  
 >
-> 在 Name 填写 Telegram-nav  
+> 在 Name 填写 TGSearch  
 > 在 Run User 选择 www  
 > 在 Run Dir 选择 站点目录  
 > 在 Start Command 填写 php artisan horizon  
