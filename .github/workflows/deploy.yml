@@ -33,11 +33,6 @@ jobs:
               sudo DEBIAN_FRONTEND=noninteractive apt-get update
               sudo DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io
             fi
-            
-            # 确保 Docker 服务正在运行
-            echo "启动 Docker 服务"
-            sudo systemctl start docker
-            sudo systemctl enable docker
                         
             echo "检查并安装 Docker Compose"
             if ! command -v docker-compose &> /dev/null; then
@@ -63,5 +58,5 @@ jobs:
               git reset --hard origin/main && git pull origin main
             fi
                         
-            docker-compose -f docker-compose-prod.yml down --remove-orphans
-            docker-compose -f docker-compose-prod.yml up -d --build --remove-orphans
+            docker compose -f docker-compose-prod.yml down --remove-orphans
+            docker compose -f docker-compose-prod.yml up -d --build --remove-orphans
