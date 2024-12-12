@@ -35,14 +35,14 @@ jobs:
             fi
                         
             echo "检查并安装 Docker Compose"
-            if ! command -v docker-compose &> /dev/null; then
+            if ! command -v docker compose &> /dev/null; then
               echo "Installing Docker and Docker Compose..."
               curl -fsSL https://get.docker.com | sh
               sudo usermod -aG docker $USER
             fi
 
             # 验证安装
-            docker-compose --version
+            docker compose --version
             
             echo "创建目录 $directory_path（如果不存在）"
             mkdir -p $directory_path
