@@ -57,6 +57,10 @@ jobs:
               git config --global --add safe.directory $(pwd)
               git reset --hard origin/main && git pull origin main
             fi
-                        
+
+            if [ ! -f .env ]; then
+              cp .env.example .env
+            fi
+         
             docker compose -f docker-compose.prod.yml down --remove-orphans
             docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
