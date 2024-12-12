@@ -51,7 +51,7 @@ jobs:
             
             if [ -z "$(ls -A $directory_path)" ]; then
               echo "目录为空，Clone git"
-              git clone https://github.com/${{ github.repository }}.git .
+              git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git .
             else
               echo "目录不为空 Pull git"
               git config --global --add safe.directory $(pwd)
