@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('chats', function (Blueprint $table) {
+            $table->boolean('audit_passed')->default(false);
             $table->decimal('audit_score', 7, 6)->default(0);
             $table->timestamp('audited_at')->index()->nullable();
             $table->timestamp('audit_started_at')->index()->nullable()->comment('审计开始时间，不管是否审计成功');
         });
         Schema::table('messages', function (Blueprint $table) {
+            $table->boolean('audit_passed')->default(false);
             $table->decimal('audit_score', 7, 6)->default(0);
             $table->timestamp('audited_at')->index()->nullable();
             $table->timestamp('audit_started_at')->index()->nullable()->comment('审计开始时间，不管是否审计成功');

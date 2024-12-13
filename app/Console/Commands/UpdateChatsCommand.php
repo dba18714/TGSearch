@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Chat;
+use App\Models\Message;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -18,6 +19,22 @@ class UpdateChatsCommand extends Command
             $result = Chat::dispatchNextVerificationJob();
             if (!$result) {
                 $this->info("No more chats to verify. Exiting.");
+                return;
+            }
+            $result = Message::dispatchNextVerificationJob();
+            if (!$result) {
+                $this->info("No more messages to verify. Exiting.");
+                return;
+            }
+
+            $result = Chat::dispatchNextAuditJob();
+            if (!$result) {
+                $this->info("No more chats to verify. Exiting.");
+                return;
+            }
+            $result = Message::dispatchNextAuditJob();
+            if (!$result) {
+                $this->info("No more messages to verify. Exiting.");
                 return;
             }
             $this->info("Dispatched verification job for the next chat.");

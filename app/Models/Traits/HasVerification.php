@@ -2,6 +2,7 @@
 
 namespace App\Models\Traits;
 
+use App\Jobs\ProcessAuditModelJob;
 use App\Jobs\ProcessUpdateTelegramModelJob;
 use Carbon\Carbon;
 
@@ -15,6 +16,21 @@ trait HasVerification
         ProcessUpdateTelegramModelJob::dispatch($this);
 
         return $this;
+    }
+
+    public function dispatchAuditJob()
+    {
+        $this->audit_started_at = now();
+        $this->save();
+
+        ProcessAuditModelJob::dispatch($this);
+
+        return $this;
+    }
+
+    public function scopeValid($query)
+    {
+        return $query->where('is_valid', true);
     }
 
     public static function dispatchNextVerificationJob(): bool
@@ -34,6 +50,23 @@ trait HasVerification
         return true;
     }
 
+    public static function dispatchNextAuditJob(): bool
+    {
+        $model = static::selectForAudit()->first();
+
+        if (!$model->exists) return false;
+
+        // 如果1小时之内已经审计过了，就跳过
+        if (
+            $model->audit_started_at &&
+            $model->audit_started_at->gt(now()->subHour())
+        ) return false;
+
+        $model->dispatchAuditJob();
+
+        return true;
+    }
+
     public function scopeSelectForVerification($query)
     {
         // pgsql
@@ -46,6 +79,14 @@ trait HasVerification
         //     ->orderByRaw('ISNULL(verified_start_at) DESC, verified_start_at ASC')
         //     ->orderByRaw('ISNULL(verified_at) DESC, verified_at ASC')
         //     ->orderBy('created_at');
+    }
+
+    public function scopeSelectForAudit($query)
+    {
+        // pgsql
+        return $query->valid()->whereNull('audited_at')
+            ->orderByRaw('audit_started_at ASC NULLS FIRST')
+            ->orderBy('created_at');
     }
 
     protected static function bootHasVerification()
@@ -61,6 +102,21 @@ trait HasVerification
                     $value = trim($value);
                     if ($value === '') $value = null;
                     $model->{$key} = $value;
+                }
+            }
+        });
+
+        static::updated(function ($model) {
+            // 如果内容有更新则派遣审计任务
+            $model_class_name = class_basename($model);
+            if ($model_class_name == 'Chat') {
+                if ($model->wasChanged('name') || $model->wasChanged('introduction')) {
+                    $model->dispatchAuditJob();
+                }
+            }
+            if ($model_class_name == 'Message') {
+                if ($model->wasChanged('text')) {
+                    $model->dispatchAuditJob();
                 }
             }
         });

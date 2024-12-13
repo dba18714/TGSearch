@@ -108,14 +108,6 @@ class Chat extends Model
     }
 
     /**
-     * Scope a query to only include valid chats.
-     */
-    public function scopeValid($query)
-    {
-        return $query->where('is_valid', true);
-    }
-
-    /**
      * Scope a query to only include user submitted chats.
      */
     public function scopeByUser($query)
