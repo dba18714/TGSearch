@@ -36,10 +36,16 @@ trait HasVerification
 
     public function scopeSelectForVerification($query)
     {
-        return $query
-            ->orderByRaw('ISNULL(verified_start_at) DESC, verified_start_at ASC')
-            ->orderByRaw('ISNULL(verified_at) DESC, verified_at ASC')
+        // pgsql
+        return $query->orderByRaw('verified_start_at ASC NULLS FIRST')
+            ->orderByRaw('verified_at ASC NULLS FIRST')
             ->orderBy('created_at');
+
+        // // mysql
+        // return $query
+        //     ->orderByRaw('ISNULL(verified_start_at) DESC, verified_start_at ASC')
+        //     ->orderByRaw('ISNULL(verified_at) DESC, verified_at ASC')
+        //     ->orderBy('created_at');
     }
 
     protected static function bootHasVerification()
