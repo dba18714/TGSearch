@@ -13,13 +13,15 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->string('type')->comment('bot/channel/group/person/message');
             $table->integer('member_or_view_count')->nullable();
-            // $table->ulidMorphs('unified_searchable'); // 默认的索引名称太长了会导致mysql报错
-            $table->ulid('unified_searchable_id');
-            $table->string('unified_searchable_type');
-            $table->index(
-                ['unified_searchable_type', 'unified_searchable_id'],
-                'unified_search_morph_idx' // 使用更短的索引名
-            );
+            $table->ulidMorphs('unified_searchable'); // 默认创建的索引名称太长了会导致mysql报错
+
+            // 如果是mysql数据库，可以使用以下方式创建索引，替代$table->ulidMorphs('unified_searchable');
+            // $table->ulid('unified_searchable_id');
+            // $table->string('unified_searchable_type');
+            // $table->index(
+            //     ['unified_searchable_type', 'unified_searchable_id'],
+            //     'unified_search_morph_idx' // 使用更短的索引名
+            // );
             $table->timestamps();
         });
     }
