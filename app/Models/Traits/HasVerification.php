@@ -106,7 +106,12 @@ trait HasVerification
             }
         });
 
-        static::updated(function ($model) {
+        static::saved(function ($model) {
+            // 防止无限循环：如果正在更新 audit_started_at，则不触发审计
+            if ($model->wasChanged('audit_started_at')) {
+                return;
+            }
+
             // 如果内容有更新则派遣审计任务
             $model_class_name = class_basename($model);
             if ($model_class_name == 'Chat') {

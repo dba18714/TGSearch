@@ -44,6 +44,10 @@ class Chat extends Model
         'is_valid',
         'verified_at',
         'verified_start_at',
+        'audit_passed',
+        'audit_score',
+        'audited_at',
+        'audit_started_at',
     ];
 
     /**
@@ -53,6 +57,7 @@ class Chat extends Model
      */
     protected $casts = [
         'is_valid' => 'boolean',
+        'audit_passed' => 'boolean',
         'verified_at' => 'datetime',
         'verified_start_at' => 'datetime',
         'member_count' => 'integer',
@@ -67,6 +72,7 @@ class Chat extends Model
                 $this->introduction,
                 $this->username
             ])),
+            'audit_passed' => !!$this->audit_passed,
             'type' => $this->type,
             'member_or_view_count' => $this->member_count,
         ];

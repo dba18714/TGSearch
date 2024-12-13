@@ -119,9 +119,14 @@ class Search extends Component
         SEOMeta::setTitle($title);
 
         $result = app(UnifiedSearchService::class)->search(
-            $this->q,
-            $this->type ? ['type' => $this->type] : [],
-            [
+            query: $this->q,
+            filters: $this->type
+                ? [
+                    'type' => $this->type,
+                    'audit_passed' => true,
+                ]
+                : ['audit_passed' => true,],
+            options: [
                 'sort' => $this->sortField,
                 'direction' => $this->sortDirection,
                 'per_page' => 12,

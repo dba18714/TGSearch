@@ -39,6 +39,10 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
+    dd(env('DB_CONNECTION1'));
+
+
+    return;
     // 1. 关闭已存在的所有缓冲区
     while (ob_get_level()) {
         ob_end_clean();

@@ -18,9 +18,12 @@ class UnifiedSearch extends Model
         'content',
         'type',
         'member_or_view_count',
+        'audit_passed',
         'searchable_type',
         'searchable_id',
     ];
+
+    public $timestamps = false;
 
     public function unified_searchable(): MorphTo
     {
@@ -33,6 +36,7 @@ class UnifiedSearch extends Model
             'id' => $this->id,
             'content' => $this->content,
             'type' => $this->type,
+            'audit_passed' => $this->audit_passed,
             'member_or_view_count' => $this->member_or_view_count,
         ];
     }

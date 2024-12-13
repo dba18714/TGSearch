@@ -84,6 +84,8 @@ TODO 安装 https://learnku.com/docs/laravel/11.x/pulsemd/16729
 ---
 * 未整理：
 
+## 开发时常用的命令
+
 运行 Horizon
 php artisan horizon
 
@@ -105,7 +107,7 @@ sail artisan horizon:clear
 
 sail artisan scout:sync-index-settings
 
-sail php artisan scout:flush "App\Models\UnifiedSearch" && sail artisan migrate:fresh --seed
+sail artisan scout:sync-index-settings && sail php artisan scout:flush "App\Models\UnifiedSearch" && sail artisan migrate:fresh --seed
 
 ## 启动长轮训
 sail artisan nutgram:run

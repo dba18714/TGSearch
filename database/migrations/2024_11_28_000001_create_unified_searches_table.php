@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->text('content')->nullable();
             $table->string('type')->comment('bot/channel/group/person/message');
+            $table->boolean('audit_passed')->default(false);
             $table->integer('member_or_view_count')->nullable();
             $table->ulidMorphs('unified_searchable'); // 默认创建的索引名称太长了会导致mysql报错
 
@@ -22,7 +23,6 @@ return new class extends Migration
             //     ['unified_searchable_type', 'unified_searchable_id'],
             //     'unified_search_morph_idx' // 使用更短的索引名
             // );
-            $table->timestamps();
         });
     }
 
