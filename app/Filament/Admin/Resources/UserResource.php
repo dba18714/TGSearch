@@ -34,8 +34,8 @@ class UserResource extends Resource
 
                 // 密码
                 Forms\Components\TextInput::make('password')
-                    ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)
-                    ->dehydrated(fn ($state) => filled($state))
+                    ->dehydrateStateUsing(fn($state) => $state ? bcrypt($state) : null)
+                    ->dehydrated(fn($state) => filled($state))
                     ->maxLength(255)
                     ->placeholder('留空以保留当前密码'),
 
@@ -56,6 +56,9 @@ class UserResource extends Resource
                     ->since()
                     ->dateTimeTooltip('Y-m-d H:i:s', 'Asia/Shanghai')
                     ->searchable(),
+                Tables\Columns\IconColumn::make('is_admin')
+                    ->sortable()
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->since()
                     ->dateTimeTooltip('Y-m-d H:i:s', 'Asia/Shanghai')
@@ -69,7 +72,7 @@ class UserResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                    Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

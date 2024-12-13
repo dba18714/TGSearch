@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\ContentModerationService;
+use App\Models\User;
 use App\Services\ContentModerationManager;
 use Illuminate\Support\ServiceProvider;
 use App\Services\GoogleCustomSearchService;
@@ -12,6 +13,9 @@ use OpenAI\Client;
 use App\Services\OpenaiModerationService;
 use App\Services\TencentModerationService;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Opcodes\LogViewer\Facades\LogViewer;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
@@ -80,6 +84,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        LogViewer::auth(function ($request) {
+            return $request->user()?->is_admin;
+        });
     }
 }
