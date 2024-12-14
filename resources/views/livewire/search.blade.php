@@ -189,13 +189,32 @@
 
                             <div class="p-6 pt-8">
                                 <!-- 标题和描述 -->
-                                <a href="{{ $unified_search->unified_searchable->route }}" wire:navigate
-                                    class="block group/title space-y-3">
-                                    <h3
+                                @if ($unified_search->audit_passed)
+                                    <a href="{{ $unified_search->unified_searchable->route }}" wire:navigate
+                                        class="block group/title space-y-3">
+                                        <h3
+                                            class="text-gray-900 dark:text-white group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition-colors duration-200">
+                                            {{ $unified_search->getTitle(200) }}
+                                        </h3>
+                                    </a>
+                                @else
+                                    <a href="{{ $unified_search->unified_searchable->route }}" wire:navigate
+                                        class="block group/title space-y-3">
+                                        <h3
+                                            class="text-gray-900 dark:text-white group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition-colors duration-200">
+                                            <div class="text-red-500 dark:text-red-400">
+                                                该内容不宜在网页版展示
+                                            </div>
+                                        </h3>
+                                    </a><br>
+                                    <div
                                         class="text-gray-900 dark:text-white group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition-colors duration-200">
-                                        {{ $unified_search->getTitle(200) }}
-                                    </h3>
-                                </a>
+                                        请使用[
+                                        <a href="https://t.me/yisou_me_bot"
+                                            class="text-blue-600 dark:text-blue-400 underline">易搜机器人 @yisou_me_bot</a>
+                                        ]搜索展示完整结果
+                                    </div>
+                                @endif
 
                                 <!-- 底部信息和操作按钮 -->
                                 <div class="mt-3 flex items-center justify-between">

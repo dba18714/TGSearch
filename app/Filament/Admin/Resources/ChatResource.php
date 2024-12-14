@@ -186,7 +186,7 @@ class ChatResource extends Resource
             ->actions([
                 // Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
-                ->slideOver(),
+                    ->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

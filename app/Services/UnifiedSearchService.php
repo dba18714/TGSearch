@@ -7,7 +7,7 @@ use App\Models\UnifiedSearch;
 
 class UnifiedSearchService
 {
-    public function search(string $query, array $filters = [], array $options = [], $excludeIds = [])
+    public function search(string $query, array $filters = [], array $options = [], $excludeIds = [], $seoModeration = false)
     {
         $query = trim($query);
 
@@ -38,6 +38,9 @@ class UnifiedSearchService
             $builder->where($key, $value);
         }
 
+        if ($seoModeration) {
+            $builder->orderBy('audit_passed', 'desc');
+        }
         if (!empty($options['sort'])) {
             $builder->orderBy($options['sort'], $options['direction'] ?? 'desc');
         }

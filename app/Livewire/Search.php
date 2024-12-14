@@ -120,17 +120,15 @@ class Search extends Component
 
         $result = app(UnifiedSearchService::class)->search(
             query: $this->q,
-            filters: $this->type
-                ? [
+            filters: $this->type ? [
                     'type' => $this->type,
-                    'audit_passed' => true,
-                ]
-                : ['audit_passed' => true,],
+                ] : [],
             options: [
                 'sort' => $this->sortField,
                 'direction' => $this->sortDirection,
                 'per_page' => 12,
             ],
+            seoModeration: true,
         );
 
         return view('livewire.search', [
