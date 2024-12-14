@@ -48,7 +48,7 @@ else
     ssh-copy-id $SERVER_USER@$SERVER_HOST
 fi
 
-# 使用 scp 或 rsync 将文件上传到服务器 # TODO 判断上传是否失败
+# 使用 scp 或 rsync 将文件上传到服务器
 echo "开始上传文件到服务器..."
 rsync -avz --files-from=<(git ls-files) --rsync-path="mkdir -p $SERVER_PATH && rsync" ./ $SERVER_USER@$SERVER_HOST:$SERVER_PATH
 

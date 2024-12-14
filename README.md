@@ -22,7 +22,19 @@ Ubuntu22.04, minimum 1 core 2G RAM
 - Site > 根目录 > 删除根目录下的所有文件  
 - 修改本地项目目录的 ./deploy.env 配置项，SERVER_PATH 为上面步骤所创建的站点的根目录，其他配置项根据实际情况填写。  
 - 在本地项目根目录执行 ./deploy.sh
-- 配置伪静态（URL rewrite）选择“zblog”并保存。（注意：如果选的是“laravel5”会导致filament后台CSS样式文件404） // TODO 尝试使用v2board的伪静态规则
+- 配置伪静态（URL rewrite）选择“zblog”或使用以下(v2board官方文档所提供)⬇️规则并保存。（注意：如果选的是“laravel5”会导致filament后台CSS样式文件404） 
+``` nginx
+location / {  
+    try_files $uri $uri/ /index.php$is_args$query_string;  
+}
+
+location ~ .*\.(js|css)?$
+{
+    expires      1h;
+    error_log off;
+    access_log /dev/null; 
+}
+```
 - 配置运行目录：Site directory -> Running directory 选择“/public”并保存
 - 现在可以访问站点了。
 - 导入数据库备份（如果需要）：资料库 > 导入 > 上传备份文件 > 点击导入
@@ -77,8 +89,6 @@ git version 1.7.1
 ```
 
 启用 http2（ nutgram 的默认配置需要开启 http2 ）: https://www.aapanel.com/forum/d/21948-how-to-enable-http2-in-php82/4
-
-TODO 安装 https://learnku.com/docs/laravel/11.x/pulsemd/16729
 
 
 ---
