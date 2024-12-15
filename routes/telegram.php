@@ -19,8 +19,32 @@ use SergiX44\Nutgram\Nutgram;
 */
 
 $bot->middleware(function (Nutgram $bot, $next) {
-    // $user = get_current_user_from_db($bot->userId());
-    // $bot->set('user', $user);
+    // 获取当前用户
+    $user = get_current_user_from_db($bot->userId());
+    
+    // 处理 start 命令的邀请参数
+    $text = $bot->message()?->text;
+    if ($text && str_starts_with($text, '/start')) {
+        $parts = explode(' ', $text, 2);
+        if (isset($parts[1]) && str_starts_with($parts[1], 'a_')) {
+            $inviterId = (int)substr($parts[1], 2);
+            // 如果是新用户且有邀请人ID，设置邀请关系
+            if ($user && !$user->parent_id && $inviterId != $user->id) {
+                $inviter = \App\Models\User::find($inviterId);
+                if ($inviter) {
+                    $user->parent_id = $inviter->id;
+                    $user->save();
+                    
+                    // 更新邀请人的邀请计数
+                    $inviter->increment('invite_count');
+                }
+            }
+        }
+    }
+    
+    // 将用户实例存储在 bot 容器中
+    $bot->set('user', $user);
+    
     $next($bot);
 });
 
