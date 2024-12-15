@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -18,12 +19,14 @@ return new class extends Migration
 
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('tg_id')->nullable()->unique();
+            $table->ulid('parent_id')->nullable()->index()->comment('邀请人(即上级)的ID');
             $table->decimal('balance', 14, 6)->default(0)->index()->comment('用户余额');
             $table->decimal('commission_balance', 14, 6)->default(0)->index()->comment('佣金余额');
             $table->decimal('total_commission', 10, 2)->default(0)->index()->comment('累计获得佣金');
             $table->unsignedInteger('invite_count')->default(0)->index()->comment('邀请人数');
-            $table->unsignedBigInteger('prev_id')->nullable()->index()->comment('邀请人(上级)ID');
             $table->timestamp('last_login_at')->nullable()->index()->comment('最后登录时间');
+
+            $table->unique(['id', 'parent_id']);
         });
 
         // PostgreSQL CHECK 约束
@@ -53,7 +56,7 @@ return new class extends Migration
                 'commission_balance',
                 'total_commission',
                 'invite_count',
-                'prev_id',
+                'parent_id',
                 'last_login_at'
             ]);
         });

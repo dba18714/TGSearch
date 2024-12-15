@@ -7,6 +7,7 @@ use App\Telegram\Conversations\RecruitConversation;
 use App\Telegram\Handlers\SearchHandler;
 use App\Telegram\Handlers\StartHandler;
 use App\Telegram\InlineMenu\ChooseColorMenu;
+use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Nutgram;
 
 /*
@@ -19,30 +20,40 @@ use SergiX44\Nutgram\Nutgram;
 |
 */
 
-function get_inviter_tg_id_form_the_start_command(string $text): string {
+function get_inviter_form_the_start_command(string $text)
+{
     if ($text && str_starts_with($text, '/start')) {
         $parts = explode(' ', $text, 2);
-        if (isset($parts[1]) && str_starts_with($parts[1], 'i')) {
-            $inviter_tg_id = (int)substr($parts[1], 1);
-            return $inviter_tg_id;
+        if (isset($parts[1])) {
+            $inviter_tg_id = (int)$parts[1];
+            if (! $inviter_tg_id) return false;
+
+            $inviter = User::where('tg_id', $inviter_tg_id)->first();
+            if($inviter->exists){
+                return $inviter;
+            }
         }
     }
     return false;
 }
 
 $bot->middleware(function (Nutgram $bot, $next) {
+    Log::info('$bot->userId()', [$bot->userId()]);
+
     // 检索或创建用户
     $user = User::firstOrCreate(
         ['tg_id' => $bot->userId()],
         ['name' => $bot->user()?->first_name . ' ' . $bot->user()?->last_name]
     );
 
-    $inviter_tg_id = get_inviter_tg_id_form_the_start_command($bot->message()?->text);
+    $inviter = get_inviter_form_the_start_command($bot->message()?->text);
 
-    if ($user->wasRecentlyCreated && $inviter_tg_id !== false) {
-        $inviter = User::where('tg_id', 'inviter_tg_id')->first();
-        if ($inviter) {
-            $user->prev_id = $inviter->id;
+    if (
+        $user->wasRecentlyCreated &&
+        $inviter !== false &&
+        $inviter->tg_id != $bot->userId()
+    ) {
+            $user->parent_id = $inviter->id;
             $user->save();
 
             // TODO 发送消息给邀请人，告知他们有人通过他们的邀请链接注册了账号
@@ -51,7 +62,6 @@ $bot->middleware(function (Nutgram $bot, $next) {
 
             // 更新邀请人的邀请计数
             $inviter->increment('invite_count');
-        }
     }
 
     // 将用户实例存储在 bot 容器中
