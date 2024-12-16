@@ -65,7 +65,7 @@ class DeployInstall extends Command
         saveToEnv([
             'QUEUE_CONNECTION' => 'redis',
 
-            'DB_CONNECTION' => 'mysql',
+            'DB_CONNECTION' => 'pgsql',
             'DB_DATABASE' => $DB_DATABASE,
             'DB_USERNAME' => $DB_USERNAME,
             'DB_PASSWORD' => $DB_PASSWORD,

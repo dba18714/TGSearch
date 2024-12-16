@@ -1,7 +1,6 @@
-# 生产环境部署 （以`aaPanel`为例）
+# 生产环境部署 
 
-### 服务器环境要求
-PHP >= 8.1
+## 使用`aaPanel`部署
 
 ### 建议的服务器版本
 Ubuntu22.04, minimum 1 core 2G RAM
@@ -13,10 +12,26 @@ Ubuntu22.04, minimum 1 core 2G RAM
 
 - 安装`aaPanel`面板
 - `aaPanel`官网：https://www.aapanel.com
-- 在`aaPanel`安装`LNMP`环境：Nginx1.24+ MySQL8.0 PHP8.3+。选择 Fast 快速编译安装即可
-- 新建站点
-- 安装扩展：App Store > 找到PHP点击Setting > Install extentions > `fileinfo`, `exif`, `mbstring`, `redis`, `opcache`(安装opcache后对网站加载速度有显著的提升) 进行安装。
-- 解除被禁止的函数：App Store > 找到PHP点击Setting > Disabled functions 将 `putenv`, `proc_open`, `symlink`, `shell_exec` 从列表中删除。
+- `aaPanel`安装完成后，访问面板，会弹出环境安装选项，选择：
+  - Nginx1.24+ 
+  - PHP8.2 (apparel的php8.3没有找到`pdo_pgsql`这个扩展)
+  - 正式生产环境选择编译安装，测试环境选择 Fast 快速编译安装。
+- 应用商店 > 搜素`sql`，安装`PostgreSQL Manager`。
+- `PostgreSQL Manager`安装完成后，打开`PostgreSQL Manager`设定窗口，`Version management` > PgSQL Version: 选择 16.1+，点击安装。
+- 安装扩展：App Store > 找到对应的PHP版本点击 Setting > Install extentions > 安装以下扩展：
+  - `pdo_pgsql`(必须，apparel的php8.3没有找到这个扩展, aapanel官方说8.3还没适配，所以只能使用8.2)
+  - `fileinfo`
+  - `exif`
+  - `mbstring`(apparel的php8.2没有找到这个扩展, 无安装未知是否有影响)
+  - `redis`
+  - `opcache`(安装opcache后对网站加载速度有显著的提升)
+- 解除被禁止的函数：App Store > 找到对应的PHP版本点击 Setting > Disabled functions 将 `putenv`, `proc_open`, `symlink`, `shell_exec` 从列表中删除。
+- 创建数据库：打开`PostgreSQL Manager`设定窗口 > DB List > Add DB：
+  - DB Name 填: tgsearch
+  - Username 填: tgsearch
+  - Password 随机
+  - 提交。
+- 新建站点 > 填写域名，选择PHP版本，确定。
 - Site > 设置 SSL 并开启 Force HTTPS  
 - Site directory -> 关闭（否则无法删除根目录的所有文件）：防止 XSS 攻擊  
 - Site > 根目录 > 删除根目录下的所有文件  

@@ -7,7 +7,7 @@ use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 
 class StartHandler
 {
-    public function __invoke(Nutgram $bot, $aff): void
+    public function __invoke(Nutgram $bot, string $aff = null): void
     {
         $aff = trim($aff);
         if (empty($aff)) {

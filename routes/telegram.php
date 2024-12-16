@@ -40,10 +40,13 @@ function get_inviter_form_the_start_command(string $text)
 $bot->middleware(function (Nutgram $bot, $next) {
     Log::info('$bot->userId()', [$bot->userId()]);
 
+    $name = trim($bot->user()?->first_name . ' ' . $bot->user()?->last_name);
+    if (empty($name)) $name = ' unknown';
+
     // 检索或创建用户
     $user = User::firstOrCreate(
         ['tg_id' => $bot->userId()],
-        ['name' => $bot->user()?->first_name . ' ' . $bot->user()?->last_name]
+        ['name' => $name]
     );
 
     $inviter = get_inviter_form_the_start_command($bot->message()?->text);
@@ -59,9 +62,6 @@ $bot->middleware(function (Nutgram $bot, $next) {
             // TODO 发送消息给邀请人，告知他们有人通过他们的邀请链接注册了账号
             // TODO 佣金发放
             // TODO 佣金发放记录
-
-            // 更新邀请人的邀请计数
-            $inviter->increment('invite_count');
     }
 
     // 将用户实例存储在 bot 容器中
