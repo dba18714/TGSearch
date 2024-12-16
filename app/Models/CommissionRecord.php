@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\CommissionLevel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -22,10 +21,6 @@ class CommissionRecord extends Model
         'invitee_id',
         'amount',
         'level',
-    ];
-
-    protected $casts = [
-        'level' => CommissionLevel::class
     ];
 
     public function user(): BelongsTo

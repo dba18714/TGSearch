@@ -2,9 +2,9 @@
 
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
-use App\Enums\CommissionLevel;
 use App\Models\CommissionRecord;
 use App\Models\User;
+use App\Settings\GeneralSettings;
 use App\Telegram\Conversations\RecruitConversation;
 use App\Telegram\Handlers\SearchHandler;
 use App\Telegram\Handlers\StartHandler;
@@ -64,30 +64,31 @@ $bot->middleware(function (Nutgram $bot, $next) {
         // TODO 队列处理
         try {
             DB::transaction(function () use ($inviter, $user, $bot) {
+                $settings = app(GeneralSettings::class);
+
                 // 1. 设置直接邀请人
                 $user->parent_id = $inviter->id;
                 $user->save();
         
                 // 2. 处理一级代理佣金(直接邀请)
-                // TODO 完善 'commission.rates.'
-                $level1_amount = config('commission.rates.' . CommissionLevel::DIRECT->value);
+                $level1_amount = $settings->level1_commission_amount;
                 CommissionRecord::create([
                     'user_id' => $inviter->id,
                     'invitee_id' => $user->id,
                     'amount' => $level1_amount,
-                    'level' => CommissionLevel::DIRECT,
+                    'level' => 1,
                 ]);
                 $inviter->increment('commission_balance', $level1_amount);
         
                 // 3. 处理二级代理佣金
                 $parent_of_inviter = $inviter->parent;
                 if ($parent_of_inviter) {
-                    $level2_amount = config('commission.rates.' . CommissionLevel::INDIRECT->value);
+                    $level2_amount = $settings->level2_commission_amount;
                     CommissionRecord::create([
                         'user_id' => $parent_of_inviter->id,
                         'invitee_id' => $user->id,
                         'amount' => $level2_amount,
-                        'level' => CommissionLevel::INDIRECT,
+                        'level' => 2,
                     ]);
                     $parent_of_inviter->increment('commission_balance', $level2_amount);
         

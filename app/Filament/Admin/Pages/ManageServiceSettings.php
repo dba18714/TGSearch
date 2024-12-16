@@ -11,8 +11,8 @@ class ManageServiceSettings extends SettingsPage
 {
     protected static ?string $navigationIcon = 'heroicon-o-cog';
     protected static ?string $navigationGroup = '系统管理';
-    protected static ?string $navigationLabel = '系统设置';
-    protected static ?string $title = '系统设置';
+    protected static ?string $navigationLabel = '第三方服务设置';
+    protected static ?string $title = '第三方服务设置';
 
     protected static string $settings = ServiceSettings::class;
 

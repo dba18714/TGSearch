@@ -19,6 +19,7 @@ use App\Models\Impression;
 use App\Models\UnifiedSearch;
 use App\Models\User;
 use App\Services\UnifiedSearchService;
+use App\Settings\GeneralSettings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,13 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
+    $settings = app(GeneralSettings::class);
+
+    $level1_amount = $settings->level1_commission_amount;
+    $level2_amount = $settings->level2_commission_amount;
+    dump($level1_amount);
+    dump($level2_amount);
+
 
     return view('welcome');
     // 1. 关闭已存在的所有缓冲区
