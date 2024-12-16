@@ -2,6 +2,8 @@
 
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
+use App\Enums\CommissionLevel;
+use App\Models\CommissionRecord;
 use App\Models\User;
 use App\Telegram\Conversations\RecruitConversation;
 use App\Telegram\Handlers\SearchHandler;
@@ -29,7 +31,7 @@ function get_inviter_form_the_start_command(string $text)
             if (! $inviter_tg_id) return false;
 
             $inviter = User::where('tg_id', $inviter_tg_id)->first();
-            if($inviter->exists){
+            if ($inviter->exists) {
                 return $inviter;
             }
         }
@@ -56,12 +58,60 @@ $bot->middleware(function (Nutgram $bot, $next) {
         $inviter !== false &&
         $inviter->tg_id != $bot->userId()
     ) {
-            $user->parent_id = $inviter->id;
-            $user->save();
+        $user->parent_id = $inviter->id;
+        $user->save();
 
-            // TODO 发送消息给邀请人，告知他们有人通过他们的邀请链接注册了账号
-            // TODO 佣金发放
-            // TODO 佣金发放记录
+        // TODO 队列处理
+        try {
+            DB::transaction(function () use ($inviter, $user, $bot) {
+                // 1. 设置直接邀请人
+                $user->parent_id = $inviter->id;
+                $user->save();
+        
+                // 2. 处理一级代理佣金(直接邀请)
+                // TODO 完善 'commission.rates.'
+                $level1_amount = config('commission.rates.' . CommissionLevel::DIRECT->value);
+                CommissionRecord::create([
+                    'user_id' => $inviter->id,
+                    'invitee_id' => $user->id,
+                    'amount' => $level1_amount,
+                    'level' => CommissionLevel::DIRECT,
+                ]);
+                $inviter->increment('commission_balance', $level1_amount);
+        
+                // 3. 处理二级代理佣金
+                $parent_of_inviter = $inviter->parent;
+                if ($parent_of_inviter) {
+                    $level2_amount = config('commission.rates.' . CommissionLevel::INDIRECT->value);
+                    CommissionRecord::create([
+                        'user_id' => $parent_of_inviter->id,
+                        'invitee_id' => $user->id,
+                        'amount' => $level2_amount,
+                        'level' => CommissionLevel::INDIRECT,
+                    ]);
+                    $parent_of_inviter->increment('commission_balance', $level2_amount);
+        
+                    // 发送消息给二级代理
+                    $bot->sendMessage(
+                        "恭喜! [{$inviter->name}]邀请了[{$user->name}]，您获得了{$level2_amount}个USDT奖励！",
+                        chat_id: $parent_of_inviter->tg_id,
+                    );
+                }
+        
+                // 发送消息给直接邀请人
+                $bot->sendMessage(
+                    "恭喜! 用户[{$user->name}]接受了您的邀请，您获得了{$level1_amount}个USDT奖励！",
+                    chat_id: $inviter->tg_id,
+                );
+            });
+        } catch (\Exception $e) {
+            // 记录错误日志
+            Log::error('佣金发放失败', [
+                'inviter_id' => $inviter->id,
+                'invitee_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     // 将用户实例存储在 bot 容器中

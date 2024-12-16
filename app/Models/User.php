@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements FilamentUser, HasName
@@ -39,6 +40,11 @@ class User extends Authenticatable implements FilamentUser, HasName
         'password',
         'remember_token',
     ];
+
+    public function commissionRecords(): HasMany
+    {
+        return $this->hasMany(CommissionRecord::class);
+    }
 
     /**
      * 获取所有层级的下级数量
