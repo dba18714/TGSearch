@@ -37,7 +37,7 @@ trait HasVerification
     {
         $model = static::selectForVerification()->first();
 
-        if (!$model->exists) return false;
+        if (!$model) return false;
 
         // 如果1小时之内已经验证过了，就跳过
         if (
@@ -54,7 +54,7 @@ trait HasVerification
     {
         $model = static::selectForAudit()->first();
 
-        if (!$model->exists) return false;
+        if (!$model) return false;
 
         // 如果1小时之内已经审计过了，就跳过
         if (
@@ -89,8 +89,19 @@ trait HasVerification
             ->orderBy('created_at');
     }
 
+    public function initializeHasVerification()
+    {
+        $this->mergeCasts([
+            'verified_start_at' => 'datetime',
+            'verified_at' => 'datetime',
+            'audit_started_at' => 'datetime',
+            'audited_at' => 'datetime',
+        ]);
+    }
+
     protected static function bootHasVerification()
     {
+
         static::created(function ($model) {
             $model->dispatchUpdateJob();
         });

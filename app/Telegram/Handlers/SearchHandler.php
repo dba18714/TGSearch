@@ -42,7 +42,21 @@ class SearchHandler
     public function __invoke(Nutgram $bot)
     {
         try {
-            $query = $bot->message()->text;
+            $query = $bot->message()?->text;
+            if (empty($query)) {
+                return;
+            }
+            $query = trim($query);
+
+            // 如果是提交收录的格式，则转给 RecruitHandler 处理
+            if (
+                str_starts_with($query, 'https://t.me/') ||
+                str_starts_with($query, 't.me/') ||
+                str_starts_with($query, '@')
+            ) {
+                app(RecruitHandler::class)->handleSubmit($bot);
+                return;
+            }
 
             $searchResults = $this->performSearch($query);
 

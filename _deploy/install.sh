@@ -45,10 +45,11 @@ echo "正在执行 npm 安装..."
 source _deploy/install_npm.sh
 check_status "NPM安装"
 
-# 执行meilisearch安装
-echo "正在执行 meilisearch 安装..."
-source _deploy/install_meilisearch.sh
-check_status "Meilisearch安装"
+# TODO 改用docker管理
+# # 执行meilisearch安装
+# echo "正在执行 meilisearch 安装..."
+# source _deploy/install_meilisearch.sh
+# check_status "Meilisearch安装"
 
 # 执行composer安装
 echo "正在执行 composer 安装..."

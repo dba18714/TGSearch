@@ -38,6 +38,28 @@ Ubuntu22.04, minimum 1 core 2G RAM
   - `proc_open`
   - `symlink`
   - `shell_exec`
+- 站点管理 > 配置 > 修改`opcache`相关的配置参数(以下参数是以`4CPU 8GB RAM`的配置为基础的)：
+```ini
+; 启用 OpCache
+opcache.enable=1
+; 启用 CLI 模式下的 OpCache，对于队列任务等很有用
+opcache.enable_cli=1
+; 内存用量，建议为可用内存的 20%左右
+opcache.memory_consumption=1024
+; 字符串缓冲区大小，建议 16MB
+opcache.interned_strings_buffer=32
+; 最大缓存文件数，根据项目大小调整，Laravel 项目建议至少 10000
+opcache.max_accelerated_files=65536
+; 检查文件更新的周期(秒)，生产环境建议设置为0，需要更新时手动重启php-fpm
+opcache.revalidate_freq=0
+; 启用快速关闭
+opcache.fast_shutdown=1
+; JIT 配置
+; JIT 缓冲区大小，建议 256MB
+opcache.jit_buffer_size=256m
+; 启用 JIT，使用 tracing 模式
+opcache.jit=1255
+```
 - 新建站点 > 填写域名，选择PHP版本，确定。
 - Site > 设置 SSL 并开启 Force HTTPS  
 - Site directory -> 关闭（否则无法删除根目录的所有文件）：防止 XSS 攻擊  

@@ -18,10 +18,10 @@ class ChatShow extends Component
 
     public function mount(Chat $chat, ?Message $message)
     {
-        app('debugbar')->debug('message', $message->exists);
+        // app('debugbar')->debug('message', $message->exists);
         $this->chat = $chat;
         $this->message = $message;
-        app('debugbar')->debug('message', $this->message->exists);
+        // app('debugbar')->debug('message', $this->message->exists);
     }
 
     public function getRelatedSearches()
@@ -68,7 +68,7 @@ class ChatShow extends Component
 
         app(ImpressionStatsService::class)->recordBulkImpressions($messages->items(), 'chat_detail_page');
 
-        app('debugbar')->debug('chat', $this->chat);
+        // app('debugbar')->debug('chat', $this->chat);
         return view('livewire.chat-show', [
             'relatedSearches' => $this->getRelatedSearches(),
             'messages' => $messages,

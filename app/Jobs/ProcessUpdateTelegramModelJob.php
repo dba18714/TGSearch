@@ -38,7 +38,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
      */
     public function handle(TelegramCrawlerService $crawler): void
     {
-        Cache::lock('telegram-crawler', 1)->block(20, function () use ($crawler) {
+        // Cache::lock('telegram-crawler', 1)->block(20, function () use ($crawler) {
 
             // 获取模型类名
             $model_class_name = class_basename($this->model);
@@ -94,7 +94,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
             } else {
                 throw new \Exception('Unknown model class name: ' . $model_class_name);
             }
-        });
+        // });
     }
 
     /**
@@ -102,7 +102,7 @@ class ProcessUpdateTelegramModelJob implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error('Chat update job failed', [
+        Log::error('ProcessUpdateTelegramModelJob Chat update job failed', [
             'model_class_name' => class_basename($this->model),
             'model_id' => $this->model->id,
             'url' => $this->model->url,

@@ -46,9 +46,9 @@ class Message extends Model
      */
     protected $casts = [
         'is_valid' => 'boolean',
-        'audit_passed' => 'boolean',
-        'verified_at' => 'datetime',
-        'verified_start_at' => 'datetime',
+        // 'audit_passed' => 'boolean',
+        // 'verified_at' => 'datetime',
+        // 'verified_start_at' => 'datetime',
         'view_count' => 'integer',
     ];
 

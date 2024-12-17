@@ -29,7 +29,7 @@ class MenuHandler
                 InlineKeyboardButton::make('➕ 添加到群组', url: "https://t.me/{$botUsername}?startgroup=start")
             );
 
-        $text = <<<TEXT
+        $text = <<<HTML
             👋 欢迎使用易搜机器人！
             
             直接向我发送关键词即可搜索:
@@ -41,7 +41,7 @@ class MenuHandler
             查看帮助 👉 /help 
 
             👉 <a href='tg://setlanguage?lang=zhcncc'>点这里安装【简体中文】</a>👈
-            TEXT;
+            HTML;
 
         if ($messageId) {
             $bot->editMessageText(
@@ -53,6 +53,7 @@ class MenuHandler
             $bot->sendMessage(
                 text: $text,
                 parse_mode: ParseMode::HTML,
+                disable_web_page_preview: true,
                 reply_markup: $keyboard,
             );
         }
@@ -73,7 +74,7 @@ class MenuHandler
             );
 
         $bot->editMessageText(
-            text: <<<TEXT
+            text: <<<HTML
 <b>🎯 邀请好友赚取USDT收益</b>
 
 💎 <b>推广奖励</b>
@@ -83,7 +84,7 @@ class MenuHandler
 📱 <b>您的专属邀请链接</b>
 <code>https://t.me/yisou123bot?start={$user->tg_id}</code>
 
-✨ 推广话术(点击复制)：
+✨ 推广文案(点击复制)：
 <code>🔍 发现一个超好用的Telegram搜索机器人！
 • 搜索群组/频道/机器人
 • 支持资源内容搜索
@@ -91,7 +92,7 @@ class MenuHandler
 👉 立即体验：t.me/yisou123bot?start={$user->tg_id}</code>
 
 💡 温馨提示：邀请的好友越多，收益越高！
-TEXT,
+HTML,
             message_id: $messageId,
             parse_mode: ParseMode::HTML,
             reply_markup: $keyboard,
@@ -118,7 +119,7 @@ TEXT,
             );
 
         $bot->editMessageText(
-            text: <<<TEXT
+            text: <<<HTML
 <b>👤 个人中心</b>
 
 📋 <b>基本信息</b>
@@ -136,7 +137,7 @@ TEXT,
 • 累计佣金：<b>{$user->total_commission}</b> USDT
 
 💡 提示：点击⬇️邀请赚钱⬇️开始推广赚取佣金
-TEXT,
+HTML,
             message_id: $messageId,
             parse_mode: ParseMode::HTML,
             reply_markup: $keyboard,

@@ -39,22 +39,22 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('队列监控(Horizon)')
                     ->url('/horizon', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-presentation-chart-line')
-                    ->group('其它')
+                    ->group('监控')
                     ->sort(3),
                 NavigationItem::make('调试工具(Telescope)')
                     ->url('/telescope', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-presentation-chart-line')
-                    ->group('其它')
+                    ->group('监控')
                     ->sort(3),
                 NavigationItem::make('性能监控(Pulse)')
                     ->url('/pulse', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-presentation-chart-line')
-                    ->group('其它')
+                    ->group('监控')
                     ->sort(3),
                 NavigationItem::make('日志查看(log-viewer)')
                     ->url('/log-viewer', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-presentation-chart-line')
-                    ->group('其它')
+                    ->group('监控')
                     ->sort(3),
             ])
             ->pages([

@@ -47,16 +47,16 @@ class AppServiceProvider extends ServiceProvider
         //         config('services.tencent.secret_id'),
         //         config('services.tencent.secret_key')
         //     );
-            
+
         //     $httpProfile = new HttpProfile();
         //     $httpProfile->setEndpoint("tms.tencentcloudapi.com");
-        
+
         //     $clientProfile = new ClientProfile();
         //     $clientProfile->setHttpProfile($httpProfile);
-            
+
         //     return new TmsClient($cred, config('services.tencent.region'), $clientProfile);
         // });
-        
+
         // $this->app->singleton(TencentCloudModerationService::class, function ($app) {
         //     return new TencentCloudModerationService($app->make(TmsClient::class));
         // });
@@ -85,9 +85,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        LogViewer::auth(function ($request) {
-            Log::info('$request->user()?->is_admin : '.$request->user()?->is_admin);
+        // LogViewer::auth(function ($request) {
+        //     return $request->user()
+        //         && $request->user()->isAdmin();
+        // });
+
+        Gate::define('viewLogViewer', function (?User $user) {
             return true; // TODO
+            return $user->isAdmin();
+        });
+
+        Gate::define('viewPulse', function (User $user) {
+            return $user->isAdmin();
         });
     }
 }

@@ -72,6 +72,9 @@ ssh -t $SERVER_USER@$SERVER_HOST "bash -c '
     # fi
 
     source _deploy/install.sh
+
+    # 重启PHP，因为 opcache.revalidate_freq 已设置为 0，必须重启PHP才能另修改过的代码生效
+    /etc/init.d/php-fpm-82 restart
 '"
 
 if [ $? -ne 0 ]; then

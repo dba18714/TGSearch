@@ -10,4 +10,4 @@ use Illuminate\Support\Facades\Schedule;
 
 
 Schedule::command('chats:verify-chats')
-->everyTenSeconds();
+->everySecond();

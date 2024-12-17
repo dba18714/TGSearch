@@ -35,6 +35,12 @@ class DeployCache extends Command
         $this->call('config:cache');
         $this->call('route:cache');
         $this->call('view:cache'); // view:cache 会导致命令行退出并报错：“Latest compiled component path not found.”
+
+        // 必须执行这个，否则“/livewire/livewire.min.js?id=02b08710”会返回404
+        Process::run('php artisan livewire:publish --assets', function (string $type, string $output) {
+            echo $output;
+        })->throw();
+
         $this->call('filament:optimize');
         $this->call('optimize');
     }

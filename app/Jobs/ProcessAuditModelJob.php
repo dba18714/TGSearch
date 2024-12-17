@@ -39,7 +39,7 @@ class ProcessAuditModelJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Cache::lock('telegram-content-audit', 1)->block(20, function () {
+        // Cache::lock('telegram-content-audit', 1)->block(20, function () {
             $model_class_name = class_basename($this->model);
             if ($model_class_name == 'Chat') {
                 $chat = $this->model;
@@ -61,7 +61,7 @@ class ProcessAuditModelJob implements ShouldQueue
             $data['audit_passed'] = $isPassed;
             $data['audit_score'] = $maxRisk['score'];
             $this->model->update($data);
-        });
+        // });
     }
 
     /**
@@ -69,7 +69,7 @@ class ProcessAuditModelJob implements ShouldQueue
      */
     public function failed(\Throwable $exception): void
     {
-        Log::error('Chat update job failed', [
+        Log::error('ProcessAuditModelJob Chat update job failed', [
             'model_class_name' => class_basename($this->model),
             'model_id' => $this->model->id,
             'url' => $this->model->url,

@@ -47,19 +47,19 @@ class Search extends Component
         $this->searchInput = $this->q;
     }
 
-    public function updatedSearchInput()
-    {
-        if ($this->searchInput === '') {
-            $this->suggestions = [];
-            $this->showSuggestions = false;
-            return;
-        }
+    // public function updatedSearchInput()
+    // {
+    //     if ($this->searchInput === '') {
+    //         $this->suggestions = [];
+    //         $this->showSuggestions = false;
+    //         return;
+    //     }
 
-        $this->suggestions = $this->googleSuggestService->getSuggestions($this->searchInput);
-        app('debugbar')->debug('$this->suggestions', $this->suggestions);
-        app('debugbar')->debug('$this->searchInput', $this->searchInput);
-        $this->showSuggestions = !empty($this->suggestions);
-    }
+    //     $this->suggestions = $this->googleSuggestService->getSuggestions($this->searchInput);
+    //     // app('debugbar')->debug('$this->suggestions', $this->suggestions);
+    //     // app('debugbar')->debug('$this->searchInput', $this->searchInput);
+    //     $this->showSuggestions = !empty($this->suggestions);
+    // }
 
     public function selectSuggestion($suggestion)
     {

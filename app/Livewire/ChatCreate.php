@@ -40,7 +40,7 @@ class ChatCreate extends Component
                         'source_str' => $line,
                     ]
                 );
-                if (isset($message_id)) {
+                if (isset($message_id) && !empty($message_id)) {
                     Message::firstOrCreate(
                         ['chat_id' => $chat->id, 'source_id' => $message_id],
                         [

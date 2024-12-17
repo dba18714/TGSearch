@@ -14,32 +14,34 @@ class UpdateChatsCommand extends Command
 
     public function handle()
     {
-        try {
-            Log::info("chats:verify-chats command started.");
-            $result = Chat::dispatchNextVerificationJob();
-            if (!$result) {
-                $this->info("No more chats to verify. Exiting.");
-                return;
-            }
-            $result = Message::dispatchNextVerificationJob();
-            if (!$result) {
-                $this->info("No more messages to verify. Exiting.");
-                return;
-            }
+        // TODO 让后台面板可以设置每秒更新多少个资源，用 GeneralSettings
 
-            $result = Chat::dispatchNextAuditJob();
-            if (!$result) {
-                $this->info("No more chats to verify. Exiting.");
-                return;
-            }
-            $result = Message::dispatchNextAuditJob();
-            if (!$result) {
-                $this->info("No more messages to verify. Exiting.");
-                return;
-            }
-            $this->info("Dispatched verification job for the next chat.");
-        } catch (\Exception $e) {
-            Log::error("Error in chats:verify-chats command: " . $e->getMessage());
+        // try {
+        Log::info("chats:verify-chats command started.");
+        $result = Chat::dispatchNextVerificationJob();
+        if (!$result) {
+            $this->info("No more chats to verify. Exiting.");
+            return;
         }
+        $result = Message::dispatchNextVerificationJob();
+        if (!$result) {
+            $this->info("No more messages to verify. Exiting.");
+            return;
+        }
+
+        $result = Chat::dispatchNextAuditJob();
+        if (!$result) {
+            $this->info("No more chats to verify. Exiting.");
+            return;
+        }
+        $result = Message::dispatchNextAuditJob();
+        if (!$result) {
+            $this->info("No more messages to verify. Exiting.");
+            return;
+        }
+        $this->info("Dispatched verification job for the next chat.");
+        // } catch (\Exception $e) {
+        //     Log::error("Error in chats:verify-chats command: " . $e->getMessage());
+        // }
     }
 }

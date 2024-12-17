@@ -16,7 +16,7 @@
                 <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-md">
                     <div class="relative flex items-center space-x-2">
                         <div x-data="{ focused: false }" class="relative flex-1">
-                            <input type="search" wire:model.live.debounce.250ms="searchInput" wire:key="search-input"
+                            <input type="search" wire:model="searchInput" wire:key="search-input"
                                 wire:keydown.enter="doSearch" @focus="focused = true"
                                 @blur="setTimeout(() => focused = false, 200)" placeholder="名称/用户名/介绍/消息..."
                                 class="w-full pl-12 pr-4 py-3.5 text-base border-0 bg-gray-200 dark:bg-gray-700
@@ -33,7 +33,7 @@
                                 </svg>
                             </div>
 
-                            <div x-show="focused && $wire.showSuggestions && $wire.suggestions.length" x-cloak
+                            {{-- <div x-show="focused && $wire.showSuggestions && $wire.suggestions.length" x-cloak
                                 class="absolute left-0 right-0 z-50 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700">
                                 @foreach ($suggestions as $suggestion)
                                     <div wire:mousedown.prevent="selectSuggestion('{{ $suggestion }}'); $nextTick(() => doSearch())"
@@ -41,7 +41,7 @@
                                         {{ $suggestion }}
                                     </div>
                                 @endforeach
-                            </div>
+                            </div> --}}
                         </div>
 
                         <button wire:click="doSearch"

@@ -40,6 +40,10 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
+    dump(opcache_get_status()); // TODO 用filament管理
+    dump(opcache_get_configuration());
+    return;
+
     $settings = app(GeneralSettings::class);
 
     $level1_amount = $settings->level1_commission_amount;

@@ -57,9 +57,9 @@ class Chat extends Model
      */
     protected $casts = [
         'is_valid' => 'boolean',
-        'audit_passed' => 'boolean',
-        'verified_at' => 'datetime',
-        'verified_start_at' => 'datetime',
+        // 'audit_passed' => 'boolean',
+        // 'verified_at' => 'datetime',
+        // 'verified_start_at' => 'datetime',
         'member_count' => 'integer',
         // 'view_count' => 'integer',
     ];

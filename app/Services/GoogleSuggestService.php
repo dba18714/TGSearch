@@ -28,11 +28,11 @@ class GoogleSuggestService
                         'q' => $query,
                     ]);
 
-                    app('debugbar')->debug('$response->json()', $response->body() ?? []);
+                    // app('debugbar')->debug('$response->json()', $response->body() ?? []);
 
 
                     if ($response->successful()) {
-                        app('debugbar')->debug('$response->json()', $response->json() ?? []);
+                        // app('debugbar')->debug('$response->json()', $response->json() ?? []);
                         Log::debug('$response->json()', $response->json() ?? []);
                         return $response->json()[1] ?? [];
                     }

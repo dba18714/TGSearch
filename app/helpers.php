@@ -39,8 +39,8 @@ if (!function_exists('br2nl')) {
 if (!function_exists('extract_telegram_username_by_url')) {
     function extract_telegram_username_by_url($url)
     {
-        // 使用正则表达式匹配 t.me 或 telegram.me 链接中的用户名
-        if (preg_match('#^https?://(?:t|telegram)\.me/(?:s/)?([^/?]+)#i', $url, $matches)) {
+        // 匹配带协议和不带协议的 t.me 或 telegram.me 链接中的用户名
+        if (preg_match('#^(?:https?://)?(?:t|telegram)\.me/(?:s/)?([^/?]+)#i', $url, $matches)) {
             return $matches[1];
         }
         return null;

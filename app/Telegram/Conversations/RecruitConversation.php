@@ -44,6 +44,7 @@ class RecruitConversation extends Conversation
         $message = $bot->sendMessage(
             text: $this->getStartText(),
             parse_mode: 'HTML',
+            disable_web_page_preview: true,
             reply_markup: $this->cancelkeyboard
         );
 
