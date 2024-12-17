@@ -15,6 +15,7 @@ use App\Services\TencentModerationService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Opcodes\LogViewer\Facades\LogViewer;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
@@ -85,7 +86,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         LogViewer::auth(function ($request) {
-            return $request->user()?->is_admin;
+            Log::info('$request->user()?->is_admin : '.$request->user()?->is_admin);
+            return true; // TODO
         });
     }
 }

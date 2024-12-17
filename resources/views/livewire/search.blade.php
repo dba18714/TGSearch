@@ -210,8 +210,8 @@
                                     <div
                                         class="text-gray-900 dark:text-white group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition-colors duration-200">
                                         请使用[
-                                        <a href="https://t.me/yisou_me_bot"
-                                            class="text-blue-600 dark:text-blue-400 underline">易搜机器人 @yisou_me_bot</a>
+                                        <a href="https://t.me/yisou123bot"
+                                            class="text-blue-600 dark:text-blue-400 underline">易搜机器人 @yisou123bot</a>
                                         ]搜索展示完整结果
                                     </div>
                                 @endif

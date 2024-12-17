@@ -47,6 +47,11 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->hasMany(CommissionRecord::class);
     }
 
+    public function getTotalCommissionAttribute(): float
+    {
+        return $this->commissionRecords()->sum('amount');
+    }
+
     /**
      * 获取所有层级的下级数量
      */

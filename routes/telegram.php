@@ -6,6 +6,7 @@ use App\Models\CommissionRecord;
 use App\Models\User;
 use App\Settings\GeneralSettings;
 use App\Telegram\Conversations\RecruitConversation;
+use App\Telegram\Handlers\MenuHandler;
 use App\Telegram\Handlers\SearchHandler;
 use App\Telegram\Handlers\StartHandler;
 use App\Telegram\InlineMenu\ChooseColorMenu;
@@ -133,11 +134,15 @@ $bot->onText('^[^/].*', SearchHandler::class);
 
 $bot->onCallbackQueryData('search:{action}:{value}', [SearchHandler::class, 'handleSearchCallback']);
 
+$bot->onCallbackQueryData('menu:profile', [MenuHandler::class, 'profile']);
+$bot->onCallbackQueryData('menu:invite', [MenuHandler::class, 'invite']);
+$bot->onCallbackQueryData('menu:home', MenuHandler::class);
+
 $bot->onCommand('add', RecruitConversation::class)
     ->description('提交收录');
 
-$bot->onCommand('menu', RecruitConversation::class)
-    ->description('菜单');
+$bot->onCommand('menu', MenuHandler::class)
+    ->description('主菜单');
 
 $bot->onCommand('tmp2', ChooseColorMenu::class)
     ->description('tmp')->isHidden();

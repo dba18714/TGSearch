@@ -42,17 +42,17 @@ Ubuntu22.04, minimum 1 core 2G RAM
 - Site > 设置 SSL 并开启 Force HTTPS  
 - Site directory -> 关闭（否则无法删除根目录的所有文件）：防止 XSS 攻擊  
 - Site > 根目录 > 删除根目录下的所有文件  
-- 待所有队列都执行成功后，重启VPS，`pdo_pgsql`扩展才会生效，单单重载/重启php-fpm不会生效。
+<!-- - 待所有队列都执行成功后，重启VPS，`pdo_pgsql`扩展才会生效，单单重载/重启php-fpm不会生效。 -->
 - 修改本地项目目录的 ./deploy.env 配置项，SERVER_PATH 为上面步骤所创建的站点的根目录，其他配置项根据实际情况填写。  
 - 创建数据库网络：aapanel > Docker > 安装Docker，安装后点击网络选项卡 > 添加网络：
-  - 網絡名稱：yisou_net
-  - 设备：bridge
-  - IPv4子網：172.19.0.0/16
-  - IPv4網關：172.19.0.1
-  - IPv4範圍：172.19.0.0/24
+  - 網絡名稱: yisou_net
+  - 设备: bridge
+  - IPv4子網: 172.19.0.0/16
+  - IPv4網關: 172.19.0.1
+  - IPv4範圍: 172.19.0.0/24
   - 点击确定。
 - 创建数据库：aapanel > Docker > 安装Docker，安装后点击容器编排选项卡 > 添加容器编排：
-  - 名称填：pgsql
+  - 名称填: pgsql
   - 组成填：
 ``` yml
 services:
@@ -100,38 +100,31 @@ DB_PASSWORD="2hjtLb3d4KZsKP2f"
   - （注意：v2board官方文档所提供的“URL rewrite”也会导致filament后台CSS样式文件404） 
     - 目前观察到会404的文件路径：https://x.xx/livewire/livewire.min.js?id=02b08710
   ``` nginx
-  if (!-f $request_filename){
-    rewrite (.*) /index.php;
-  }
+if (!-f $request_filename){
+  rewrite (.*) /index.php;
+}
   ```
 - 配置运行目录：Site directory -> Running directory 选择“/public”并保存
 - 现在可以访问站点了。
 - 导入数据库备份（如果需要）：资料库 > 导入 > 上传备份文件 > 点击导入
 - 配置定时任务  
 > aaPanel 面板 > Cron。  
->
 > 在 Type of Task 选择 Shell Script  
 > 在 Name of Task 填写 TGSearch  
 > 在 Period 选择 N Minutes 1 Minute  
 > 在 Run User 选择 www  
 > 在 Script content 填写 php /www/wwwroot/路径/artisan schedule:run  
->
 > 根据上述信息添加每1分钟执行一次的定时任务。
 - 启动队列服务
 > TGSearch 的系统强依赖队列服务，正常使用 TGSearch 必须启动队列服务。    
 > 下面以 aaPanel 中的 supervisor 服务来守护队列服务作为演示。  
->
 > aaPanel 面板 > App Store > Tools  
->
-> 找到 Supervisor 进行安装，安装完成后点击设置 > Add Daemon 按照如下填  
->  
->
-> 在 Name 填写 TGSearch  
+> 找到 Supervisor 进行安装，安装完成后点击设置 > Add Daemon 按照如下填写  
+> 在 Name 填写 tgsearch  
 > 在 Run User 选择 www  
 > 在 Run Dir 选择 站点目录  
 > 在 Start Command 填写 php artisan horizon  
 > 在 Processes 填写 1  
->
 > 填写后点击 Confirm 添加即可运行。  
 - 部署完成。
 
