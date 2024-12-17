@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Chat;
 use App\Models\Message;
+use App\Settings\GeneralSettings;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -14,19 +15,23 @@ class UpdateChatsCommand extends Command
 
     public function handle()
     {
-        // TODO 让后台面板可以设置每秒更新多少个资源，用 GeneralSettings
+        $settings = app(GeneralSettings::class);
+        $itemsPerUpdate = $settings->itemsPerUpdate;
 
         // try {
         Log::info("chats:verify-chats command started.");
-        $result = Chat::dispatchNextVerificationJob();
-        if (!$result) {
-            $this->info("No more chats to verify. Exiting.");
-            return;
-        }
-        $result = Message::dispatchNextVerificationJob();
-        if (!$result) {
-            $this->info("No more messages to verify. Exiting.");
-            return;
+
+        for ($i = 0; $i < $itemsPerUpdate; $i++) {
+            $result = Chat::dispatchNextVerificationJob();
+            if (!$result) {
+                $this->info("No more chats to verify. Exiting.");
+                return;
+            }
+            $result = Message::dispatchNextVerificationJob();
+            if (!$result) {
+                $this->info("No more messages to verify. Exiting.");
+                return;
+            }
         }
 
         $result = Chat::dispatchNextAuditJob();
@@ -39,6 +44,7 @@ class UpdateChatsCommand extends Command
             $this->info("No more messages to verify. Exiting.");
             return;
         }
+
         $this->info("Dispatched verification job for the next chat.");
         // } catch (\Exception $e) {
         //     Log::error("Error in chats:verify-chats command: " . $e->getMessage());

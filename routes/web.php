@@ -40,6 +40,7 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
+    echo now()->timezone('Asia/Taipei')->subMinutes(60);
     dump(opcache_get_status()); // TODO 用filament管理
     dump(opcache_get_configuration());
     return;

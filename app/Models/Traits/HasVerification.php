@@ -4,6 +4,7 @@ namespace App\Models\Traits;
 
 use App\Jobs\ProcessAuditModelJob;
 use App\Jobs\ProcessUpdateTelegramModelJob;
+use App\Settings\GeneralSettings;
 use Carbon\Carbon;
 
 trait HasVerification
@@ -39,10 +40,12 @@ trait HasVerification
 
         if (!$model) return false;
 
-        // 如果1小时之内已经验证过了，就跳过
+         // 如果N分钟之内已经验证过了，就跳过
+         $settings = app(GeneralSettings::class);
+        $update_interval_minutes = $settings->update_interval_minutes;
         if (
             $model->verified_start_at &&
-            $model->verified_start_at->gt(now()->subHour())
+            $model->verified_start_at->gt(now()->subMinutes($update_interval_minutes))
         ) return false;
 
         $model->dispatchUpdateJob();
