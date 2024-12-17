@@ -9,6 +9,7 @@ use App\Telegram\Conversations\RecruitConversation;
 use App\Telegram\Handlers\SearchHandler;
 use App\Telegram\Handlers\StartHandler;
 use App\Telegram\InlineMenu\ChooseColorMenu;
+use App\Telegram\Services\InviterService;
 use Illuminate\Support\Facades\Log;
 use SergiX44\Nutgram\Nutgram;
 
@@ -22,22 +23,22 @@ use SergiX44\Nutgram\Nutgram;
 |
 */
 
-function get_inviter_form_the_start_command(string $text)
-{
-    if ($text && str_starts_with($text, '/start')) {
-        $parts = explode(' ', $text, 2);
-        if (isset($parts[1])) {
-            $inviter_tg_id = (int)$parts[1];
-            if (! $inviter_tg_id) return false;
+// function get_inviter_form_the_start_command(string $text)
+// {
+//     if ($text && str_starts_with($text, '/start')) {
+//         $parts = explode(' ', $text, 2);
+//         if (isset($parts[1])) {
+//             $inviter_tg_id = (int)$parts[1];
+//             if (! $inviter_tg_id) return false;
 
-            $inviter = User::where('tg_id', $inviter_tg_id)->first();
-            if ($inviter->exists) {
-                return $inviter;
-            }
-        }
-    }
-    return false;
-}
+//             $inviter = User::where('tg_id', $inviter_tg_id)->first();
+//             if ($inviter->exists) {
+//                 return $inviter;
+//             }
+//         }
+//     }
+//     return false;
+// }
 
 $bot->middleware(function (Nutgram $bot, $next) {
     Log::info('$bot->userId()', [$bot->userId()]);
@@ -51,7 +52,8 @@ $bot->middleware(function (Nutgram $bot, $next) {
         ['name' => $name]
     );
 
-    $inviter = get_inviter_form_the_start_command($bot->message()?->text);
+    // $inviter = get_inviter_form_the_start_command($bot->message()?->text);
+    $inviter = InviterService::getInviterFromStartCommand($bot->message()?->text);
 
     if (
         $user->wasRecentlyCreated &&
@@ -133,6 +135,9 @@ $bot->onCallbackQueryData('search:{action}:{value}', [SearchHandler::class, 'han
 
 $bot->onCommand('add', RecruitConversation::class)
     ->description('提交收录');
+
+$bot->onCommand('menu', RecruitConversation::class)
+    ->description('菜单');
 
 $bot->onCommand('tmp2', ChooseColorMenu::class)
     ->description('tmp')->isHidden();

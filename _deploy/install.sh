@@ -22,14 +22,17 @@ check_status() {
     fi
 }
 
-# Logo显示
+# Logo显示, form: https://patorjk.com/software/taag
 cat << "EOF"
- _____      _                                                                 
-|_   _|___ | |  ___   __ _  _ __  __ _  _ __ ___          _ __    __ _ __   __
-  | | / _ \| | / _ \ / _` || '__|/ _` || '_ ` _ \  _____ | '_ \  / _` |\ \ / /
-  | ||  __/| ||  __/| (_| || |  | (_| || | | | | ||_____|| | | || (_| | \ V / 
-  |_| \___||_| \___| \__, ||_|   \__,_||_| |_| |_|       |_| |_| \__,_|  \_/  
-                     |___/                                                     
+
+  _______ _____  _____                     _     
+ |__   __/ ____|/ ____|                   | |    
+    | | | |  __| (___   ___  __ _ _ __ ___| |__  
+    | | | | |_ |\___ \ / _ \/ _` | '__/ __| '_ \ 
+    | | | |__| |____) |  __/ (_| | | | (__| | | |
+    |_|  \_____|_____/ \___|\__,_|_|  \___|_| |_|
+                                                 
+                                                 
 EOF
 
 # 更新包列表
@@ -61,6 +64,35 @@ check_status "文件权限设置"
 echo "正在安装 composer 依赖..."
 COMPOSER_ALLOW_SUPERUSER=1 php composer.phar install --prefer-dist --no-dev -o
 check_status "Composer依赖安装"
+
+# setup_database_permissions() {
+#     if [ -f "/etc/init.d/bt" ]; then
+#         echo "正在设置数据库权限..."
+        
+#         # 从 deploy.env 获取数据库配置
+#         DB_DATABASE=$1
+#         DB_USERNAME=$2
+        
+#         # 使用 PHP 执行 SQL
+#         php -r "
+#             \$pdo = new PDO('pgsql:host=localhost;dbname=$DB_DATABASE', 'postgres', '');
+#             \$sql = [
+#                 'GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USERNAME',
+#                 'GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_USERNAME',
+#                 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $DB_USERNAME',
+#                 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO $DB_USERNAME'
+#             ];
+#             foreach (\$sql as \$query) {
+#                 \$pdo->exec(\$query);
+#             }
+#         "
+        
+#         check_status "数据库权限设置"
+#     fi
+# }
+
+# # 在执行数据库迁移之前调用此函数
+# setup_database_permissions "$DB_DATABASE" "$DB_USERNAME"
 
 # 执行应用安装
 echo "正在执行应用安装..."

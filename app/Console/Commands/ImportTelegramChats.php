@@ -11,6 +11,7 @@ class ImportTelegramChats extends Command
     protected $signature = 'telegram:import-chats {file : Path to the URLs file}';
     protected $description = 'Import Telegram chat usernames from a file';
 
+    // sail php artisan telegram:import-chats urls_export.txt
     public function handle()
     {
         $filePath = $this->argument('file');

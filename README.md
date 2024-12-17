@@ -10,46 +10,100 @@ Ubuntu22.04, minimum 1 core 2G RAM
 
 ### 首次部署
 
+- cloudflare：
+  - 配置域名解析A记录指向VPS IP地址
+  - SSL/TLS > 配置 > 加密模式 > 自定义 SSL/TLS > 选择`完全` > 保存。（否则访问域名会死循环重定向）
 - 安装`aaPanel`面板
 - `aaPanel`官网：https://www.aapanel.com
 - `aaPanel`安装完成后，访问面板，会弹出环境安装选项，选择：
   - Nginx1.24+ 
   - PHP8.2 (apparel的php8.3没有找到`pdo_pgsql`这个扩展)
   - 正式生产环境选择编译安装，测试环境选择 Fast 快速编译安装。
-- 应用商店 > 搜素`sql`，安装`PostgreSQL Manager`。
-- `PostgreSQL Manager`安装完成后，打开`PostgreSQL Manager`设定窗口，`Version management` > PgSQL Version: 选择 16.1+，点击安装。
-- 安装扩展：App Store > 找到对应的PHP版本点击 Setting > Install extentions > 安装以下扩展：
-  - `pdo_pgsql`(必须，apparel的php8.3没有找到这个扩展, aapanel官方说8.3还没适配，所以只能使用8.2)
-  - `fileinfo`
-  - `exif`
-  - `mbstring`(apparel的php8.2没有找到这个扩展, 无安装未知是否有影响)
-  - `redis`
-  - `opcache`(安装opcache后对网站加载速度有显著的提升)
-- 解除被禁止的函数：App Store > 找到对应的PHP版本点击 Setting > Disabled functions 将 `putenv`, `proc_open`, `symlink`, `shell_exec` 从列表中删除。
+<!-- - 应用商店 > 搜素`sql`，安装`PostgreSQL Manager`。
+- `PostgreSQL Manager`安装完成后，打开`PostgreSQL Manager`设定窗口 > `Version management` > PgSQL Version: 选择 16.1+，点击安装。
 - 创建数据库：打开`PostgreSQL Manager`设定窗口 > DB List > Add DB：
   - DB Name 填: tgsearch
   - Username 填: tgsearch
   - Password 随机
-  - 提交。
+  - 提交。 -->
+- 安装扩展：App Store > 找到对应的PHP版本点击 Setting > Install extentions > 安装以下扩展：
+  - `pdo_pgsql`(必须，aapanel的php8.3没有找到这个扩展, aapanel官方说8.3还没适配，所以只能使用8.2)
+  - `redis`
+  - `fileinfo`
+  - `exif`
+  - `mbstring`(aapanel的php8.2没有找到这个扩展, 无安装未知是否有影响)
+  - `opcache`(安装opcache后对网站加载速度有显著的提升)
+- 解除被禁止的函数：App Store > 找到对应的PHP版本点击 Setting > Disabled functions 将以下从列表中删除：
+  - `putenv`
+  - `proc_open`
+  - `symlink`
+  - `shell_exec`
 - 新建站点 > 填写域名，选择PHP版本，确定。
 - Site > 设置 SSL 并开启 Force HTTPS  
 - Site directory -> 关闭（否则无法删除根目录的所有文件）：防止 XSS 攻擊  
 - Site > 根目录 > 删除根目录下的所有文件  
+- 待所有队列都执行成功后，重启VPS，`pdo_pgsql`扩展才会生效，单单重载/重启php-fpm不会生效。
 - 修改本地项目目录的 ./deploy.env 配置项，SERVER_PATH 为上面步骤所创建的站点的根目录，其他配置项根据实际情况填写。  
-- 在本地项目根目录执行 ./deploy.sh
-- 配置伪静态（URL rewrite）选择“zblog”或使用以下(v2board官方文档所提供)⬇️规则并保存。（注意：如果选的是“laravel5”会导致filament后台CSS样式文件404） 
-``` nginx
-location / {  
-    try_files $uri $uri/ /index.php$is_args$query_string;  
-}
-
-location ~ .*\.(js|css)?$
-{
-    expires      1h;
-    error_log off;
-    access_log /dev/null; 
-}
+- 创建数据库网络：aapanel > Docker > 安装Docker，安装后点击网络选项卡 > 添加网络：
+  - 網絡名稱：yisou_net
+  - 设备：bridge
+  - IPv4子網：172.19.0.0/16
+  - IPv4網關：172.19.0.1
+  - IPv4範圍：172.19.0.0/24
+  - 点击确定。
+- 创建数据库：aapanel > Docker > 安装Docker，安装后点击容器编排选项卡 > 添加容器编排：
+  - 名称填：pgsql
+  - 组成填：
+``` yml
+services:
+    pgsql:
+        image: 'postgres:17-alpine'
+        ports:
+            - '5432:5432'
+        restart: always
+        environment:
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - 'dbdata:/var/lib/postgresql/data'
+        networks:
+            - yisou_net
+        healthcheck:
+            test:
+                - CMD
+                - pg_isready
+                - '-q'
+                - '-d'
+                - '${DB_DATABASE}'
+                - '-U'
+                - '${DB_USERNAME}'
+            retries: 3
+            timeout: 5s
+volumes:
+    dbdata:
+        driver: local
+networks:
+  yisou_net:
+    external: true
 ```
+  - .env內容填 ./deploy.env 里的：
+``` env
+DB_DATABASE="tgsearch"
+DB_USERNAME="tgsearch"
+DB_PASSWORD="2hjtLb3d4KZsKP2f"
+```
+  - 点击`确定`编排。
+- 在本地项目根目录执行 ./deploy.sh
+- 配置伪静态（URL rewrite）选择“zblog”或使用以下⬇️规则并保存。
+  - （注意：如果选的是“laravel5”会导致filament后台CSS样式文件404） 
+  - （注意：v2board官方文档所提供的“URL rewrite”也会导致filament后台CSS样式文件404） 
+    - 目前观察到会404的文件路径：https://x.xx/livewire/livewire.min.js?id=02b08710
+  ``` nginx
+  if (!-f $request_filename){
+    rewrite (.*) /index.php;
+  }
+  ```
 - 配置运行目录：Site directory -> Running directory 选择“/public”并保存
 - 现在可以访问站点了。
 - 导入数据库备份（如果需要）：资料库 > 导入 > 上传备份文件 > 点击导入

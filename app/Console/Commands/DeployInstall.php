@@ -73,7 +73,9 @@ class DeployInstall extends Command
             'SCOUT_DRIVER' => $SCOUT_DRIVER,
             'MEILISEARCH_KEY' => $MEILISEARCH_KEY,
         ]);
-        $this->call('deploy:cache-clear');
+        Process::run('php artisan config:clear', function (string $type, string $output) {
+            echo $output;
+        })->throw();
 
         $exitCode = $this->call('deploy:migrate');
         if ($exitCode) {
@@ -112,7 +114,11 @@ class DeployInstall extends Command
         $this->call('deploy:cache');
         $this->call('deploy:file-permission');
         if (env('TELEGRAM_TOKEN')) {
-            $this->call('nutgram:register-commands');
+            try {
+                $this->call('nutgram:register-commands');
+            } catch (\Exception $e) {
+                $this->warn($e->getMessage());
+            }
         }
         $this->call('scout:sync-index-settings');
         $this->call('scout:import', ['model' => 'App\Models\UnifiedSearch']);

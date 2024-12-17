@@ -30,7 +30,7 @@ class DeployMigrate extends Command
         try {
             DB::connection()->getPdo();
         } catch (\Exception $e) {
-            abort(500, '数据库连接失败');
+            throw $e;
         }
         $this->info('数据库连接成功');
 
