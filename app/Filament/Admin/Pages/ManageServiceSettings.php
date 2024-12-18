@@ -45,8 +45,10 @@ class ManageServiceSettings extends SettingsPage
                 ->columns(2)
                 ->schema([
                     TextInput::make('telegram_token')
-                        ->label('Telegram Bot Token'),
-                ]),
+                        ->label('Telegram Bot Token')
+                        ->required()
+                        ->helperText('如果不设置请随便填写任何字符，因为如果空值系统会出错'),
+                ])
         ];
     }
 }

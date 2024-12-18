@@ -6,6 +6,8 @@ use Spatie\LaravelSettings\Settings;
 
 class GeneralSettings extends Settings
 {
+    public ?string $log_level = null;
+
     public ?float $level1_commission_amount = 0.08;
     public ?float $level2_commission_amount = 0.02;
 

@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Jobs\MakeCache;
+use App\Settings\GeneralSettings;
 use App\Settings\OAuthSettings;
 use App\Settings\ServiceSettings;
 use App\Settings\SiteSettings;
@@ -16,8 +17,14 @@ class HandleSettingSaved
 {
     public function handle(SettingsSaved $event)
     {
+        $general = app(GeneralSettings::class);
         $service = app(ServiceSettings::class);
         $maps = [
+            [
+                'env_name' => 'LOG_LEVEL', 
+                'value_old' => config('logging.channels.daily.level'), 
+                'value_new' =>  $general->log_level
+            ],
             [
                 'env_name' => 'GOOGLE_SEARCH_API_KEY', 
                 'value_old' => config('services.google.search_api_key'), 
