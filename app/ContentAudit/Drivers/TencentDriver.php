@@ -69,6 +69,10 @@ class TencentDriver implements ContentAuditInterface
             }
         }
 
+        if ($maxRisk['score'] > 0.9 && $isPassed){
+            $isPassed = false;
+        }
+
         return new AuditResult(
             isPassed: $isPassed,
             risks: $risks,

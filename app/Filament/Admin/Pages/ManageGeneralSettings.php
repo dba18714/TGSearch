@@ -39,7 +39,6 @@ class ManageGeneralSettings extends SettingsPage
                             'alert' => 'Alert (警报)',
                             'emergency' => 'Emergency (紧急)',
                         ])
-                        ->default('info')
                         ->helperText('设置系统记录日志的最低级别，只有等于或高于该级别的日志才会被记录。生产环境建议设置为info或更高，以减少服务器性能开销。'),
                 ]),
             Section::make('佣金设置')
