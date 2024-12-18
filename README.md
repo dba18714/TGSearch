@@ -117,13 +117,10 @@ DB_PASSWORD="2hjtLb3d4KZsKP2f"
 ```
   - 点击`确定`编排。
 - 在本地项目根目录执行 ./deploy.sh
-- 配置伪静态（URL rewrite）选择“zblog”或使用以下⬇️规则并保存。
-  - （注意：如果选的是“laravel5”会导致filament后台CSS样式文件404） 
-  - （注意：v2board官方文档所提供的“URL rewrite”也会导致filament后台CSS样式文件404） 
-    - 目前观察到会404的文件路径：https://x.xx/livewire/livewire.min.js?id=02b08710
+- 配置伪静态（URL rewrite）填写以下⬇️规则并保存。
   ``` nginx
-if (!-f $request_filename){
-  rewrite (.*) /index.php;
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
 }
   ```
 - 配置运行目录：Site directory -> Running directory 选择“/public”并保存

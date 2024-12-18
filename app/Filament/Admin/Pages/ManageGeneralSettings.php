@@ -31,7 +31,7 @@ class ManageGeneralSettings extends SettingsPage
                         ->required()
                         ->numeric()
                         ->minValue(0.0001)
-                        ->step(0.01)
+                        // ->step(0.01)
                         ->default(0.02),
 
                     TextInput::make('level2_commission_amount')
@@ -39,27 +39,27 @@ class ManageGeneralSettings extends SettingsPage
                         ->required()
                         ->numeric()
                         ->minValue(0.0001)
-                        ->step(0.01)
+                        // ->step(0.01)
                         ->default(0.01),
                 ]),
             Section::make('Chats/Messages更新设置')
                 ->description('控制爬虫更新频率')
                 ->columns(2)
                 ->schema([
-                    TextInput::make('itemsPerUpdate')
+                    TextInput::make('items_per_update')
                         ->label('每次更新多少个资源(chats/messages)')
                         ->required()
                         ->numeric()
                         ->minValue(1)
-                        ->step(1)
+                        // ->step(1)
                         ->default(1)
                         ->helperText('设置每秒最多可以更新多少个资源，建议不要超过10'),
-                    TextInput::make('itemsPerUpdate')
+                    TextInput::make('update_interval_minutes')
                         ->label('更新间隔')
                         ->required()
                         ->numeric()
                         ->minValue(1)
-                        ->step(10)
+                        // ->step(10)
                         ->default(60)
                         ->helperText('设置同一个资源至少间隔多少分钟更新一次'),
                 ]),

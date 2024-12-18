@@ -40,8 +40,8 @@ trait HasVerification
 
         if (!$model) return false;
 
-         // 如果N分钟之内已经验证过了，就跳过
-         $settings = app(GeneralSettings::class);
+        // 如果N分钟之内已经验证过了，就跳过
+        $settings = app(GeneralSettings::class);
         $update_interval_minutes = $settings->update_interval_minutes;
         if (
             $model->verified_start_at &&

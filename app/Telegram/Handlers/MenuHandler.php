@@ -73,7 +73,7 @@ class MenuHandler
                 InlineKeyboardButton::make('<< 返回主菜单', callback_data: 'menu:home')
             );
 
-        $bot->editMessageText(
+        $bot->editMessageText( // TODO 金额去掉硬编码
             text: <<<HTML
 <b>🎯 邀请好友赚取USDT收益</b>
 

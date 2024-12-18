@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# 记录开始时间
+start_time=$(date +%s)
+
 echo "🚀 开始部署..."
 
 # 定义颜色输出
@@ -82,5 +85,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# 计算总用时
+end_time=$(date +%s)
+duration=$((end_time - start_time))
+minutes=$((duration / 60))
+seconds=$((duration % 60))
+current_time=$(date '+%Y-%m-%d %H:%M:%S')
 
-echo "✅ 脚本执行完毕."
+echo -e "${GREEN}✅ 脚本执行完毕."
+echo -e "完成时间: ${current_time}"
+echo -e "总用时: ${minutes}分${seconds}秒${NC}"

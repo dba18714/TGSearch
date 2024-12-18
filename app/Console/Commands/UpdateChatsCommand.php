@@ -16,33 +16,36 @@ class UpdateChatsCommand extends Command
     public function handle()
     {
         $settings = app(GeneralSettings::class);
-        $itemsPerUpdate = $settings->itemsPerUpdate;
+        $items_per_update = $settings->items_per_update;
 
         // try {
-        Log::info("chats:verify-chats command started.");
+        Log::info("chats:verify-chats command started.111");
 
-        for ($i = 0; $i < $itemsPerUpdate; $i++) {
-            $result = Chat::dispatchNextVerificationJob();
-            if (!$result) {
-                $this->info("No more chats to verify. Exiting.");
-                return;
+        $dispatched_count = 0;
+        try {
+            for ($i = 0; $i < $items_per_update; $i++) {
+                $dispatched_count++;
+                $result = Chat::dispatchNextVerificationJob();
+                if (!$result) {
+                    $this->info("No more chats to verify. Exiting.");
+                }
+                $result = Message::dispatchNextVerificationJob();
+                if (!$result) {
+                    $this->info("No more messages to verify. Exiting.");
+                }
             }
-            $result = Message::dispatchNextVerificationJob();
-            if (!$result) {
-                $this->info("No more messages to verify. Exiting.");
-                return;
-            }
+        } catch (\Exception $e) {
+            Log::error("Error in dispatchNextVerificationJob: " . $e->getMessage());
         }
+        Log::info('::dispatchNextVerificationJob() $dispatched_count: ' . $dispatched_count);
 
         $result = Chat::dispatchNextAuditJob();
         if (!$result) {
             $this->info("No more chats to verify. Exiting.");
-            return;
         }
         $result = Message::dispatchNextAuditJob();
         if (!$result) {
             $this->info("No more messages to verify. Exiting.");
-            return;
         }
 
         $this->info("Dispatched verification job for the next chat.");
