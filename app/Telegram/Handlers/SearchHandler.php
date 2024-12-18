@@ -58,6 +58,8 @@ class SearchHandler
                 return;
             }
 
+            // 移除多余的空白字符(包括换行、制表符等)
+            $query = preg_replace('/\s+/', ' ', $query);
             $searchResults = $this->performSearch($query);
 
             if ($searchResults->isEmpty()) {
