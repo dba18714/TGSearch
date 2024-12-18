@@ -69,37 +69,37 @@ $bot->middleware(function (Nutgram $bot, $next) {
         // TODO 队列处理
         try {
             DB::transaction(function () use ($inviter, $user, $bot) {
-                $settings = app(GeneralSettings::class);
+                $generaSettings = app(GeneralSettings::class);
+                $level1_commission_amount = $generaSettings->level1_commission_amount;
+                $level2_commission_amount = $generaSettings->level2_commission_amount;
 
                 // 1. 设置直接邀请人
                 $user->parent_id = $inviter->id;
                 $user->save();
 
                 // 2. 处理一级代理佣金(直接邀请)
-                $level1_amount = $settings->level1_commission_amount;
                 CommissionRecord::create([
                     'user_id' => $inviter->id,
                     'invitee_id' => $user->id,
-                    'amount' => $level1_amount,
+                    'amount' => $level1_commission_amount,
                     'level' => 1,
                 ]);
-                $inviter->increment('commission_balance', $level1_amount);
+                $inviter->increment('commission_balance', $level1_commission_amount);
 
                 // 3. 处理二级代理佣金
                 $parent_of_inviter = $inviter->parent;
                 if ($parent_of_inviter) {
-                    $level2_amount = $settings->level2_commission_amount;
                     CommissionRecord::create([
                         'user_id' => $parent_of_inviter->id,
                         'invitee_id' => $user->id,
-                        'amount' => $level2_amount,
+                        'amount' => $level2_commission_amount,
                         'level' => 2,
                     ]);
-                    $parent_of_inviter->increment('commission_balance', $level2_amount);
+                    $parent_of_inviter->increment('commission_balance', $level2_commission_amount);
 
                     // 发送消息给二级代理
                     $bot->sendMessage(
-                        "恭喜! [{$inviter->name}]邀请了[{$user->name}]，您获得了{$level2_amount}个USDT奖励！",
+                        "恭喜! [{$inviter->name}]邀请了[{$user->name}]，您获得了{$level2_commission_amount}个USDT奖励！",
                         disable_web_page_preview: true,
                         chat_id: $parent_of_inviter->tg_id,
                     );
@@ -107,7 +107,7 @@ $bot->middleware(function (Nutgram $bot, $next) {
 
                 // 发送消息给直接邀请人
                 $bot->sendMessage(
-                    "恭喜! 用户[{$user->name}]接受了您的邀请，您获得了{$level1_amount}个USDT奖励！",
+                    "恭喜! 用户[{$user->name}]接受了您的邀请，您获得了{$level1_commission_amount}个USDT奖励！",
                     disable_web_page_preview: true,
                     chat_id: $inviter->tg_id,
                 );
@@ -130,9 +130,6 @@ $bot->middleware(function (Nutgram $bot, $next) {
 
 // $bot->onCommand('tmp', StartHandler::class)
 //     ->description('tmp description')->isHidden(); // TODO ->isHidden()无效
-
-$bot->onCommand('help', HelpHandler::class)
-    ->description('帮助说明');
 
 $bot->onCommand('start', StartHandler::class)
     ->description('开始使用!');
@@ -166,3 +163,6 @@ $bot->onCallbackQueryData('recruit:detail:{id}', [RecruitHandler::class, 'handle
 // 分别处理两种格式
 // $bot->onText('https://t\.me/.*', [RecruitHandler::class, 'handleSubmit']);
 // $bot->onText('@.*', [RecruitHandler::class, 'handleSubmit']);
+
+$bot->onCommand('help', HelpHandler::class)
+    ->description('帮助说明');

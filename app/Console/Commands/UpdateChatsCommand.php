@@ -15,8 +15,8 @@ class UpdateChatsCommand extends Command
 
     public function handle()
     {
-        $settings = app(GeneralSettings::class);
-        $items_per_update = $settings->items_per_update;
+        $generaSettings = app(GeneralSettings::class);
+        $items_per_update = $generaSettings->items_per_update;
 
         // try {
         Log::info("chats:verify-chats command started.111");

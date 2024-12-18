@@ -2,6 +2,7 @@
 
 namespace App\Telegram\Handlers;
 
+use App\Settings\GeneralSettings;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
@@ -73,26 +74,32 @@ class MenuHandler
                 InlineKeyboardButton::make('<< 返回主菜单', callback_data: 'menu:home')
             );
 
-        $bot->editMessageText( // TODO 金额去掉硬编码
-            text: <<<HTML
+            $generaSettings = app(GeneralSettings::class);
+            $level1_commission_amount = $generaSettings->level1_commission_amount;
+            $level2_commission_amount = $generaSettings->level2_commission_amount;
+
+            $text = <<<HTML
 <b>🎯 邀请好友赚取USDT收益</b>
 
 💎 <b>推广奖励</b>
-• 直接邀请：每邀请1位新用户，您会获得 <b>0.08 USDT</b>
-• 间接邀请：您的下级每邀请1人，您会获得 <b>0.02 USDT</b>
+• 直接邀请：每邀请1位新用户，您会获得 <b>{$level1_commission_amount} USDT</b>
+• 间接邀请：您的下级每邀请1人，您会获得 <b>{$level2_commission_amount} USDT</b>
 
-📱 <b>您的专属邀请链接</b>
+📱 <b>您的专属邀请链接:</b>
 <code>https://t.me/yisou123bot?start={$user->tg_id}</code>
 
-✨ 推广文案(点击复制)：
+✨ 推广文案(点击复制):
 <code>🔍 发现一个超好用的Telegram搜索机器人！
 • 搜索群组/频道/机器人
 • 支持资源内容搜索
 • 完全免费使用
-👉 立即体验：t.me/yisou123bot?start={$user->tg_id}</code>
+👉 立即体验: t.me/yisou123bot?start={$user->tg_id}</code>
 
 💡 温馨提示：邀请的好友越多，收益越高！
-HTML,
+HTML;
+            
+        $bot->editMessageText(
+            text: $text,
             message_id: $messageId,
             parse_mode: ParseMode::HTML,
             reply_markup: $keyboard,

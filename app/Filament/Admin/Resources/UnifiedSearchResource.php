@@ -70,6 +70,7 @@ class UnifiedSearchResource extends Resource
                 
                 Tables\Columns\TextColumn::make('content')
                     ->limit(16)
+                    ->sortable()
                     ->tooltip(function (Tables\Columns\TextColumn $column) {
                         return $column->getState();
                     }),
