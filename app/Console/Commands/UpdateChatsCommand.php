@@ -37,16 +37,17 @@ class UpdateChatsCommand extends Command
         } catch (\Exception $e) {
             Log::error("Error in dispatchNextVerificationJob: " . $e->getMessage());
         }
+
         Log::info('::dispatchNextVerificationJob() $dispatched_count: ' . $dispatched_count);
 
-        $result = Chat::dispatchNextAuditJob();
-        if (!$result) {
-            $this->info("No more chats to verify. Exiting.");
-        }
-        $result = Message::dispatchNextAuditJob();
-        if (!$result) {
-            $this->info("No more messages to verify. Exiting.");
-        }
+        // $result = Chat::dispatchNextAuditJob();
+        // if (!$result) {
+        //     $this->info("No more chats to verify. Exiting.");
+        // }
+        // $result = Message::dispatchNextAuditJob();
+        // if (!$result) {
+        //     $this->info("No more messages to verify. Exiting.");
+        // }
 
         $this->info("Dispatched verification job for the next chat.");
         // } catch (\Exception $e) {

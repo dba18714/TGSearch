@@ -7,6 +7,7 @@ use App\Models\UnifiedSearch;
 
 class UnifiedSearchService
 {
+    // TODO 搜索结果权重优化
     public function search(string $query, array $filters = [], array $options = [], $excludeIds = [], $seoModeration = false)
     {
         $query = trim($query);

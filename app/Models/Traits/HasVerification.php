@@ -53,22 +53,22 @@ trait HasVerification
         return true;
     }
 
-    public static function dispatchNextAuditJob(): bool
-    {
-        $model = static::selectForAudit()->first();
+    // public static function dispatchNextAuditJob(): bool
+    // {
+    //     $model = static::selectForAudit()->first();
 
-        if (!$model) return false;
+    //     if (!$model) return false;
 
-        // 如果1小时之内已经审计过了，就跳过
-        if (
-            $model->audit_started_at &&
-            $model->audit_started_at->gt(now()->subHour())
-        ) return false;
+    //     // 如果1小时之内已经审计过了，就跳过
+    //     if (
+    //         $model->audit_started_at &&
+    //         $model->audit_started_at->gt(now()->subHour())
+    //     ) return false;
 
-        $model->dispatchAuditJob();
+    //     $model->dispatchAuditJob();
 
-        return true;
-    }
+    //     return true;
+    // }
 
     public function scopeSelectForVerification($query)
     {
@@ -130,12 +130,12 @@ trait HasVerification
             $model_class_name = class_basename($model);
             if ($model_class_name == 'Chat') {
                 if ($model->wasChanged('name') || $model->wasChanged('introduction')) {
-                    $model->dispatchAuditJob();
+                    if (!empty($model->name)) $model->dispatchAuditJob();
                 }
             }
             if ($model_class_name == 'Message') {
                 if ($model->wasChanged('text')) {
-                    $model->dispatchAuditJob();
+                    if (!empty($model->text)) $model->dispatchAuditJob();
                 }
             }
         });

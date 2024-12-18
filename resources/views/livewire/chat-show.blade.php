@@ -1,6 +1,7 @@
 <div>
     <div class="bg-gray-100 dark:bg-gray-900 min-h-screen py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {{-- // TODO 完善拦截不宜展示的内容 --}}
             @if (!$chat->audit_passed)
                 <h3
                     class="text-gray-900 dark:text-white group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition-colors duration-200">
