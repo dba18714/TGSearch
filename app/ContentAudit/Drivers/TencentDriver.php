@@ -49,6 +49,10 @@ class TencentDriver implements ContentAuditInterface
 
     public function audit(string $content): AuditResult
     {
+        if (empty($content)) {
+            throw new \InvalidArgumentException('Content cannot be empty');
+        }
+
         $result = $this->checkContent($content);
 
         $isPassed = $result['Suggestion'] !== 'Block';

@@ -27,7 +27,7 @@ class ManageGeneralSettings extends SettingsPage
                 ->columns(2)
                 ->schema([
                     Components\Select::make('log_level')
-                        ->label('日志级别')
+                        ->label('系统日志级别')
                         ->required()
                         ->options([
                             'debug' => 'Debug (调试)',
@@ -77,6 +77,9 @@ class ManageGeneralSettings extends SettingsPage
                         ->minValue(1)
                         ->default(60)
                         ->helperText('设置同一个资源至少间隔多少分钟更新一次'),
+
+                    // TODO 添加内容审查管理（开关更新/审查，已审查的再次审查时间间隔）
+
                 ]),
         ];
     }
