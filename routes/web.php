@@ -41,6 +41,11 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
+    $settings = app(GeneralSettings::class);
+    dump($settings->existing_content_audit_enabled);
+    $settings = app(GeneralSettings::class);
+    dump($settings->new_links_update_enabled);
+    // dd();
     echo now()->timezone('Asia/Taipei')->subMinutes(60);
     return;
 

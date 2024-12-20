@@ -36,16 +36,21 @@ trait HasVerification
 
     public static function dispatchNextVerificationJob(): bool
     {
+        $general = app(GeneralSettings::class);
+
+        // 如果定期更新被禁用，直接返回
+        if (!$general->existing_links_update_enabled) {
+            return false;
+        }
+
         $model = static::selectForVerification()->first();
 
         if (!$model) return false;
 
         // 如果N分钟之内已经验证过了，就跳过
-        $settings = app(GeneralSettings::class);
-        $update_interval_minutes = $settings->update_interval_minutes;
         if (
             $model->verified_start_at &&
-            $model->verified_start_at->gt(now()->subMinutes($update_interval_minutes))
+            $model->verified_start_at->gt(now()->subMinutes($general->update_interval_minutes))
         ) return false;
 
         $model->dispatchUpdateJob();
@@ -53,22 +58,29 @@ trait HasVerification
         return true;
     }
 
-    // public static function dispatchNextAuditJob(): bool
-    // {
-    //     $model = static::selectForAudit()->first();
+    public static function dispatchNextAuditJob(): bool
+    {
+        $general = app(GeneralSettings::class);
 
-    //     if (!$model) return false;
+        // 如果定期审查被禁用，直接返回
+        if (!$general->existing_content_audit_enabled) {
+            return false;
+        }
 
-    //     // 如果1小时之内已经审计过了，就跳过
-    //     if (
-    //         $model->audit_started_at &&
-    //         $model->audit_started_at->gt(now()->subHour())
-    //     ) return false;
+        $model = static::selectForAudit()->first();
 
-    //     $model->dispatchAuditJob();
+        if (!$model) return false;
 
-    //     return true;
-    // }
+        // 如果 N 小时之内已经审计过了，就跳过
+        if (
+            $model->audit_started_at &&
+            $model->audit_started_at->gt(now()->subHour($general->audit_interval_hours))
+        ) return false;
+
+        $model->dispatchAuditJob();
+
+        return true;
+    }
 
     public function scopeSelectForVerification($query)
     {
@@ -125,6 +137,13 @@ trait HasVerification
         });
 
         static::saved(function ($model) {
+            $general = app(GeneralSettings::class);
+
+            // 如果内容审查开关关闭，则不执行审计
+            if (!$general->content_changed_audit_enabled) {
+                return;
+            }
+
             // 防止无限循环：如果正在更新 audit_started_at，则不触发审计
             if ($model->wasChanged('audit_started_at')) {
                 return;

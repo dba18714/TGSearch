@@ -11,7 +11,4 @@ use Illuminate\Support\Facades\Schedule;
 
 
 Schedule::command('chats:verify-chats')
-    ->everySecond()
-    ->when(function () {
-        return app(GeneralSettings::class)->existing_links_update_enabled;
-    });
+    ->everySecond();

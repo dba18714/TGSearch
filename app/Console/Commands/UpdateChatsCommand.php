@@ -15,10 +15,9 @@ class UpdateChatsCommand extends Command
 
     public function handle()
     {
-        $generaSettings = app(GeneralSettings::class);
-        $items_per_update = $generaSettings->items_per_update;
+        $genera = app(GeneralSettings::class);
+        $items_per_update = $genera->items_per_update;
 
-        // try {
         Log::info("chats:verify-chats command started.111");
 
         $dispatched_count = 0;
@@ -40,18 +39,27 @@ class UpdateChatsCommand extends Command
 
         Log::info('::dispatchNextVerificationJob() $dispatched_count: ' . $dispatched_count);
 
-        // $result = Chat::dispatchNextAuditJob();
-        // if (!$result) {
-        //     $this->info("No more chats to verify. Exiting.");
-        // }
-        // $result = Message::dispatchNextAuditJob();
-        // if (!$result) {
-        //     $this->info("No more messages to verify. Exiting.");
-        // }
+        $audit_items_per_update = $genera->audit_items_per_update;
 
-        $this->info("Dispatched verification job for the next chat.");
-        // } catch (\Exception $e) {
-        //     Log::error("Error in chats:verify-chats command: " . $e->getMessage());
-        // }
+        Log::info("contents:audit command started");
+
+        $dispatched_count = 0;
+        try {
+            for ($i = 0; $i < $audit_items_per_update; $i++) {
+                $dispatched_count++;
+                
+                $result = Chat::dispatchNextAuditJob();
+                if (!$result) {
+                    $this->info("No more chats to audit");
+                }
+                
+                $result = Message::dispatchNextAuditJob();
+                if (!$result) {
+                    $this->info("No more messages to audit");
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error("Error in dispatchNextAuditJob: " . $e->getMessage());
+        }
     }
 }
