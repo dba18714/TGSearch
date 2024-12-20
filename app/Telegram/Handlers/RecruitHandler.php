@@ -151,10 +151,12 @@ class RecruitHandler
             }
 
             // 构建详情消息
+            $name = $chat->user->name ?? '-';
             $text = "<b>📊 详细信息</b>\n\n";
-            $text .= "TG用户名: @{$chat->username}\n";
+            if ($chat->is_valid) $text .= "名称: {$chat->name}\n";
+            $text .= "链接: @{$chat->username}\n";
             $text .= "首次提交时间: " . $chat->created_at?->format('Y-m-d H:i:s') . "\n"; // TODO 处理时区
-            $text .= "首次提交者: {$chat->user->name}\n";
+            $text .= "首次提交者: {$name}\n";
             $text .= "收录时间: " . ($chat->verified_at ? $chat->verified_at?->format('Y-m-d H:i:s') : '正在排队收录中') . "\n"; // TODO 处理时区
             if ($chat->verified_at) $text .= "是否有效: " . ($chat->is_valid ? 'Yes' : '无效') . "\n";
 

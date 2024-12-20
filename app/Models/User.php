@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
@@ -41,6 +42,13 @@ class User extends Authenticatable implements FilamentUser, HasName
         'password',
         'remember_token',
     ];
+
+    public function tgGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(TgGroup::class, 'tg_group_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
 
     public function commissionRecords(): HasMany
     {

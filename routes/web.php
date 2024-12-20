@@ -16,6 +16,7 @@ use App\Livewire\Search;
 use App\Models\Message;
 use App\Models\Chat;
 use App\Models\Impression;
+use App\Models\TgGroup;
 use App\Models\UnifiedSearch;
 use App\Models\User;
 use App\Services\UnifiedSearchService;
@@ -41,8 +42,6 @@ Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
     echo now()->timezone('Asia/Taipei')->subMinutes(60);
-    dump(opcache_get_status()); // TODO 用filament管理
-    dump(opcache_get_configuration());
     return;
 
     $settings = app(GeneralSettings::class);
