@@ -31,7 +31,7 @@ class MessageResource extends Resource
                     ->label('所有者')
                     ->relationship('chat', 'name')
                     ->searchable()
-                    ->preload()
+                    ->optionsLimit(100)
                     ->required(),
                 Forms\Components\TextInput::make('source_id')
                     ->dehydrated(fn($state) => filled($state)),
@@ -159,13 +159,23 @@ class MessageResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('update')
+                    Tables\Actions\BulkAction::make('dispatchUpdateJob')
                         ->label('爬取更新信息')
                         ->icon('heroicon-o-arrow-path')
                         ->action(function (Collection $records) {
                             $records->each->dispatchUpdateJob();
                             Notification::make()
                                 ->title('已派发爬取更新任务')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\BulkAction::make('dispatchAuditJob')
+                        ->label('派发内容审计任务')
+                        ->icon('heroicon-o-arrow-path')
+                        ->action(function (Collection $records) {
+                            $records->each->dispatchAuditJob();
+                            Notification::make()
+                                ->title('已派发内容审计任务任务')
                                 ->success()
                                 ->send();
                         }),

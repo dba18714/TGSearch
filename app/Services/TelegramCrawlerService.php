@@ -105,6 +105,11 @@ class TelegramCrawlerService
             return trim($text);
         }
 
+        $node = $xpath->query('//div[@data-post="' . $str . '"]//a[contains(@class, "tgme_widget_message_photo_wrap")]')->item(0);
+        if ($node) {
+            return trim('[图片]');
+        }
+
         if ($this->message_id && $this->type == 'group') {
             $node = $xpath->query('//meta[@property="og:description"]')->item(0);
             if ($node) return $node->getAttribute('content');
