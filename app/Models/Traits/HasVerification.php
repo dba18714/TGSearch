@@ -106,7 +106,11 @@ trait HasVerification
     {
 
         static::created(function ($model) {
-            $model->dispatchUpdateJob();
+
+            // 检查是否允许更新新链接
+            if (app(GeneralSettings::class)->new_links_update_enabled) {
+                $model->dispatchUpdateJob();
+            }
         });
 
         static::saving(function ($model) {
@@ -129,13 +133,20 @@ trait HasVerification
             // 如果内容有更新则派遣审计任务
             $model_class_name = class_basename($model);
             if ($model_class_name == 'Chat') {
-                if ($model->wasChanged('name') || $model->wasChanged('introduction')) {
-                    if (!empty($model->name)) $model->dispatchAuditJob();
+                if (
+                    $model->wasChanged('name') ||
+                    $model->wasChanged('introduction')
+                ) {
+                    if (!empty($model->name) && $model->is_valid) {
+                        $model->dispatchAuditJob();
+                    }
                 }
             }
             if ($model_class_name == 'Message') {
                 if ($model->wasChanged('text')) {
-                    if (!empty($model->text)) $model->dispatchAuditJob();
+                    if (!empty($model->text) && $model->is_valid) {
+                        $model->dispatchAuditJob();
+                    }
                 }
             }
         });

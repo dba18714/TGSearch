@@ -26,6 +26,11 @@ class HandleSettingSaved
                 'value_new' =>  $general->log_level
             ],
             [
+                'env_name' => 'CONTENT_MODERATION_SERVICE', 
+                'value_old' => config('content-audit.default'), 
+                'value_new' =>  $general->content_audit_driver
+            ],
+            [
                 'env_name' => 'GOOGLE_SEARCH_API_KEY', 
                 'value_old' => config('services.google.search_api_key'), 
                 'value_new' =>  $service->google_search_api_key

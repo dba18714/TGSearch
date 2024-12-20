@@ -8,14 +8,19 @@ class GeneralSettings extends Settings
 {
     public ?string $log_level = null;
 
-    public ?float $level1_commission_amount = 0.08;
-    public ?float $level2_commission_amount = 0.02;
+    public ?float $level1_commission_amount;
+    public ?float $level2_commission_amount;
 
-    // 设置每次更新 N 个资源(chats/messages)
-    public ?int $items_per_update = 1;
+    public ?bool $new_links_update_enabled;
+    public ?bool $existing_links_update_enabled;
+    public ?int $items_per_update;
+    public ?int $update_interval_minutes;
 
-    // 设置同一个资源至少间隔多久更新一次
-    public ?int $update_interval_minutes = 60;
+    public ?string $content_audit_driver;
+    public ?bool $content_changed_audit_enabled;
+    public ?bool $existing_content_audit_enabled;
+    public ?int $audit_items_per_update;
+    public ?int $audit_interval_hours;
 
     public static function group(): string
     {
