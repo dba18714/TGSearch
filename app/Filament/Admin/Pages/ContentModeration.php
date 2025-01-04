@@ -14,6 +14,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
+use Filament\Support\Enums\MaxWidth;
 
 class ContentModeration extends Page implements HasForms
 {
@@ -34,6 +35,11 @@ class ContentModeration extends Page implements HasForms
     public ?bool $isPassed = null;
     public ?array $risks = null;
     public ?array $maxRisk = null;
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::SevenExtraLarge;
+    }
 
     public function mount(): void
     {

@@ -6,6 +6,7 @@ use App\Settings\ServiceSettings;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
+use Filament\Support\Enums\MaxWidth;
 
 class ManageServiceSettings extends SettingsPage
 {
@@ -15,6 +16,11 @@ class ManageServiceSettings extends SettingsPage
     protected static ?string $title = '第三方服务设置';
 
     protected static string $settings = ServiceSettings::class;
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::SevenExtraLarge;
+    }
 
     protected function getFormSchema(): array
     {

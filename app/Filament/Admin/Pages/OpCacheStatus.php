@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Pages;
 
 use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\HtmlString;
 
 class OpCacheStatus extends Page
@@ -14,6 +15,11 @@ class OpCacheStatus extends Page
     protected static ?string $slug = 'opcache-status';
     
     protected static string $view = 'filament.admin.pages.opcache-status';
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::SevenExtraLarge;
+    }
 
     public function getViewData(): array
     {

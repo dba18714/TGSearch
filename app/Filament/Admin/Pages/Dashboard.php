@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Pages;
 
 use Filament\Pages\Dashboard as BaseDashboard;
 use App\Filament\Admin\Widgets\StatsOverviewWidget;
+use Filament\Support\Enums\MaxWidth;
 
 class Dashboard extends BaseDashboard
 {
@@ -13,6 +14,11 @@ class Dashboard extends BaseDashboard
     //         StatsOverviewWidget::class,
     //     ];
     // }
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::SevenExtraLarge;
+    }
 
     public function getWidgets(): array
     {

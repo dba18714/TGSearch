@@ -20,6 +20,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Admin\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Vite;
 
 class AdminPanelProvider extends PanelProvider
@@ -33,6 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ->homeUrl('/')
             ->login()
             ->spa()
+            ->maxContentWidth(MaxWidth::Full)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('14rem')
             ->navigationItems([

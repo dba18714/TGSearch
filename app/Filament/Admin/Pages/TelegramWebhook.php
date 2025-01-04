@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 use SergiX44\Nutgram\Nutgram;
 
 class TelegramWebhook extends Page
@@ -22,6 +23,11 @@ class TelegramWebhook extends Page
     protected static string $view = 'filament.admin.pages.telegram-webhook';
 
     public ?array $data = [];
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::SevenExtraLarge;
+    }
 
     public function mount(): void
     {

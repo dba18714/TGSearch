@@ -6,6 +6,7 @@ use App\Settings\GeneralSettings;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components;
 use Filament\Pages\SettingsPage;
+use Filament\Support\Enums\MaxWidth;
 
 class ManageGeneralSettings extends SettingsPage
 {
@@ -18,6 +19,11 @@ class ManageGeneralSettings extends SettingsPage
     protected static ?string $title = '通用设置';
 
     protected static string $settings = GeneralSettings::class;
+
+    public function getMaxContentWidth(): MaxWidth
+    {
+        return MaxWidth::SevenExtraLarge;
+    }
 
     protected function getFormSchema(): array
     {
