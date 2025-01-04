@@ -38,6 +38,8 @@ class ManageServiceSettings extends SettingsPage
             Section::make('OpenAI')
                 ->columns(2)
                 ->schema([
+                    TextInput::make('openai_base_uri')
+                        ->label('OpenAI BASE URI'),
                     TextInput::make('openai_api_key')
                         ->label('OpenAI API Key'),
                 ]),

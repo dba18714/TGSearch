@@ -25,16 +25,10 @@ class OpenaiDriver implements ContentAuditInterface
                 try {
                     $response = $this->client->moderations()->create([
                         'model' => 'text-moderation-latest',
-
-                        // omni-moderation-latest 当前不可用，
-                        // 会出错：{"status":500,"body":{"error":{"message":"Unexpected error","type":"server_error","param":null,"code":null}}} 
-                        // 社区有人也遇到同样的问题： https://community.openai.com/t/content-moderation-api-throwing-internal-server-errors/959809
-                        // 'model' => 'omni-moderation-latest', 
-
                         'input' => $content,
                     ]);
 
-                    Log::debug('OpenAI Moderation API error', $response);
+                    Log::debug('OpenAI Moderation API response', ['result' => $response]);
 
                     $result = $response->results[0] ?? null;
 
@@ -42,10 +36,26 @@ class OpenaiDriver implements ContentAuditInterface
                         throw new \Exception('No moderation result returned');
                     }
 
+                    // 转换响应结构
+                    $categories = [];
+                    $categoryScores = [];
+                    
+                    foreach ($result->categories as $category => $data) {
+                        if (is_object($data)) {
+                            // 新的响应结构
+                            $categories[$category] = $data->violated;
+                            $categoryScores[$category] = $data->score;
+                        } else {
+                            // 保持对旧响应结构的兼容
+                            $categories[$category] = $data;
+                            $categoryScores[$category] = $result->category_scores->{$category} ?? 0.0;
+                        }
+                    }
+
                     return [
                         'flagged' => $result->flagged ?? false,
-                        'categories' => $result->categories ?? [],
-                        'category_scores' => $result->category_scores ?? $result->scores ?? [],
+                        'categories' => $categories,
+                        'category_scores' => $categoryScores,
                     ];
                 } catch (\Exception $e) {
                     Log::error('OpenAI Moderation API error', [
@@ -68,11 +78,14 @@ class OpenaiDriver implements ContentAuditInterface
         $result = $this->checkContent($content);
 
         $risks = [];
-        $maxRisk = [];
+        $maxRisk = [
+            'category' => null,
+            'score' => 0.0,
+        ];
 
         foreach ($result['categories'] as $category => $flagged) {
             if ($flagged) {
-                $score = $result['category_scores']->{$category} ?? 0.0;
+                $score = $result['category_scores'][$category] ?? 0.0;
                 $risks[] = [
                     'category' => $category,
                     'score' => $score

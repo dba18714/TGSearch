@@ -46,6 +46,7 @@ class TelegramCrawlerService
             if ($member_count === null) $member_count = $counters['subscribers'];
 
             $isValid = $this->checkValidity($xpath);
+            if ($message_id && !$message) $isValid = false;
 
             $data = [
                 'username' => $username,
@@ -96,6 +97,11 @@ class TelegramCrawlerService
 
     private function extractMessageText($xpath)
     {
+        if ($this->message_id && $this->type == 'group') {
+            $node = $xpath->query('//meta[@property="og:description"]')->item(0);
+            if ($node) return $node->getAttribute('content');
+        }
+
         $str = "{$this->username}/{$this->message_id}";
         $node = $xpath->query('//div[@data-post="' . $str . '"]//div[contains(@class, "tgme_widget_message_text js-message_text")][@dir="auto"]')->item(0);
         if ($node) {
@@ -107,12 +113,12 @@ class TelegramCrawlerService
 
         $node = $xpath->query('//div[@data-post="' . $str . '"]//a[contains(@class, "tgme_widget_message_photo_wrap")]')->item(0);
         if ($node) {
-            return trim('[图片]');
+            return '[图片]';
         }
 
-        if ($this->message_id && $this->type == 'group') {
-            $node = $xpath->query('//meta[@property="og:description"]')->item(0);
-            if ($node) return $node->getAttribute('content');
+        $node = $xpath->query('//div[@data-post="' . $str . '"]//a[contains(@class, "tgme_widget_message_video_wrap")]')->item(0);
+        if ($node) {
+            return '[视频]';
         }
 
         return null;
@@ -241,7 +247,10 @@ class TelegramCrawlerService
         $node = $xpath->query('//div[contains(@class, "tgme_channel_info_counters")]')->item(0);
         if ($node) {
             $text = $node->textContent;
-            if (strpos($text, 'subscribers') !== false) {
+            if (
+                strpos($text, 'subscribers') !== false ||
+                strpos($text, 'subscriber') !== false
+                ) {
                 return 'channel';
             }
         }

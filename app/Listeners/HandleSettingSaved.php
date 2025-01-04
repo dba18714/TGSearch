@@ -51,6 +51,11 @@ class HandleSettingSaved
                 'value_new' =>  $service->tencent_cloud_secret_key
             ],
             [
+                'env_name' => 'OPENAI_BASE_URI', 
+                'value_old' => config('services.openai.base_uri'), 
+                'value_new' =>  $service->openai_base_uri
+            ],
+            [
                 'env_name' => 'OPENAI_API_KEY', 
                 'value_old' => config('services.openai.api_key'), 
                 'value_new' =>  $service->openai_api_key

@@ -19,6 +19,7 @@ use App\Models\Impression;
 use App\Models\TgGroup;
 use App\Models\UnifiedSearch;
 use App\Models\User;
+use App\Services\CrawlerGetAllMessageIdService;
 use App\Services\UnifiedSearchService;
 use App\Settings\GeneralSettings;
 use Illuminate\Database\Eloquent\Model;
@@ -41,12 +42,10 @@ Route::get('/home', Home::class);
 Route::view('/welcome', 'welcome');
 
 Route::get('/tmp', function (Request $request) {
-    $settings = app(GeneralSettings::class);
-    dump($settings->existing_content_audit_enabled);
-    $settings = app(GeneralSettings::class);
-    dump($settings->new_links_update_enabled);
-    // dd();
-    echo now()->timezone('Asia/Taipei')->subMinutes(60);
+    $allMessageIds = app(CrawlerGetAllMessageIdService::class)->crawl('yunpanshare');
+
+    dump($allMessageIds);
+    
     return;
 
     $settings = app(GeneralSettings::class);

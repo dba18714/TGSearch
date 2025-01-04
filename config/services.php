@@ -37,6 +37,7 @@ return [
     ],
 
     'openai' => [
+        'base_uri' => env('OPENAI_BASE_URI', 'https://api.openai.com/v1'),
         'api_key' => env('OPENAI_API_KEY'),
     ],
 

@@ -18,27 +18,30 @@ class ContentAuditManager extends Manager
     {
         $config = $this->config->get('services.openai');
         return new OpenaiDriver(
-            OpenAI::client($config['api_key'])
+            OpenAI::factory()
+                ->withBaseUri($config['base_uri'])  // https://api.guidaodeng.com/v1
+                ->withApiKey($config['api_key'])
+                ->make()
         );
     }
 
     public function createTencentDriver(): ContentAuditInterface
     {
         $config = $this->config->get('services.tencent');
-        
+
         $cred = new Credential(
             $config['secret_id'],
             $config['secret_key']
         );
-        
+
         $httpProfile = new HttpProfile();
         $httpProfile->setEndpoint("tms.tencentcloudapi.com");
-    
+
         $clientProfile = new ClientProfile();
         $clientProfile->setHttpProfile($httpProfile);
-        
+
         $client = new TmsClient($cred, $config['region'], $clientProfile);
-        
+
         return new TencentDriver($client);
     }
 

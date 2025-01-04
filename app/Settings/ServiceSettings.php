@@ -10,6 +10,7 @@ class ServiceSettings extends Settings
     public ?string $google_search_engine_id;
     public ?string $tencent_cloud_secret_id;
     public ?string $tencent_cloud_secret_key;
+    public ?string $openai_base_uri;
     public ?string $openai_api_key;
     public ?string $telegram_token;
 
