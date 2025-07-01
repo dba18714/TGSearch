@@ -1,3 +1,35 @@
+# 本地开发调试 （适用于macOS）
+
+安装 Composer 包管理器
+```bash
+brew install composer
+```
+
+复制 `.env.example` 为 `.env`，并根据需要修改配置。
+运行以下命令启动 Sail（首次运行会自动安装依赖并构建容器）：
+```bash
+./vendor/bin/sail up
+```
+应用程序的 Docker 容器启动后，执行以下命令运行应用程序的scout索引同步和数据库迁移：
+```bash
+sail artisan scout:sync-index-settings && ./vendor/bin/sail artisan migrate
+```
+可选，如果需要生成用于测试的数据，则执行数据填充：
+```bash
+./vendor/bin/sail artisan db:seed
+```
+访问 `http://localhost` 查看项目。
+
+常用命令：
+- 进入容器的终端：
+  ```bash
+  ./vendor/bin/sail bash
+  ```
+- 停止 Sail：
+  ```bash
+  ./vendor/bin/sail down
+  ```
+
 # 生产环境部署 
 
 ## 使用`aaPanel`部署
@@ -159,7 +191,7 @@ location / {
 [宝塔面板/aaPanel如何切换默认的命令行php版本](https://www.bt.cn/bbs/forum.php?mod=redirect&goto=findpost&ptid=22467&pid=483577)
 
 ### Git 安装：
-```shell
+```bash
 $ yum install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel
 

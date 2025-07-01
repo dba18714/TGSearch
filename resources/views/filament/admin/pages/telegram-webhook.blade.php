@@ -1,10 +1,11 @@
 <x-filament-panels::page>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <x-filament::card>
         <form wire:submit="submit">
             {{ $this->form }}
 
-            {{-- # TODO 解决所有filament自定义视图无法使用（不会自动更新）tailwindcss的问题 --}}
-            <div class="mt-6 flex space-x-4">
+            <div class="mt-4 flex space-x-4">
                 <x-filament::button wire:click="submit">
                     设置 Webhook
                 </x-filament::button>
